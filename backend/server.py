@@ -85,10 +85,10 @@ DEFAULT_SETTINGS = {
     "formTitle": "Vamos reservar sua vaga?",
     "formSubtitle": "Leva menos de um minuto.",
     "consentText": "Concordo com o uso dos meus dados para fins de inscrição e comunicação sobre o evento.",
-    "colorPaper": "#FAF8F5",
-    "colorBeige": "#F3ECE3",
-    "colorInk": "#171615",
-    "colorGold": "#C5A059",
+    "colorPaper": "#F2EAE0",
+    "colorBeige": "#A98E72",
+    "colorInk": "#3A2E27",
+    "colorGold": "#C5A880",
 }
 
 COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")

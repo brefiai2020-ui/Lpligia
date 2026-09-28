@@ -89,14 +89,14 @@ select {
 
 @layer base {
     :root {
-        --c-paper-rgb: 250 248 245;
-        --c-cream-rgb: 248 244 238;
-        --c-beige-rgb: 243 236 227;
-        --c-line-rgb: 229 222 193;
-        --c-ink-rgb: 23 22 21;
-        --c-smoke-rgb: 74 70 67;
-        --c-gold-rgb: 197 160 89;
-        --c-goldlight-rgb: 234 216 177;
+        --c-paper-rgb: 242 234 224;
+        --c-cream-rgb: 237 227 214;
+        --c-beige-rgb: 169 142 114;
+        --c-line-rgb: 152 128 103;
+        --c-ink-rgb: 58 46 39;
+        --c-smoke-rgb: 105 95 88;
+        --c-gold-rgb: 197 168 128;
+        --c-goldlight-rgb: 216 204 183;
         --background: 0 0% 100%;
         --foreground: 0 0% 3.9%;
         --card: 0 0% 100%;

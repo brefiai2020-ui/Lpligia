@@ -30,10 +30,10 @@ export const DEFAULT_SETTINGS = {
     formSubtitle: "Leva menos de um minuto.",
     consentText:
         "Concordo com o uso dos meus dados para fins de inscrição e comunicação sobre o evento.",
-    colorPaper: "#FAF8F5",
-    colorBeige: "#F3ECE3",
-    colorInk: "#171615",
-    colorGold: "#C5A059",
+    colorPaper: "#F2EAE0",
+    colorBeige: "#A98E72",
+    colorInk: "#3A2E27",
+    colorGold: "#C5A880",
 };
 
 export const formatBRL = (v) =>

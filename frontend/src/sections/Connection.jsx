@@ -7,7 +7,7 @@ export default function Connection() {
         <section className="bg-beige py-24 sm:py-32" data-testid="connection-block">
             <div className="max-w-3xl mx-auto px-5 sm:px-8 text-center">
                 <Reveal>
-                    <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
+                    <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
                         {s.connectionTitle}
                     </h2>
                 </Reveal>

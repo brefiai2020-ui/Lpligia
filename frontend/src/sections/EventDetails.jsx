@@ -18,8 +18,8 @@ export default function EventDetails() {
         <section className="bg-paper py-24 sm:py-32" data-testid="event-details">
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
                 <Reveal>
-                    <Eyebrow>Detalhes do evento</Eyebrow>
-                    <h2 className="mt-5 font-serif text-3xl sm:text-4xl text-ink leading-tight max-w-xl">
+                    <Eyebrow tone="dark">Detalhes do evento</Eyebrow>
+                    <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl text-ink leading-tight max-w-xl">
                         Tudo o que você precisa saber.
                     </h2>
                 </Reveal>

@@ -27,8 +27,8 @@ export default function Faq() {
         <section className="bg-cream py-24 sm:py-32" data-testid="faq-section">
             <div className="max-w-3xl mx-auto px-5 sm:px-8">
                 <Reveal>
-                    <Eyebrow center>Dúvidas frequentes</Eyebrow>
-                    <h2 className="mt-5 font-serif text-3xl sm:text-4xl text-ink text-center leading-tight">
+                    <Eyebrow center tone="dark">Dúvidas frequentes</Eyebrow>
+                    <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl text-ink text-center leading-tight">
                         Perguntas & respostas
                     </h2>
                 </Reveal>

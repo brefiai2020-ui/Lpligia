@@ -112,10 +112,10 @@ export default function Payment() {
                     }`}
                 >
                     <QrCode size={18} strokeWidth={1.4} className="text-gold" />
-                    <span className="text-xs uppercase tracking-[0.14em] text-smoke">Pix</span>
+                    <span className={`text-xs uppercase tracking-[0.14em] ${method === "PIX" ? "text-ink/70" : "text-smoke"}`}>Pix</span>
                     <span className="text-sm text-ink">
                         {formatBRL(s.pricePix)}
-                        <span className="block text-[11px] text-smoke">Pagamento à vista</span>
+                        <span className={`block text-[11px] ${method === "PIX" ? "text-ink/70" : "text-smoke"}`}>Pagamento à vista</span>
                     </span>
                 </button>
                 <button
@@ -126,10 +126,10 @@ export default function Payment() {
                     }`}
                 >
                     <CreditCard size={18} strokeWidth={1.4} className="text-gold" />
-                    <span className="text-xs uppercase tracking-[0.14em] text-smoke">Cartão</span>
+                    <span className={`text-xs uppercase tracking-[0.14em] ${method === "CARD" ? "text-ink/70" : "text-smoke"}`}>Cartão</span>
                     <span className="text-sm text-ink">
                         {formatBRL(s.priceCard)}
-                        <span className="block text-[11px] text-smoke">Até {s.installments}x</span>
+                        <span className={`block text-[11px] ${method === "CARD" ? "text-ink/70" : "text-smoke"}`}>Até {s.installments}x</span>
                     </span>
                 </button>
             </div>

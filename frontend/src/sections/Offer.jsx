@@ -10,8 +10,8 @@ export default function Offer() {
             <div className="max-w-xl mx-auto px-5 sm:px-8">
                 <Reveal>
                     <div className="bg-cream border border-line/60 rounded-3xl p-8 sm:p-12 text-center shadow-sm">
-                        <Eyebrow center>Oferta</Eyebrow>
-                        <h2 className="mt-5 font-serif text-3xl sm:text-4xl text-ink leading-tight">
+                        <Eyebrow center tone="dark">Oferta</Eyebrow>
+                        <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl text-ink leading-tight">
                             Seu próximo passo pode começar aqui.
                         </h2>
                         <p className="mt-6 text-[11px] uppercase tracking-[0.28em] text-gold">Mentoria em Grupo</p>

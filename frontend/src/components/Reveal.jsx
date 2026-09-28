@@ -12,14 +12,22 @@ export const Reveal = ({ children, delay = 0, y = 28, className = "" }) => (
     </motion.div>
 );
 
-export const Eyebrow = ({ children, center = false }) => (
-    <p
-        className={`flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-gold ${
-            center ? "justify-center" : ""
-        }`}
-    >
-        <span className="h-px w-10 bg-gold/60" aria-hidden="true" />
-        {children}
-        {center && <span className="h-px w-10 bg-gold/60" aria-hidden="true" />}
-    </p>
-);
+export const Eyebrow = ({ children, center = false, tone = "gold" }) => {
+    const tones = {
+        gold: "text-gold",
+        dark: "text-ink",
+        light: "text-cream/90",
+    };
+    const line = { gold: "bg-gold/60", dark: "bg-gold/70", light: "bg-cream/50" };
+    return (
+        <p
+            className={`flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] ${tones[tone]} ${
+                center ? "justify-center" : ""
+            }`}
+        >
+            <span className={`h-px w-10 ${line[tone]}`} aria-hidden="true" />
+            {children}
+            {center && <span className={`h-px w-10 ${line[tone]}`} aria-hidden="true" />}
+        </p>
+    );
+};

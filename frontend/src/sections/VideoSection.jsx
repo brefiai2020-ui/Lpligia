@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Play } from "lucide-react";
-import { Reveal } from "@/components/Reveal";
+import { Reveal, Eyebrow } from "@/components/Reveal";
 import { Monogram } from "@/components/Monogram";
 import { useSettings } from "@/lib/settings";
 
@@ -12,11 +12,8 @@ export default function VideoSection() {
         <section className="bg-paper py-24 sm:py-32" data-testid="video-section">
             <div className="max-w-5xl mx-auto px-5 sm:px-8">
                 <Reveal className="text-center">
-                    <p className="flex justify-center items-center gap-3 text-[11px] uppercase tracking-[0.28em] text-gold">
-                        <span className="h-px w-10 bg-gold/60" aria-hidden="true" /> Vídeo{" "}
-                        <span className="h-px w-10 bg-gold/60" aria-hidden="true" />
-                    </p>
-                    <h2 className="mt-5 font-serif text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
+                    <Eyebrow center tone="dark">Vídeo</Eyebrow>
+                    <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
                         Antes de decidir participar,
                         <br className="hidden sm:block" /> quero conversar com você.
                     </h2>

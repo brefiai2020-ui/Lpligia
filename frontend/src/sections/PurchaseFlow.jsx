@@ -11,7 +11,7 @@ export default function PurchaseFlow() {
         <section className="bg-paper py-24 sm:py-32" data-testid="purchase-flow">
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
                 <Reveal>
-                    <Eyebrow>Como participar</Eyebrow>
+                    <Eyebrow tone="dark">Como participar</Eyebrow>
                     <h2 className="mt-5 font-serif text-3xl sm:text-4xl text-ink leading-tight max-w-xl">
                         Do clique ao ingresso, em três passos.
                     </h2>
@@ -25,7 +25,7 @@ export default function PurchaseFlow() {
                                     style={{ transform: "scaleX(1)", transformOrigin: "left" }}
                                     aria-hidden="true"
                                 />
-                                <span className="font-mono text-5xl text-gold/80">{`0${i + 1}`}</span>
+                                <span className="font-serif italic text-5xl text-gold">{`0${i + 1}`}</span>
                                 <p className="mt-5 text-ink leading-relaxed max-w-xs">{step}</p>
                             </div>
                         </Reveal>

@@ -9,7 +9,7 @@ export default function FinalCta() {
             <div className="absolute inset-0 texture-grain opacity-20" aria-hidden="true" />
             <div className="relative max-w-3xl mx-auto px-5 sm:px-8 text-center">
                 <Reveal>
-                    <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-cream leading-[1.15]">
+                    <h2 className="font-serif italic font-light text-4xl sm:text-5xl lg:text-6xl text-cream leading-[1.15]">
                         {s.finalTitle}
                     </h2>
                     <p className="mt-6 text-cream/70 leading-relaxed max-w-xl mx-auto">{s.finalText}</p>

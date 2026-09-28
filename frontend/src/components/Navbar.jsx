@@ -43,13 +43,15 @@ export default function Navbar() {
     };
 
     const ctaLabel = s.soldOut ? "Inscrições encerradas" : "Quero participar";
+    // Sobre o hero escuro (topo da home, sem rolagem): texto claro; depois, barra creme com texto escuro.
+    const onDark = !scrolled && !open && location.pathname === "/";
 
     return (
         <>
             <header
                 className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
                     scrolled || open
-                        ? "bg-paper/85 backdrop-blur-md border-b border-line/60"
+                        ? "bg-cream/90 backdrop-blur-md border-b border-line/50"
                         : "bg-transparent border-b border-transparent"
                 }`}
                 data-testid="navbar"
@@ -63,10 +65,18 @@ export default function Navbar() {
                         }}
                         className="flex items-center gap-3 text-left"
                     >
-                        <span className="w-9 h-9 rounded-full border border-gold/60 flex items-center justify-center font-serif italic text-gold text-sm">
+                        <span
+                            className={`w-9 h-9 rounded-full border flex items-center justify-center font-serif italic text-sm transition-colors ${
+                                onDark ? "border-cream/50 text-goldlight" : "border-gold/60 text-gold"
+                            }`}
+                        >
                             LJ
                         </span>
-                        <span className="font-serif text-base sm:text-lg text-ink leading-tight">
+                        <span
+                            className={`font-serif italic text-base sm:text-lg leading-tight transition-colors ${
+                                onDark ? "text-cream" : "text-ink"
+                            }`}
+                        >
                             Dra. Lígia Jeane Matroski
                         </span>
                     </button>
@@ -77,7 +87,9 @@ export default function Navbar() {
                                 key={l.id}
                                 data-testid={`nav-link-${l.id}`}
                                 onClick={() => goSection(l.id)}
-                                className="text-[13px] uppercase tracking-[0.18em] text-smoke hover:text-ink transition-colors"
+                                className={`text-[13px] uppercase tracking-[0.18em] transition-colors ${
+                                    onDark ? "text-cream/80 hover:text-cream" : "text-smoke hover:text-ink"
+                                }`}
                             >
                                 {l.label}
                             </button>
@@ -87,8 +99,10 @@ export default function Navbar() {
                             to="/inscricao/cadastro"
                             className={`h-11 px-6 inline-flex items-center rounded-full text-[13px] uppercase tracking-[0.18em] transition-colors duration-300 ${
                                 s.soldOut
-                                    ? "bg-cream/60 text-smoke/60 cursor-not-allowed pointer-events-none border border-line"
-                                    : "bg-ink text-paper hover:bg-gold hover:text-ink"
+                                    ? "bg-smoke/10 text-smoke/60 cursor-not-allowed pointer-events-none border border-line"
+                                    : onDark
+                                      ? "bg-cream text-ink hover:bg-gold"
+                                      : "bg-ink text-cream hover:bg-gold hover:text-ink"
                             }`}
                         >
                             {ctaLabel}
@@ -97,7 +111,7 @@ export default function Navbar() {
 
                     <button
                         data-testid="nav-mobile-toggle"
-                        className="md:hidden p-2 -mr-2 text-ink"
+                        className={`md:hidden p-2 -mr-2 transition-colors ${onDark ? "text-cream" : "text-ink"}`}
                         onClick={() => setOpen((v) => !v)}
                         aria-label={open ? "Fechar menu" : "Abrir menu"}
                     >
@@ -124,7 +138,7 @@ export default function Navbar() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.08 * i + 0.1 }}
                                     onClick={() => goSection(l.id)}
-                                    className="text-left font-serif text-4xl text-cream"
+                                    className="text-left font-serif italic text-4xl text-cream"
                                 >
                                     {l.label}
                                 </motion.button>
