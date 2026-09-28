@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Instagram, X } from "lucide-react";
+import { Instagram, X, Lock } from "lucide-react";
 import { useSettings } from "@/lib/settings";
 
 const LEGAL = {
@@ -58,6 +58,13 @@ export default function Footer() {
                         >
                             Termos de Uso
                         </button>
+                        <Link
+                            data-testid="footer-admin-link"
+                            to="/admin"
+                            className="inline-flex items-center gap-2 text-cream/70 hover:text-gold transition-colors"
+                        >
+                            <Lock size={13} strokeWidth={1.5} /> Área administrativa
+                        </Link>
                         <Link
                             data-testid="footer-states-link"
                             to="/estados"
