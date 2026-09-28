@@ -5,13 +5,31 @@ import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function FixedCta() {
     const { settings: s } = useSettings();
-    const [show, setShow] = useState(false);
+    const [pastHero, setPastHero] = useState(false);
+    const [finalInView, setFinalInView] = useState(false);
+    const [scrollingUp, setScrollingUp] = useState(false);
+    const show = pastHero && !finalInView && scrollingUp;
 
     useEffect(() => {
-        const onScroll = () => setShow(window.scrollY > 560);
+        let lastY = window.scrollY;
+        const onScroll = () => {
+            const y = window.scrollY;
+            setPastHero(y > 560);
+            setScrollingUp(y < lastY - 2);
+            lastY = y;
+        };
         onScroll();
         window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
+        const target = document.getElementById("final-cta");
+        const observer = new IntersectionObserver(
+            ([entry]) => setFinalInView(entry.isIntersecting),
+            { threshold: 0.12 }
+        );
+        if (target) observer.observe(target);
+        return () => {
+            window.removeEventListener("scroll", onScroll);
+            observer.disconnect();
+        };
     }, []);
 
     return (

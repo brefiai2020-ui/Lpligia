@@ -7,7 +7,8 @@ export default function FinalCta() {
     const { settings: s } = useSettings();
     return (
         <section
-            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-ink py-24 sm:py-32 overflow-hidden"
+            id="final-cta"
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-ink py-16 sm:py-32 overflow-hidden"
             data-testid="final-cta"
         >
             <div className="absolute inset-0 texture-grain opacity-20" aria-hidden="true" />

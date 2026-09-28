@@ -16,7 +16,7 @@ export default function EventDetails() {
     ];
     return (
         <section
-            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-paper py-24 sm:py-32"
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-paper py-16 sm:py-32"
             data-testid="event-details"
         >
             <div className="max-w-6xl mx-auto px-5 sm:px-8">

@@ -7,7 +7,7 @@ export default function ImpactQuote() {
     const [firstLine, ...restLines] = (s.impactQuote || "").split("\n");
     return (
         <section
-            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-ink py-28 sm:py-40 overflow-hidden"
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-ink py-20 sm:py-40 overflow-hidden"
             data-testid="impact-quote"
         >
             <div className="absolute inset-0 texture-grain opacity-20" aria-hidden="true" />

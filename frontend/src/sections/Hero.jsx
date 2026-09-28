@@ -117,13 +117,15 @@ export default function Hero() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 1.3 }}
-                        className="mt-8 flex items-center gap-2 text-xs text-cream/75"
+                        className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-cream/75"
                         data-testid="hero-quote-card"
                     >
-                        <span className="font-serif italic text-base text-goldlight mr-2">
+                        <span className="font-serif italic text-base text-goldlight">
                             “{s.heroQuote}”
                         </span>
-                        · Pagamento seguro
+                        <span className="inline-flex items-center gap-1.5">
+                            <ShieldCheck size={13} strokeWidth={1.5} /> Pagamento seguro
+                        </span>
                     </motion.p>
                 </motion.div>
             </div>

@@ -56,7 +56,7 @@ export default function About() {
     return (
         <section
             id="sobre"
-            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-beige py-24 sm:py-32 scroll-mt-20 overflow-hidden"
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-beige py-16 sm:py-32 scroll-mt-20 overflow-hidden"
             data-testid="about-section"
         >
             <div className="absolute inset-0 texture-grain opacity-10" aria-hidden="true" />

@@ -23,7 +23,7 @@ export default function Footer() {
 
     return (
         <footer className="bg-ink text-cream" data-testid="footer">
-            <div className="max-w-6xl mx-auto px-5 sm:px-8 py-16">
+            <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-16 pb-28 md:pb-16">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
                     <div>
                         <div className="flex items-center gap-3">

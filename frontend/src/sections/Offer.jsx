@@ -9,7 +9,7 @@ export default function Offer() {
     return (
         <section
             id="mentoria"
-            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-beige py-24 sm:py-32 scroll-mt-20 overflow-hidden"
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-beige py-16 sm:py-32 scroll-mt-20 overflow-hidden"
             data-testid="offer-section"
         >
             <Blob className="top-20 -right-20 w-80 h-80 bg-rose/25" />
@@ -31,7 +31,7 @@ export default function Offer() {
                         <p className="mt-3 text-sm text-ink/85" data-testid="offer-price-card">
                             ou {formatBRL(s.priceCard)} no cartão em até {s.installments}x
                         </p>
-                        <div className="mt-6 flex justify-center gap-2 text-[11px] uppercase tracking-[0.18em]">
+                        <div className="mt-6 flex flex-wrap justify-center gap-2 text-[11px] uppercase tracking-[0.18em]">
                             <span className="px-4 py-2 rounded-full border border-line bg-paper text-ink/80">
                                 {s.eventDateLabel}
                             </span>
