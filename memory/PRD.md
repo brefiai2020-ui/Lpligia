@@ -25,6 +25,13 @@ Landing page de vendas premium, mobile-first para a Mentoria em Grupo da Dra. L�
 - P1: foto oficial e vídeo real (admin cola URLs — já suportado).
 - P2: conteúdo real de Política/Termos; horário/local do evento; relatório de vendas exportável.
 
+## Redesign alta conversão — 5 seções (2026-09-28, pedido da usuária)
+- Usuária: "tem muito texto, página com no máximo 5 seções, busque uma landing de alta conversão e se inspire". Pesquisa (anatomia de decisão 2026) + design_guidelines.json aplicados.
+- Nova estrutura em <main>: 1) Hero (promessa+data+CTA) → 2) Sobre a Lígia (autoridade+retrato+bloco de vídeo) → 3) O que você vai viver (4 benefícios + chips "para quem é", id="viver") → 4) Como funciona + Investimento (3 passos + card escuro com Pix 189,90/cartão 229 3x, vagas, CTA — novo sections/Investment.jsx) → 5) Dúvidas + CTA final (FAQ escuro acordeão + mensagem final + botão, id="final-cta" preservado para a barra fixa).
+- Navbar minimalista (logo + "Garantir vaga"; menu/hamburger removidos por atrito de conversão). Página: mobile 9623→6599px, desktop 8633→5346px.
+- Apagados: Marquee, Connection, Experience, VideoSection, ImpactQuote, EventDetails, Offer, PurchaseFlow, FinalCta (0 referências restantes). Settings de conteúdo (connectionTitle, impactQuote etc.) permanecem no admin sem uso na landing.
+- Testado (iteration_2.json): 100% mobile+desktop — 5 seções na ordem, CTAs→/inscricao/cadastro, barra fixa com comportamento correto, FAQ, vídeo placeholder, preços/vagas no card, sem overflow, /estados e /admin 200, /api/settings 200, sem erros de console. Warning benigno do framer-motion (useScroll/position) mantido sem impacto.
+
 ## Testes executados (briefing §33)
 T1 PIX 18990→PAID+1 vaga ✓ · T2 CARD 22900→PAID+1 vaga ✓ · T3 CARD 3x valor 22900 ✓ · T4 recusado/falhou→vaga NÃO ocupada ✓ · T5 pendente→não ocupa ✓ · T6 webhook duplicado→1 vaga só ✓ · T7 última vaga→1 ocupa, outro→PAYMENT_REVIEW ✓ · T8 capacidade esgotada→0 vagas e nova venda bloqueada ("Inscrições encerradas") ✓
 

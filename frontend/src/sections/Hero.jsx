@@ -21,7 +21,7 @@ export default function Hero() {
     const yText = useTransform(scrollYProgress, [0, 1], [0, 40]);
 
     return (
-        <section ref={ref} className="relative min-h-screen flex items-center overflow-hidden bg-ink">
+        <section ref={ref} className="relative min-h-screen flex items-center overflow-hidden bg-ink" data-testid="section-hero">
             <motion.div style={{ y: yBg }} className="absolute inset-0 scale-110" data-testid="hero-background" aria-hidden="true">
                 <img
                     src={HERO_BG}

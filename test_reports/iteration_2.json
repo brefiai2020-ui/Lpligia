@@ -1,0 +1,26 @@
+{
+  "summary": "Bateria completa (mobile 390x844 + desktop 1440x900) da reestruturação para 5 seções. TODOS os critérios do review passaram: 5 <section> em <main> na ordem correta (hero implicito, about-section, section-beneficios, section-investimento, faq-final-section); fluxo de conversão (hero/investimento/final/nav CTAs) navega para /inscricao/cadastro; hero-secondary-cta rola até #viver; barra fixa fixed-cta corretamente oculta no topo, oculta ao rolar para baixo, visível ao rolar para cima, oculta quando final-cta visível; FAQ abre/fecha; about-video mostra placeholder LJ; investimento mostra R$ 189,90 Pix, R$ 229,00 cartão 3x R$ 76,33, 'Restam 50 vagas', selo InfinitePay; sem overflow horizontal em mobile ou desktop; navbar minimalista (0 nav-link-*); testids removidos (nav-mobile-toggle, mobile-menu, nav-link-*, section-marquee) confirmados ausentes; rotas /estados e /admin carregam (200, com formulário de login); GET /api/settings retorna 200 com pricePix=189.9, priceCard=229, slotsTotal=50; nenhum erro de console no desktop.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Landing (global)", "issues": ["Warning benigno do framer-motion no console mobile: 'Please ensure that the container has a non-static position...' — não impacta funcionalidade, mas pode ser silenciado adicionando position:relative no container observado pelo useScroll do Hero (o <section ref={ref}> já é relative, então o alvo pode ser o <main> ou raiz; investigar se persistir)"]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Hero.jsx não expõe data-testid='section-hero' (o problem statement marcou como 'implícito'); ok, mas considerar adicionar para facilitar futuros testes.",
+    "FixedCta usa IntersectionObserver com threshold 0.12 e depende do scroll direction — comportamento validado, mas em telas muito pequenas onde final-cta ocupa mais que 12% já no fim da rolagem, poderia ocultar mais cedo. Não é um bug.",
+    "Warning do framer-motion sobre non-static position aparece em mobile; considerar auditar useScroll target para eliminar warning."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "N/A para esta bateria (admin não foi logado; /admin apenas carregou formulário).",
+  "seed_data_creation": "Nenhuma.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Landing agora tem exatamente 5 seções em <main>. Testids removidos de propósito: nav-mobile-toggle, mobile-menu, nav-link-*, seções antigas (marquee, connection, experience, videoSection, impactQuote, eventDetails, offer, purchaseFlow, finalCta separado). FixedCta visibilidade só pode ser aferida via getComputedStyle(el).opacity (não is_visible do Playwright). Hero section usa id vazio; demais seções: #sobre, #viver, #mentoria, #final-cta.",
+  "rca of the issue": "Nenhum bug encontrado."
+}
