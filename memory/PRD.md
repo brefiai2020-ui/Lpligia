@@ -25,6 +25,11 @@ Landing page de vendas premium, mobile-first para a Mentoria em Grupo da Dra. L�
 - P1: foto oficial e vídeo real (admin cola URLs — já suportado).
 - P2: conteúdo real de Política/Termos; horário/local do evento; relatório de vendas exportável.
 
+## Nova paleta terra & sálvia (2026-09-28, referência da usuária)
+- Referência visual (Pinterest, marca de psicóloga): verde sálvia, caramelo/tan, creme, terracota, marrom cacau. Mapeamento nos 5 tokens (lib/settings.jsx E site_settings no Mongo — valores do banco sobrepõem defaults): Paper #EFEAD9, Beige #5F7355 (sálvia PROFUNDA em vez do sálvia claro do swatch para manter contraste AA do texto branco), Ink #4E362A (cacau profundo), Gold #C4A57E (tan), Rose #C67C5F (terracota).
+- Labels dos color pickers do admin atualizados (Verde sálvia / Marrom cacau / Caramelo-tan / Terracota); placeholders globais escurecidos (ink/0.7) para legibilidade sobre fundos derivados.
+- Testado (iteration_4.json): 100% mobile+desktop, zero hex legado no DOM, pickers do admin mostram os hex novos, fluxo de inscrição estilizado, sem overflow, sem erros de console.
+
 ## Redesign alta conversão — 5 seções (2026-09-28, pedido da usuária)
 - Usuária: "tem muito texto, página com no máximo 5 seções, busque uma landing de alta conversão e se inspire". Pesquisa (anatomia de decisão 2026) + design_guidelines.json aplicados.
 - Nova estrutura em <main>: 1) Hero (promessa+data+CTA) → 2) Sobre a Lígia (autoridade+retrato+bloco de vídeo) → 3) O que você vai viver (4 benefícios + chips "para quem é", id="viver") → 4) Como funciona + Investimento (3 passos + card escuro com Pix 189,90/cartão 229 3x, vagas, CTA — novo sections/Investment.jsx) → 5) Dúvidas + CTA final (FAQ escuro acordeão + mensagem final + botão, id="final-cta" preservado para a barra fixa).
