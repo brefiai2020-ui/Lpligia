@@ -29,8 +29,8 @@ export default function Offer() {
                             <span className="px-4 py-2 rounded-full border border-line bg-paper text-smoke">
                                 {s.eventDateLabel}
                             </span>
-                            <span className="px-4 py-2 rounded-full border border-line bg-paper text-smoke">
-                                {s.slotsTotal} vagas
+                            <span className="px-4 py-2 rounded-full border border-line bg-paper text-smoke" data-testid="offer-seats-chip">
+                                {s.seatsLabel}
                             </span>
                         </div>
                         {s.soldOut ? (

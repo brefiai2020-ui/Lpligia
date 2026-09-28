@@ -25,7 +25,7 @@ export default function FixedCta() {
             <div className="m-3 p-2.5 rounded-full bg-ink/95 backdrop-blur border border-cream/10 shadow-2xl flex items-center justify-between gap-3 pointer-events-auto">
                 <div className="pl-3">
                     <p className="text-cream font-serif text-lg leading-none">{formatBRL(s.pricePix)}</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-cream/60 mt-0.5">no Pix · {s.slotsTotal} vagas</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-cream/60 mt-0.5">no Pix · {s.seatsLabel}</p>
                 </div>
                 {s.soldOut ? (
                     <span

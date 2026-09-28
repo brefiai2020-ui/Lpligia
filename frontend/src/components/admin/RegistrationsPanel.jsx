@@ -4,19 +4,15 @@ import { RefreshCw, Mail, Pencil, Trash2, X } from "lucide-react";
 import { apiService, formatApiError, formatBRL } from "@/services/api";
 
 const STATUS_LABEL = {
-    aguardando: "Aguardando",
-    processando: "Processando",
-    pago: "Pago",
-    recusado: "Recusado",
-    expirado: "Expirado",
+    PENDING_PAYMENT: "Aguardando",
+    CONFIRMED: "Confirmada",
+    CANCELLED: "Cancelada",
 };
 
 const STATUS_STYLE = {
-    aguardando: "bg-goldlight/40 text-ink border-gold/40",
-    processando: "bg-goldlight/40 text-ink border-gold/40",
-    pago: "bg-pine/10 text-pine border-pine/30",
-    recusado: "bg-wine/10 text-wine border-wine/30",
-    expirado: "bg-smoke/10 text-smoke border-smoke/30",
+    PENDING_PAYMENT: "bg-goldlight/40 text-ink border-gold/40",
+    CONFIRMED: "bg-pine/10 text-pine border-pine/30",
+    CANCELLED: "bg-smoke/10 text-smoke border-smoke/30",
 };
 
 export default function RegistrationsPanel() {
@@ -64,9 +60,9 @@ export default function RegistrationsPanel() {
                 <div className="flex gap-3">
                     {counts &&
                         [
-                            { label: "Inscritos", value: counts.total },
-                            { label: "Pagos", value: counts.pagos },
-                            { label: "Aguardando", value: counts.aguardando },
+                            { label: "Inscritas", value: counts.total },
+                            { label: "Confirmadas", value: counts.confirmed },
+                            { label: "Aguardando", value: counts.pending },
                         ].map((c) => (
                             <div
                                 key={c.label}
@@ -98,6 +94,7 @@ export default function RegistrationsPanel() {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="text-left text-[10px] uppercase tracking-[0.16em] text-smoke/70 border-b border-line">
+                                <th className="px-4 py-3">Código</th>
                                 <th className="px-4 py-3">Nome</th>
                                 <th className="px-4 py-3">Contato</th>
                                 <th className="px-4 py-3">CPF</th>
@@ -110,6 +107,7 @@ export default function RegistrationsPanel() {
                         <tbody>
                             {rows.map((r) => (
                                 <tr key={r.id} className="border-b border-line/50 last:border-0" data-testid="admin-registration-row">
+                                    <td className="px-4 py-3 font-mono text-xs text-gold">{r.registration_code}</td>
                                     <td className="px-4 py-3 text-ink">{r.nome}</td>
                                     <td className="px-4 py-3 text-smoke">
                                         <div>{r.whatsapp}</div>
@@ -131,7 +129,7 @@ export default function RegistrationsPanel() {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="flex justify-end gap-1">
-                                            {r.status === "pago" && r.ticket_code && (
+                                            {r.status === "CONFIRMED" && r.ticket_code && (
                                                 <button
                                                     data-testid="admin-resend-email-button"
                                                     onClick={() => resend(r)}
@@ -280,7 +278,7 @@ function EditModal({ row, onClose, onSaved }) {
                             ))}
                         </select>
                         <p className="mt-2 text-[11px] text-smoke/70">
-                            Ao marcar como Pago, o código do ingresso é gerado e o e-mail de confirmação é enviado.
+                            Confirmar ocupa uma vaga e envia o ingresso por e-mail e WhatsApp. Cancelar libera a vaga.
                         </p>
                     </div>
                 </div>

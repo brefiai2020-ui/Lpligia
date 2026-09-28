@@ -86,8 +86,22 @@ export function SettingsProvider({ children }) {
             .then(({ data }) => setSettings((s) => ({ ...s, ...data })))
             .catch(() => {});
 
+    const available = Math.max(
+        0,
+        Number(settings.availableSeats ?? settings.capacity ?? settings.slotsTotal ?? 50),
+    );
+    const enriched = {
+        ...settings,
+        available,
+        seatsLabel: settings.soldOut
+            ? "Inscrições encerradas"
+            : available === 1
+              ? "Última vaga disponível"
+              : `Restam ${available} vagas`,
+    };
+
     return (
-        <SettingsCtx.Provider value={{ settings, setSettings, refresh }}>
+        <SettingsCtx.Provider value={{ settings: enriched, setSettings, refresh }}>
             {children}
         </SettingsCtx.Provider>
     );

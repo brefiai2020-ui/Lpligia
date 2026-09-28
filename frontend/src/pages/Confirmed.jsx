@@ -58,7 +58,7 @@ export default function Confirmed() {
                         <div className="mt-3 pt-3 border-t border-line flex items-center justify-between gap-4">
                             <span className="text-[11px] uppercase tracking-[0.2em] text-smoke/70">Pagamento</span>
                             <span className="text-ink">
-                                {reg.method === "pix" ? "Pix" : "Cartão"} · {formatBRL(reg.amount || 0)}
+                                {reg.method === "PIX" ? "Pix" : "Cartão"} · {formatBRL((reg.amount_cents || 0) / 100)}
                             </span>
                         </div>
                     )}

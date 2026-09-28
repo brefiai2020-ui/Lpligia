@@ -79,6 +79,16 @@ export default function Hero() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 1.05, ease }}
+                            className="mt-6 text-[11px] uppercase tracking-[0.18em] text-gold"
+                            data-testid="hero-seats-label"
+                        >
+                            {s.seatsLabel}
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 1.05, ease }}
                             className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4"
                         >
                             {s.soldOut ? (
@@ -112,8 +122,8 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 1.3 }}
                             className="mt-6 flex items-center gap-2 text-xs text-smoke/80"
                         >
-                            <ShieldCheck size={14} strokeWidth={1.5} className="text-gold" /> {s.slotsTotal} vagas
-                            disponíveis · A partir de {formatBRL(s.pricePix)} · Pagamento seguro
+                            <ShieldCheck size={14} strokeWidth={1.5} className="text-gold" /> {s.seatsLabel} ·
+                            A partir de {formatBRL(s.pricePix)} · Pagamento seguro
                         </motion.p>
                     </motion.div>
 

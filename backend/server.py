@@ -7,6 +7,7 @@ import re
 import uuid
 import asyncio
 import ipaddress
+import secrets
 import logging
 from datetime import datetime, timezone, timedelta
 from html import escape
@@ -18,7 +19,7 @@ import bcrypt
 import jwt
 from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
 from pydantic import BaseModel, EmailStr, ConfigDict
-from typing import Optional, List
+from typing import Optional
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -39,10 +40,26 @@ EMAIL_BASE_URL = "https://integrations.emergentagent.com"
 EMAIL_KEY = os.environ["EMERGENT_EMAIL_KEY"]
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 
+# InfinitePay / WhatsApp / URLs
+INFINITEPAY_HANDLE = os.environ.get("INFINITEPAY_HANDLE", "")
+INFINITEPAY_API_URL = os.environ.get("INFINITEPAY_API_URL", "https://api.checkout.infinitepay.io")
+PUBLIC_APP_URL = os.environ.get("PUBLIC_APP_URL", "").rstrip("/")
+INFINITEPAY_SANDBOX = os.environ.get("INFINITEPAY_SANDBOX", "") == "1"
+WHATSAPP_API_URL = os.environ.get("WHATSAPP_API_URL", "")
+WHATSAPP_API_TOKEN = os.environ.get("WHATSAPP_API_TOKEN", "")
+WHATSAPP_ADMIN_PHONE = os.environ.get("WHATSAPP_ADMIN_PHONE", "")
+WHATSAPP_PROVIDER = os.environ.get("WHATSAPP_PROVIDER", "generic")
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 DEFAULT_SETTINGS = {
+    "event_name": "Mentoria em Grupo",
+    "event_date": "10 de outubro de 2026",
+    "event_time": "",
+    "location": "",
+    "capacity": 50,
+    "infinitepay_handle": "",
     "eventDateLabel": "10 de outubro de 2026",
     "eventDateShort": "10/10/2026",
     "eventDateTicket": "10 OUTUBRO 2026",
@@ -74,7 +91,6 @@ DEFAULT_SETTINGS = {
     "colorGold": "#C5A059",
 }
 
-TEXT_SETTINGS = [k for k in DEFAULT_SETTINGS if k.startswith(("hero", "connection", "impact", "final", "form", "consent", "event"))]
 COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
@@ -89,8 +105,60 @@ async def current_settings() -> dict:
     return merge_settings(await db.site_settings.find_one({}, {"_id": 0}))
 
 
-def format_brl(amount) -> str:
-    return f"R$ {float(amount):.2f}".replace(".", ",")
+def format_brl(amount_reais) -> str:
+    return f"R$ {float(amount_reais):.2f}".replace(".", ",")
+
+
+def format_brl_cents(cents) -> str:
+    return f"R$ {int(round(cents)) / 100:.2f}".replace(".", ",")
+
+
+def price_cents(settings: dict, method: str) -> int:
+    # Regra do briefing: PIX = 18990 | CARD = 22900 (centavos), derivados das configurações.
+    if method == "PIX":
+        return int(round(float(settings["pricePix"]) * 100))
+    if method == "CARD":
+        return int(round(float(settings["priceCard"]) * 100))
+    raise ValueError("Método inválido")
+
+
+# ---------- Vagas (controle atômico) ----------
+
+async def get_seats_counter() -> dict:
+    doc = await db.counters.find_one({"_id": "confirmed_sales"})
+    if doc is None:
+        await db.counters.update_one({"_id": "confirmed_sales"}, {"$setOnInsert": {"count": 0}}, upsert=True)
+        doc = await db.counters.find_one({"_id": "confirmed_sales"})
+    return doc
+
+
+async def get_available_seats(settings: Optional[dict] = None) -> int:
+    s = settings or await current_settings()
+    counter = await get_seats_counter()
+    return max(0, int(s["capacity"]) - int(counter["count"]))
+
+
+async def try_occupy_seat(capacity: int) -> bool:
+    # Atômico: só ocupa se count < capacity — nunca passa de 50.
+    doc = await db.counters.find_one_and_update(
+        {"_id": "confirmed_sales", "count": {"$lt": capacity}},
+        {"$inc": {"count": 1}},
+    )
+    return doc is not None
+
+
+async def release_seat() -> None:
+    await db.counters.update_one({"_id": "confirmed_sales", "count": {"$gt": 0}}, {"$inc": {"count": -1}})
+
+
+async def next_registration_code() -> str:
+    doc = await db.counters.find_one_and_update(
+        {"_id": "registration_code"},
+        {"$inc": {"count": 1}},
+        upsert=True,
+        return_document=True,
+    )
+    return f"MNT-2026-{doc['count']:04d}"
 
 
 # ---------- Senha / JWT ----------
@@ -272,6 +340,7 @@ def ticket_email_html(nome: str, code: str, method_label: str, amount: str, date
     </table>
     <p style="margin:24px 0 0;font-family:Arial,sans-serif;font-size:13px;line-height:20px;color:#4A4643;">
       Guarde este e-mail: o código do ingresso será solicitado no momento do acesso ao encontro.
+      Você também receberá a confirmação pelo WhatsApp.
     </p>
   </td></tr>
   <tr><td style="padding:20px;text-align:center;">
@@ -284,24 +353,174 @@ def ticket_email_html(nome: str, code: str, method_label: str, amount: str, date
 </body></html>"""
 
 
-async def send_ticket_email(reg: dict, code: str, method: str, amount: float) -> None:
+async def send_ticket_email(reg: dict, code: str, method_label: str, amount: str, date_label: str) -> None:
     try:
-        settings = await current_settings()
-        method_label = "Pix" if method == "pix" else f"Cartão em até {settings['installments']}x"
-        subject = f"Pagamento confirmado — Ingresso {code} | Mentoria em Grupo"
-        html = ticket_email_html(reg.get("nome", ""), code, method_label, format_brl(amount), settings["eventDateLabel"])
-        await send_email(to=reg["email"], subject=subject, html=html)
-        logger.info(f"Ingresso {code} enviado para {reg['email']}")
+        await send_email(
+            to=reg["email"],
+            subject=f"Pagamento confirmado — Ingresso {code} | Mentoria em Grupo",
+            html=ticket_email_html(reg.get("nome", ""), code, method_label, amount, date_label),
+        )
+        logger.info(f"E-mail do ingresso {code} enviado para {reg['email']}")
     except Exception as e:
         logger.error(f"Falha ao enviar e-mail do ingresso {code}: {e}")
 
 
-async def generate_unique_code() -> str:
-    for _ in range(20):
-        code = f"MNT-2026-{int.from_bytes(os.urandom(2), 'big') % 9000 + 1000}"
-        if not await db.registrations.find_one({"ticket_code": code}):
-            return code
-    return f"MNT-2026-{uuid.uuid4().hex[:4].upper()}"
+# ---------- WhatsApp (adaptador; inativo até WHATSAPP_API_URL ser configurada) ----------
+
+async def send_whatsapp(registration_id: str, phone: str, message: str) -> str:
+    log = {"id": str(uuid.uuid4()), "registration_id": registration_id, "phone": phone, "message": message}
+    if not (WHATSAPP_API_URL and WHATSAPP_API_TOKEN):
+        log.update({"status": "not_configured", "sent_at": datetime.now(timezone.utc).isoformat()})
+        await db.whatsapp_logs.insert_one(log)
+        return "not_configured"
+    headers, body = {"Content-Type": "application/json"}, {}
+    provider = WHATSAPP_PROVIDER.lower()
+    if provider == "evolution":
+        headers["apikey"] = WHATSAPP_API_TOKEN
+        body = {"number": phone, "text": message}
+    elif provider == "cloud":
+        headers["Authorization"] = f"Bearer {WHATSAPP_API_TOKEN}"
+        body = {"messaging_product": "whatsapp", "recipient_type": "individual", "to": phone, "type": "text",
+                "text": {"preview_url": False, "body": message}}
+    elif provider == "zapi":
+        headers["Client-Token"] = WHATSAPP_API_TOKEN
+        body = {"phone": phone, "message": message}
+    else:
+        headers["Authorization"] = f"Bearer {WHATSAPP_API_TOKEN}"
+        body = {"to": phone, "message": message}
+    try:
+        async with httpx.AsyncClient(timeout=8.0) as client_http:
+            resp = await client_http.post(WHATSAPP_API_URL, headers=headers, json=body)
+        status = "sent" if resp.status_code < 300 else "failed"
+    except Exception as e:
+        logger.error(f"WhatsApp send error: {e}")
+        status = "failed"
+    log.update({"status": status, "sent_at": datetime.now(timezone.utc).isoformat()})
+    await db.whatsapp_logs.insert_one(log)
+    return status
+
+
+def whatsapp_confirmation_message(nome: str, ticket_code: str, method_label: str, amount: str, date_label: str, ticket_url: str) -> str:
+    first = nome.strip().split()[0] if nome.strip() else ""
+    return (
+        "🎉 PAGAMENTO CONFIRMADO!\n\n"
+        f"Olá, {first}!\n\n"
+        "Sua vaga para a Mentoria em Grupo com a Dra. Lígia Jeane Matroski está confirmada.\n\n"
+        f"📅 {date_label}\n"
+        f"🎟️ Ingresso:\n{ticket_code}\n\n"
+        f"💰 Pagamento: {method_label}\n"
+        f"Valor: {amount}\n\n"
+        f"Seu ingresso:\n{ticket_url}\n\n"
+        "Guarde este link e apresente o QR Code no dia do evento."
+    )
+
+
+# ---------- Confirmação de pagamento (núcleo idempotente) ----------
+
+def method_label(method: str) -> str:
+    return "Pix" if method == "PIX" else "Cartão"
+
+
+async def process_paid(payment: dict, data: dict, force: bool = False) -> str:
+    """Webhook/consulta confirmou pagamento: valida, ocupa vaga atomicamente, gera ingresso e avisa. Nunca processa duas vezes."""
+    if payment.get("status") == "PAID":
+        return "PAID"
+    payment = await db.payments.find_one({"id": payment["id"]}, {"_id": 0})
+    if payment.get("status") == "PAID":
+        return "PAID"
+
+    settings = await current_settings()
+    expected = price_cents(settings, payment["payment_method"])
+    paid_amount = data.get("paid_amount") or data.get("amount")
+    if not force and paid_amount is not None and int(paid_amount) != expected:
+        await db.payments.update_one(
+            {"id": payment["id"], "status": {"$ne": "PAID"}},
+            {"$set": {"status": "PAYMENT_REVIEW", "review_reason": "VALOR_DIVERGENTE",
+                      "invoice_slug": data.get("invoice_slug"), "transaction_nsu": data.get("transaction_nsu"),
+                      "receipt_url": data.get("receipt_url"), "paid_amount": paid_amount,
+                      "installments": data.get("installments"), "capture_method": data.get("capture_method")}},
+        )
+        return "PAYMENT_REVIEW"
+
+    if not await try_occupy_seat(int(settings["capacity"])):
+        await db.payments.update_one(
+            {"id": payment["id"], "status": {"$ne": "PAID"}},
+            {"$set": {"status": "PAYMENT_REVIEW", "review_reason": "SEM_VAGAS_DISPONIVEIS",
+                      "invoice_slug": data.get("invoice_slug"), "transaction_nsu": data.get("transaction_nsu"),
+                      "receipt_url": data.get("receipt_url"), "paid_amount": paid_amount,
+                      "installments": data.get("installments"), "capture_method": data.get("capture_method")}},
+        )
+        return "PAYMENT_REVIEW"
+
+    now = datetime.now(timezone.utc).isoformat()
+    await db.payments.update_one(
+        {"id": payment["id"]},
+        {"$set": {"status": "PAID", "paid_at": now,
+                  "invoice_slug": data.get("invoice_slug"), "transaction_nsu": data.get("transaction_nsu"),
+                  "receipt_url": data.get("receipt_url"), "paid_amount": paid_amount or expected,
+                  "installments": data.get("installments") or (1 if payment["payment_method"] == "PIX" else settings["installments"]),
+                  "capture_method": data.get("capture_method")}},
+    )
+    reg = await db.registrations.find_one({"id": payment["registration_id"]})
+    if reg:
+        await db.registrations.update_one(
+            {"id": reg["id"]},
+            {"$set": {"status": "CONFIRMED", "updated_at": now,
+                      "method": payment["payment_method"], "amount_cents": expected}},
+        )
+        existing_ticket = await db.tickets.find_one({"registration_id": reg["id"]})
+        if not existing_ticket:
+            qr_token = secrets.token_urlsafe(24)
+            await db.tickets.insert_one({
+                "id": str(uuid.uuid4()),
+                "registration_id": reg["id"],
+                "ticket_code": reg["registration_code"],
+                "qr_token": qr_token,
+                "status": "VALID",
+                "created_at": now,
+                "validated_at": None,
+                "validated_by": None,
+            })
+            ticket_url = f"{PUBLIC_APP_URL or ''}/ingresso/validar/{qr_token}"
+            method_lbl = method_label(payment["payment_method"])
+            amount_lbl = format_brl_cents(expected)
+            date_lbl = settings["eventDateLabel"]
+            asyncio.create_task(
+                send_ticket_email(reg, reg["registration_code"], method_lbl, amount_lbl, date_lbl)
+            )
+            asyncio.create_task(
+                send_whatsapp(
+                    reg["id"], reg["whatsapp"],
+                    whatsapp_confirmation_message(reg["nome"], reg["registration_code"], method_lbl, amount_lbl, date_lbl, ticket_url),
+                )
+            )
+            if WHATSAPP_ADMIN_PHONE:
+                asyncio.create_task(
+                    send_whatsapp(
+                        reg["id"], WHATSAPP_ADMIN_PHONE,
+                        f"Nova venda confirmada: {reg['nome']} · {method_lbl} · {amount_lbl} · Ingresso {reg['registration_code']}",
+                    )
+                )
+    return "PAID"
+
+
+def normalize_webhook(payload: dict) -> dict:
+    out = {}
+    wanted = {"invoice_slug", "amount", "paid_amount", "installments", "capture_method", "transaction_nsu", "order_nsu", "receipt_url"}
+    def walk(node):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k in wanted and k not in out and not isinstance(v, (dict, list)):
+                    out[k] = v
+                walk(v)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+    walk(payload or {})
+    if "capture_method" in out and isinstance(out["capture_method"], str):
+        cm = out["capture_method"].lower()
+        out["capture_method"] = "PIX" if cm == "pix" else ("CARD" if "card" in cm or "credit" in cm else out["capture_method"])
+    return out
 
 
 # ---------- Modelos ----------
@@ -323,8 +542,9 @@ class RegistrationUpdate(BaseModel):
     status: Optional[str] = None
 
 
-class CheckoutCreate(BaseModel):
-    method: str
+class PaymentCreate(BaseModel):
+    registration_id: str
+    payment_method: str
 
 
 class LoginRequest(BaseModel):
@@ -334,6 +554,12 @@ class LoginRequest(BaseModel):
 
 class SettingsUpdate(BaseModel):
     model_config = ConfigDict(extra="ignore")
+    event_name: Optional[str] = None
+    event_date: Optional[str] = None
+    event_time: Optional[str] = None
+    location: Optional[str] = None
+    capacity: Optional[int] = None
+    infinitepay_handle: Optional[str] = None
     eventDateLabel: Optional[str] = None
     eventDateShort: Optional[str] = None
     eventDateTicket: Optional[str] = None
@@ -374,13 +600,17 @@ async def root():
 
 @api_router.get("/settings")
 async def get_settings_public():
-    return await current_settings()
+    settings = await current_settings()
+    available = await get_available_seats(settings)
+    settings["availableSeats"] = available
+    settings["soldOut"] = bool(settings["soldOut"]) or available <= 0
+    return settings
 
 
 @api_router.post("/registrations")
 async def create_registration(input: RegistrationCreate):
     settings = await current_settings()
-    if settings["soldOut"]:
+    if settings["soldOut"] or await get_available_seats(settings) <= 0:
         raise HTTPException(status_code=403, detail="Inscrições encerradas.")
     if not input.consent:
         raise HTTPException(status_code=400, detail="É necessário aceitar o uso dos seus dados.")
@@ -391,71 +621,183 @@ async def create_registration(input: RegistrationCreate):
         raise HTTPException(status_code=400, detail="Informe um WhatsApp válido.")
     if len(re.sub(r"\D", "", input.cpf)) != 11:
         raise HTTPException(status_code=400, detail="Informe um CPF válido.")
+    now = datetime.now(timezone.utc).isoformat()
     reg = {
         "id": str(uuid.uuid4()),
+        "registration_code": await next_registration_code(),
         "nome": nome,
         "whatsapp": input.whatsapp.strip(),
         "email": input.email.lower().strip(),
         "cpf": re.sub(r"\D", "", input.cpf),
         "consent": True,
-        "status": "aguardando",
-        "ticket_code": None,
+        "status": "PENDING_PAYMENT",
+        "order_nsu": None,
         "method": None,
-        "amount": None,
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "amount_cents": None,
+        "created_at": now,
+        "updated_at": now,
     }
     await db.registrations.insert_one(reg)
-    return {"id": reg["id"], "nome": reg["nome"], "status": reg["status"]}
+    return {"id": reg["id"], "registration_code": reg["registration_code"], "status": reg["status"]}
 
 
-@api_router.post("/registrations/{rid}/checkout")
-async def create_checkout(rid: str, input: CheckoutCreate):
-    reg = await db.registrations.find_one({"id": rid})
+@api_router.post("/payment/create")
+async def create_payment(input: PaymentCreate):
+    # payment_method válido: PIX | CARD (qualquer outro é rejeitado). Valor SEMPRE definido no backend.
+    input.payment_method = (input.payment_method or "").upper()
+    if input.payment_method not in ("PIX", "CARD"):
+        raise HTTPException(status_code=400, detail="Método de pagamento inválido.")
+    reg = await db.registrations.find_one({"id": input.registration_id})
     if not reg:
         raise HTTPException(status_code=404, detail="Inscrição não encontrada.")
-    if input.method not in ("pix", "cartao"):
-        raise HTTPException(status_code=400, detail="Forma de pagamento inválida.")
+    if reg.get("status") != "PENDING_PAYMENT":
+        raise HTTPException(status_code=400, detail="Esta inscrição não está mais pendente de pagamento.")
     settings = await current_settings()
-    amount = settings["pricePix"] if input.method == "pix" else settings["priceCard"]
+    if await get_available_seats(settings) <= 0:
+        raise HTTPException(status_code=403, detail="Inscrições encerradas.")
+
+    amount = price_cents(settings, input.payment_method)
+    order_nsu = f"{reg['registration_code']}-{secrets.token_hex(3).upper()}"
+    description = f"{settings['event_name']} — Dra. Lígia Jeane Matroski"
+    phone_digits = re.sub(r"\D", "", reg["whatsapp"])
+    customer = {
+        "name": reg["nome"],
+        "email": reg["email"],
+        "phone_number": f"+55{phone_digits}",
+    }
+    checkout_url = None
+    slug = None
+    if INFINITEPAY_SANDBOX or not INFINITEPAY_HANDLE:
+        # Modo sandbox do preview: nenhum dado sai para a InfinitePay; o webhook é simulado nos testes.
+        checkout_url = f"{PUBLIC_APP_URL or ''}/pagamento-concluido?order_nsu={order_nsu}&sandbox=1"
+        if not INFINITEPAY_SANDBOX:
+            raise HTTPException(status_code=503, detail="Checkout ainda não configurado: informe o infinitepay_handle no servidor.")
+    else:
+        payload = {
+            "handle": INFINITEPAY_HANDLE,
+            "items": [{"quantity": 1, "price": amount, "description": description}],
+            "order_nsu": order_nsu,
+            "redirect_url": f"{PUBLIC_APP_URL}/pagamento-concluido",
+            "webhook_url": f"{PUBLIC_APP_URL}/api/webhooks/infinitepay",
+            "customer": customer,
+        }
+        try:
+            async with httpx.AsyncClient(timeout=20) as client_http:
+                resp = await client_http.post(f"{INFINITEPAY_API_URL}/links", json=payload)
+                resp.raise_for_status()
+                rdata = resp.json()
+        except httpx.HTTPStatusError as e:
+            logger.error(f"InfinitePay /links falhou: {e.response.status_code} {e.response.text}")
+            raise HTTPException(status_code=502, detail="Não foi possível abrir o checkout agora. Tente novamente.")
+        except Exception as e:
+            logger.error(f"InfinitePay /links erro: {e}")
+            raise HTTPException(status_code=502, detail="Não foi possível abrir o checkout agora. Tente novamente.")
+        slug = rdata.get("slug") or rdata.get("invoice_slug")
+        checkout_url = rdata.get("url") or rdata.get("checkout_url") or rdata.get("link")
+        if not checkout_url and slug:
+            checkout_url = f"https://pay.infinitepay.io/{INFINITEPAY_HANDLE}/{slug}"
+        if not checkout_url:
+            raise HTTPException(status_code=502, detail="Checkout criado sem URL de retorno. Contate o suporte.")
+
+    now = datetime.now(timezone.utc).isoformat()
     payment = {
         "id": str(uuid.uuid4()),
-        "registration_id": rid,
-        "method": input.method,
+        "registration_id": reg["id"],
+        "order_nsu": order_nsu,
+        "invoice_slug": slug,
+        "transaction_nsu": None,
+        "payment_method": input.payment_method,
         "amount": amount,
-        "status": "processando",
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "paid_amount": None,
+        "installments": 1 if input.payment_method == "PIX" else int(settings["installments"]),
+        "capture_method": None,
+        "receipt_url": None,
+        "status": "PENDING_PAYMENT",
+        "checkout_url": checkout_url,
+        "created_at": now,
+        "paid_at": None,
     }
     await db.payments.insert_one(payment)
     await db.registrations.update_one(
-        {"id": rid},
-        {"$set": {"payment_id": payment["id"], "method": input.method, "amount": amount, "status": "processando"}},
+        {"id": reg["id"]},
+        {"$set": {"order_nsu": order_nsu, "method": input.payment_method, "amount_cents": amount, "updated_at": now}},
     )
-    # TODO(INTEGRAÇÃO): aqui entrará a URL/API real do Checkout InfinitePay.
-    return {"payment_id": payment["id"], "amount": amount, "method": input.method, "status": "processando"}
+    return {"checkout_url": checkout_url, "order_nsu": order_nsu, "amount": amount, "payment_method": input.payment_method}
 
 
-@api_router.get("/payments/{pid}/status")
-async def payment_status(pid: str):
-    payment = await db.payments.find_one({"id": pid}, {"_id": 0})
+@api_router.get("/payments/{order_nsu}/status")
+async def payment_status(order_nsu: str):
+    payment = await db.payments.find_one({"order_nsu": order_nsu}, {"_id": 0})
     if not payment:
         raise HTTPException(status_code=404, detail="Pagamento não encontrado.")
-    if payment["status"] == "processando":
-        created = datetime.fromisoformat(payment["created_at"])
-        if datetime.now(timezone.utc) - created >= timedelta(seconds=3):
-            # MOCK: aprovação automática (na integração real, o status virá da InfinitePay).
-            code = await generate_unique_code()
-            await db.payments.update_one({"id": pid}, {"$set": {"status": "aprovado", "ticket_code": code}})
-            reg = await db.registrations.find_one({"id": payment["registration_id"]})
-            if reg:
-                await db.registrations.update_one(
-                    {"id": reg["id"]}, {"$set": {"status": "pago", "ticket_code": code}}
-                )
-                asyncio.create_task(
-                    send_ticket_email(reg, code, payment["method"], payment["amount"])
-                )
-            return {"status": "aprovado", "ticket_code": code, "method": payment["method"], "amount": payment["amount"]}
-        return {"status": "processando"}
-    return {"status": payment["status"], "ticket_code": payment.get("ticket_code")}
+    return {
+        "status": payment["status"],
+        "order_nsu": order_nsu,
+        "payment_method": payment.get("payment_method"),
+        "amount": payment.get("amount"),
+        "review_reason": payment.get("review_reason"),
+    }
+
+
+@api_router.post("/payments/{order_nsu}/check")
+async def payment_check(order_nsu: str):
+    # Consulta oficial de status na InfinitePay (o webhook continua sendo a via principal).
+    payment = await db.payments.find_one({"order_nsu": order_nsu})
+    if not payment:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado.")
+    if payment.get("status") != "PENDING_PAYMENT":
+        return {"status": payment["status"], "order_nsu": order_nsu}
+    if INFINITEPAY_SANDBOX or not INFINITEPAY_HANDLE or not payment.get("transaction_nsu"):
+        return {"status": payment["status"], "order_nsu": order_nsu, "checked": False}
+    body = {
+        "handle": INFINITEPAY_HANDLE,
+        "order_nsu": order_nsu,
+        "transaction_nsu": payment.get("transaction_nsu"),
+        "slug": payment.get("invoice_slug"),
+    }
+    try:
+        async with httpx.AsyncClient(timeout=15) as client_http:
+            resp = await client_http.post(f"{INFINITEPAY_API_URL}/payment_check", json=body)
+            resp.raise_for_status()
+            rdata = resp.json()
+    except Exception as e:
+        logger.error(f"payment_check erro: {e}")
+        return {"status": payment["status"], "order_nsu": order_nsu, "checked": False}
+    if rdata.get("paid"):
+        status = await process_paid(
+            payment,
+            {"amount": rdata.get("amount"), "paid_amount": rdata.get("paid_amount"),
+             "installments": rdata.get("installments"), "capture_method": rdata.get("capture_method")},
+        )
+        return {"status": status, "order_nsu": order_nsu, "checked": True}
+    return {"status": payment["status"], "order_nsu": order_nsu, "checked": True}
+
+
+@api_router.post("/webhooks/infinitepay")
+async def infinitepay_webhook(request: Request):
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse({"ok": False}, status_code=400)
+    data = normalize_webhook(payload)
+    order_nsu = data.get("order_nsu")
+    transaction_nsu = data.get("transaction_nsu")
+    if not order_nsu:
+        return JSONResponse({"ok": False}, status_code=400)
+
+    payment = await db.payments.find_one({"order_nsu": order_nsu})
+    if not payment:
+        logger.warning(f"Webhook para order_nsu desconhecido: {order_nsu}")
+        return JSONResponse({"ok": False}, status_code=400)
+
+    # Idempotência: mesma transação ou pedido já pago → nada a fazer.
+    if payment.get("transaction_nsu") and payment["transaction_nsu"] == transaction_nsu:
+        return {"ok": True, "status": payment["status"]}
+    if payment.get("status") == "PAID":
+        return {"ok": True, "status": "PAID"}
+
+    status = await process_paid(payment, data)
+    return {"ok": True, "status": status}
 
 
 @api_router.get("/registrations/{rid}")
@@ -463,13 +805,33 @@ async def get_registration_public(rid: str):
     reg = await db.registrations.find_one({"id": rid}, {"_id": 0})
     if not reg:
         raise HTTPException(status_code=404, detail="Inscrição não encontrada.")
+    ticket = await db.tickets.find_one({"registration_id": rid}, {"_id": 0})
     return {
         "id": reg["id"],
+        "registration_code": reg.get("registration_code"),
         "nome": reg["nome"],
         "status": reg["status"],
-        "ticket_code": reg.get("ticket_code"),
+        "ticket_code": (ticket or {}).get("ticket_code") or reg.get("registration_code"),
+        "qr_token": (ticket or {}).get("qr_token"),
         "method": reg.get("method"),
-        "amount": reg.get("amount"),
+        "amount_cents": reg.get("amount_cents"),
+    }
+
+
+@api_router.get("/tickets/{token}")
+async def ticket_validation(token: str):
+    ticket = await db.tickets.find_one({"qr_token": token}, {"_id": 0})
+    if not ticket:
+        return {"valid": False, "state": "INVALID"}
+    reg = await db.registrations.find_one({"id": ticket["registration_id"]}, {"_id": 0})
+    settings = await current_settings()
+    return {
+        "valid": ticket["status"] in ("VALID", "USED"),
+        "state": ticket["status"],
+        "name": reg["nome"] if reg else "",
+        "ticket_code": ticket["ticket_code"],
+        "event_name": settings["event_name"],
+        "event_date": settings["eventDateLabel"],
     }
 
 
@@ -518,8 +880,8 @@ async def admin_registrations(user: dict = Depends(get_current_admin)):
     regs = await db.registrations.find({}, {"_id": 0}).sort("created_at", -1).to_list(2000)
     counts = {
         "total": len(regs),
-        "pagos": len([r for r in regs if r.get("status") == "pago"]),
-        "aguardando": len([r for r in regs if r.get("status") in ("aguardando", "processando")]),
+        "confirmed": len([r for r in regs if r.get("status") == "CONFIRMED"]),
+        "pending": len([r for r in regs if r.get("status") == "PENDING_PAYMENT"]),
     }
     return {"registrations": regs, "counts": counts}
 
@@ -534,28 +896,43 @@ async def admin_update_registration(rid: str, input: RegistrationUpdate, user: d
         data["cpf"] = re.sub(r"\D", "", data["cpf"])
         if len(data["cpf"]) != 11:
             raise HTTPException(status_code=400, detail="CPF inválido.")
-    if "status" in data and data["status"] not in ("aguardando", "processando", "pago", "recusado", "expirado"):
+    if "status" in data and data["status"] not in ("PENDING_PAYMENT", "CONFIRMED", "CANCELLED"):
         raise HTTPException(status_code=400, detail="Status inválido.")
-    send_email_task = None
-    if data.get("status") == "pago" and reg.get("status") != "pago" and not reg.get("ticket_code"):
-        code = await generate_unique_code()
-        data["ticket_code"] = code
-        method = data.get("method") or reg.get("method") or "pix"
-        amount = reg.get("amount") or (await current_settings())["pricePix"]
-        send_email_task = send_ticket_email({**reg, **data}, code, method, amount)
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+    # Regra de cancelamento definida pelo administrador: cancelar inscrição confirmada libera a vaga.
+    if data.get("status") == "CANCELLED" and reg.get("status") == "CONFIRMED":
+        await release_seat()
+        await db.tickets.update_one({"registration_id": rid}, {"$set": {"status": "CANCELLED"}})
+        await db.payments.update_many({"registration_id": rid, "status": "PAID"}, {"$set": {"status": "CANCELLED"}})
+    if data.get("status") == "CONFIRMED" and reg.get("status") != "CONFIRMED":
+        if await try_occupy_seat(int((await current_settings())["capacity"])):
+            ticket = await db.tickets.find_one({"registration_id": rid})
+            if not ticket:
+                qr_token = secrets.token_urlsafe(24)
+                await db.tickets.insert_one({
+                    "id": str(uuid.uuid4()), "registration_id": rid,
+                    "ticket_code": reg.get("registration_code"), "qr_token": qr_token,
+                    "status": "VALID", "created_at": data["updated_at"],
+                    "validated_at": None, "validated_by": None,
+                })
+        else:
+            raise HTTPException(status_code=400, detail="Sem vagas disponíveis para confirmar.")
     if data:
         await db.registrations.update_one({"id": rid}, {"$set": data})
-    if send_email_task:
-        asyncio.create_task(send_email_task)
-    updated = await db.registrations.find_one({"id": rid}, {"_id": 0})
-    return updated
+    return await db.registrations.find_one({"id": rid}, {"_id": 0})
 
 
 @api_router.delete("/admin/registrations/{rid}")
 async def admin_delete_registration(rid: str, user: dict = Depends(get_current_admin)):
+    reg = await db.registrations.find_one({"id": rid})
+    if reg and reg.get("status") == "CONFIRMED":
+        await release_seat()
     result = await db.registrations.delete_one({"id": rid})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Inscrição não encontrada.")
+    await db.payments.delete_many({"registration_id": rid})
+    await db.tickets.delete_many({"registration_id": rid})
     return {"ok": True}
 
 
@@ -564,19 +941,112 @@ async def admin_resend_email(rid: str, user: dict = Depends(get_current_admin)):
     reg = await db.registrations.find_one({"id": rid})
     if not reg:
         raise HTTPException(status_code=404, detail="Inscrição não encontrada.")
-    if reg.get("status") != "pago" or not reg.get("ticket_code"):
-        raise HTTPException(status_code=400, detail="Só é possível reenviar após o pagamento confirmado.")
+    if reg.get("status") != "CONFIRMED":
+        raise HTTPException(status_code=400, detail="Só é possível reenviar após a confirmação do pagamento.")
+    settings = await current_settings()
+    method_lbl = method_label(reg.get("method") or "PIX")
     email_id = await send_email(
         to=reg["email"],
-        subject=f"Pagamento confirmado — Ingresso {reg['ticket_code']} | Mentoria em Grupo",
+        subject=f"Pagamento confirmado — Ingresso {reg['registration_code']} | Mentoria em Grupo",
         html=ticket_email_html(
-            reg["nome"], reg["ticket_code"],
-            "Pix" if reg.get("method") == "pix" else "Cartão",
-            format_brl(reg.get("amount") or 0),
-            (await current_settings())["eventDateLabel"],
+            reg["nome"], reg["registration_code"], method_lbl,
+            format_brl_cents(reg.get("amount_cents") or 0), settings["eventDateLabel"],
         ),
     )
     return {"ok": True, "email_id": email_id}
+
+
+@api_router.get("/admin/dashboard")
+async def admin_dashboard(user: dict = Depends(get_current_admin)):
+    settings = await current_settings()
+    counter = await get_seats_counter()
+    paid = await db.payments.find({"status": "PAID"}, {"_id": 0, "amount": 1, "payment_method": 1}).to_list(5000)
+    pending = await db.payments.count_documents({"status": "PENDING_PAYMENT"})
+    review = await db.payments.count_documents({"status": "PAYMENT_REVIEW"})
+    confirmed = int(counter["count"])
+    revenue = sum(p["amount"] for p in paid)
+    return {
+        "capacity": int(settings["capacity"]),
+        "confirmed": confirmed,
+        "available": max(0, int(settings["capacity"]) - confirmed),
+        "revenueTotal": revenue / 100,
+        "revenuePix": sum(p["amount"] for p in paid if p["payment_method"] == "PIX") / 100,
+        "revenueCard": sum(p["amount"] for p in paid if p["payment_method"] == "CARD") / 100,
+        "pendingPayments": pending,
+        "reviewPayments": review,
+    }
+
+
+@api_router.get("/admin/payments")
+async def admin_payments(user: dict = Depends(get_current_admin)):
+    payments = await db.payments.find({}, {"_id": 0}).sort("created_at", -1).to_list(2000)
+    regs = {r["id"]: r for r in await db.registrations.find({}, {"_id": 0, "id": 1, "nome": 1, "email": 1}).to_list(2000)}
+    tickets = {t["registration_id"]: t for t in await db.tickets.find({}, {"_id": 0}).to_list(2000)}
+    out = []
+    for p in payments:
+        reg = regs.get(p["registration_id"], {})
+        out.append({
+            "id": p["id"],
+            "name": reg.get("nome", "—"),
+            "order_nsu": p.get("order_nsu"),
+            "payment_method": p.get("payment_method"),
+            "amount": p.get("amount"),
+            "paid_amount": p.get("paid_amount"),
+            "status": p.get("status"),
+            "created_at": p.get("created_at"),
+            "paid_at": p.get("paid_at"),
+            "transaction_nsu": p.get("transaction_nsu"),
+            "ticket_code": (tickets.get(p["registration_id"]) or {}).get("ticket_code"),
+            "receipt_url": p.get("receipt_url"),
+            "review_reason": p.get("review_reason"),
+            "installments": p.get("installments"),
+        })
+    return {"payments": out}
+
+
+@api_router.post("/admin/payments/{pid}/approve")
+async def admin_approve_payment(pid: str, user: dict = Depends(get_current_admin)):
+    payment = await db.payments.find_one({"id": pid})
+    if not payment:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado.")
+    if payment.get("status") == "PAID":
+        return {"ok": True, "status": "PAID"}
+    data = {"paid_amount": payment.get("paid_amount"), "invoice_slug": payment.get("invoice_slug"),
+            "transaction_nsu": payment.get("transaction_nsu"), "receipt_url": payment.get("receipt_url"),
+            "installments": payment.get("installments"), "capture_method": payment.get("capture_method")}
+    status = await process_paid(payment, data, force=True)
+    if status == "PAYMENT_REVIEW":
+        raise HTTPException(status_code=400, detail="Sem vagas disponíveis para aprovar.")
+    return {"ok": True, "status": status}
+
+
+@api_router.post("/admin/payments/{pid}/reject")
+async def admin_reject_payment(pid: str, user: dict = Depends(get_current_admin)):
+    payment = await db.payments.find_one({"id": pid})
+    if not payment:
+        raise HTTPException(status_code=404, detail="Pagamento não encontrado.")
+    if payment.get("status") == "PAID":
+        raise HTTPException(status_code=400, detail="Pagamento já confirmado.")
+    await db.payments.update_one({"id": pid}, {"$set": {"status": "FAILED"}})
+    await db.registrations.update_one({"id": payment["registration_id"], "status": {"$ne": "CONFIRMED"}},
+                                      {"$set": {"status": "PENDING_PAYMENT"}})
+    return {"ok": True, "status": "FAILED"}
+
+
+@api_router.post("/admin/tickets/{token}/use")
+async def admin_use_ticket(token: str, user: dict = Depends(get_current_admin)):
+    ticket = await db.tickets.find_one({"qr_token": token})
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ingresso não encontrado.")
+    if ticket.get("status") == "USED":
+        raise HTTPException(status_code=400, detail="Ingresso já utilizado.")
+    if ticket.get("status") != "VALID":
+        raise HTTPException(status_code=400, detail="Ingresso não está válido.")
+    await db.tickets.update_one(
+        {"qr_token": token},
+        {"$set": {"status": "USED", "validated_at": datetime.now(timezone.utc).isoformat(), "validated_by": user["email"]}},
+    )
+    return {"ok": True, "status": "USED"}
 
 
 @api_router.put("/admin/settings")
@@ -589,10 +1059,14 @@ async def admin_save_settings(input: SettingsUpdate, user: dict = Depends(get_cu
         raise HTTPException(status_code=400, detail="Preço inválido.")
     if "priceCard" in data and data["priceCard"] < 0:
         raise HTTPException(status_code=400, detail="Preço inválido.")
+    if "capacity" in data and not 0 <= data["capacity"] <= 1000:
+        raise HTTPException(status_code=400, detail="Capacidade inválida.")
     if "installments" in data and not 1 <= data["installments"] <= 12:
         raise HTTPException(status_code=400, detail="Parcelamento inválido.")
     if data:
         await db.site_settings.update_one({}, {"$set": data}, upsert=True)
+        if "capacity" in data:
+            pass  # contador de vagas continua atômico contra a nova capacidade
     return await current_settings()
 
 
@@ -622,7 +1096,13 @@ async def startup():
     await db.users.create_index("email", unique=True)
     await db.login_attempts.create_index("identifier")
     await db.registrations.create_index("id")
-    await db.payments.create_index("id")
+    await db.registrations.create_index("registration_code")
+    await db.payments.create_index("order_nsu", unique=True)
+    await db.payments.create_index("transaction_nsu")
+    await db.tickets.create_index("qr_token", unique=True)
+    await db.tickets.create_index("registration_id")
+    await db.counters.update_one({"_id": "confirmed_sales"}, {"$setOnInsert": {"count": 0}}, upsert=True)
+    await db.counters.update_one({"_id": "registration_code"}, {"$setOnInsert": {"count": 0}}, upsert=True)
     await seed_admin()
 
 
@@ -630,6 +1110,8 @@ async def startup():
 async def shutdown_db_client():
     client.close()
 
+
+from fastapi.responses import JSONResponse  # noqa: E402
 
 app.include_router(api_router)
 

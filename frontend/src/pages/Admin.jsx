@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { apiService } from "@/services/api";
 import AdminLogin from "@/components/admin/AdminLogin";
 import RegistrationsPanel from "@/components/admin/RegistrationsPanel";
+import PaymentsPanel from "@/components/admin/PaymentsPanel";
 import SettingsPanel from "@/components/admin/SettingsPanel";
 
 export default function Admin() {
@@ -71,7 +72,8 @@ export default function Admin() {
                     <>
                         <div className="flex gap-6 border-b border-line mb-8">
                             {[
-                                { id: "inscritos", label: "Inscritos" },
+                                { id: "inscritos", label: "Inscritas" },
+                                { id: "pagamentos", label: "Pagamentos" },
                                 { id: "site", label: "Editar site" },
                             ].map((t) => (
                                 <button
@@ -88,7 +90,7 @@ export default function Admin() {
                                 </button>
                             ))}
                         </div>
-                        {tab === "inscritos" ? <RegistrationsPanel /> : <SettingsPanel />}
+                        {tab === "inscritos" ? <RegistrationsPanel /> : tab === "pagamentos" ? <PaymentsPanel /> : <SettingsPanel />}
                     </>
                 )}
             </main>

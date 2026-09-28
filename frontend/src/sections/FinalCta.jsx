@@ -23,7 +23,7 @@ export default function FinalCta() {
                         <span aria-hidden="true">·</span>
                         <span>{formatBRL(s.pricePix)} no Pix</span>
                         <span aria-hidden="true">·</span>
-                        <span>{s.slotsTotal} vagas</span>
+                        <span>{s.seatsLabel}</span>
                     </div>
                     {s.soldOut ? (
                         <span

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import CheckoutShell from "@/components/CheckoutShell";
 import QrMock from "@/components/QrMock";
+import { QRCodeSVG } from "qrcode.react";
 import { apiService, getStoredRegistrationId } from "@/services/api";
 import { useSettings } from "@/lib/settings";
 
@@ -69,7 +70,18 @@ export default function Ticket() {
                     </div>
 
                     <div className="flex flex-col items-center gap-4">
-                        <QrMock seed={reg?.ticket_code || "MNT-2026"} />
+                        {reg?.qr_token ? (
+                            <QRCodeSVG
+                                data-testid="ticket-qr-code"
+                                value={`${window.location.origin}/ingresso/validar/${reg.qr_token}`}
+                                size={168}
+                                bgColor="#FAF8F5"
+                                fgColor="#171615"
+                                level="M"
+                            />
+                        ) : (
+                            <QrMock seed={reg?.ticket_code || "MNT-2026"} />
+                        )}
                         <p className="font-mono text-sm text-ink tracking-wider" data-testid="ticket-code-display">
                             {reg?.ticket_code || "MNT-2026-XXXX"}
                         </p>
@@ -80,9 +92,11 @@ export default function Ticket() {
                 </div>
             </div>
 
-            <p className="mt-4 text-center text-[10px] uppercase tracking-[0.2em] text-smoke/60 max-w-sm mx-auto">
-                QR Code simulado — será gerado pelo backend na integração
-            </p>
+            {reg?.qr_token ? null : (
+                <p className="mt-4 text-center text-[10px] uppercase tracking-[0.2em] text-smoke/60 max-w-sm mx-auto">
+                    QR Code simulado — será gerado após a confirmação do pagamento
+                </p>
+            )}
 
             <div className="mt-8 flex flex-col gap-3 max-w-sm mx-auto">
                 <button

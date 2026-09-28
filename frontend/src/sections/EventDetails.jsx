@@ -7,7 +7,7 @@ export default function EventDetails() {
     const DETAILS = [
         { icon: Calendar, value: s.eventDateLabel, label: "Data do encontro" },
         { icon: Users, value: "Mentoria em grupo", label: "Formato" },
-        { icon: Ticket, value: `Apenas ${s.slotsTotal} vagas`, label: "Exclusividade" },
+        { icon: Ticket, value: `Apenas ${s.slotsTotal} vagas`, label: s.seatsLabel },
         {
             icon: Wallet,
             value: `${formatBRL(s.pricePix)} no Pix`,

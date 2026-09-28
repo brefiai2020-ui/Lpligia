@@ -5,14 +5,17 @@ import { useSettings } from "@/lib/settings";
 
 const TEXT_FIELDS = {
     evento: [
+        ["event_name", "Nome do evento", "Mentoria em Grupo"],
         ["eventDateLabel", "Data (texto completo)", "10 de outubro de 2026"],
         ["eventDateShort", "Data curta", "10/10/2026"],
         ["eventDateTicket", "Data no ingresso", "10 OUTUBRO 2026"],
+        ["event_time", "Horário (quando definido)", "14:00"],
+        ["location", "Local (quando definido)", "Espaço / endereço"],
         ["eventPlaceNote", "Nota de horário/local", "Horário e local serão informados em breve."],
         ["instagram", "Instagram", "@draligijeanematroski"],
         ["whatsappNumber", "WhatsApp para receber confirmações (só números)", "5547998887766"],
     ],
-    valores: [["slotsTotal", "Total de vagas", "50"], ["pricePix", "Preço no Pix (R$)", "189.90"], ["priceCard", "Preço no cartão (R$)", "229.00"], ["installments", "Parcelas no cartão", "3"]],
+    valores: [["capacity", "Capacidade máxima de vagas", "50"], ["slotsTotal", "Vagas exibidas na página", "50"], ["pricePix", "Preço no Pix (R$)", "189.90"], ["priceCard", "Preço no cartão (R$)", "229.00"], ["installments", "Parcelas no cartão", "3"], ["infinitepay_handle", "InfiniteTag da InfinitePay (sem o $)", "draligia"]],
     midia: [["photoUrl", "URL da foto da Dra. Lígia", "https://..."], ["videoUrl", "URL do vídeo (YouTube/Vimeo/MP4)", "https://..."]],
     conteudo: [
         ["heroTitle", "Título do hero (quebre linhas com Enter)", "Tudo começa quando\nvocê decide olhar\npara dentro.", true],

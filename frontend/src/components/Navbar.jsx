@@ -141,7 +141,7 @@ export default function Navbar() {
                             {ctaLabel}
                         </Link>
                         <p className="mt-8 text-xs uppercase tracking-[0.25em] text-cream/50">
-                            10.10.2026 · 50 vagas · R$ 100
+                            {s.eventDateShort} · {s.seatsLabel}
                         </p>
                     </motion.div>
                 )}

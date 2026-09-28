@@ -10,6 +10,7 @@ import Processing from "@/pages/Processing";
 import Confirmed from "@/pages/Confirmed";
 import Ticket from "@/pages/Ticket";
 import StatesPreview from "@/pages/StatesPreview";
+import TicketValidation from "@/pages/TicketValidation";
 import Admin from "@/pages/Admin";
 import { SettingsProvider } from "@/lib/settings";
 
@@ -75,8 +76,10 @@ export default function App() {
                         <Route path="/inscricao/cadastro" element={<Signup />} />
                         <Route path="/inscricao/pagamento" element={<Payment />} />
                         <Route path="/inscricao/processando" element={<Processing />} />
+                        <Route path="/pagamento-concluido" element={<Processing />} />
                         <Route path="/inscricao/confirmado" element={<Confirmed />} />
                         <Route path="/inscricao/ingresso" element={<Ticket />} />
+                        <Route path="/ingresso/validar/:token" element={<TicketValidation />} />
                         <Route path="/estados" element={<StatesPreview />} />
                         <Route path="/admin" element={<Admin />} />
                         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,30 +1,40 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { X, Clock } from "lucide-react";
+import { X, Clock, Search } from "lucide-react";
 import CheckoutShell from "@/components/CheckoutShell";
-import { apiService, getStoredPaymentId } from "@/services/api";
+import { apiService, getStoredOrderNsu, setStoredOrderNsu } from "@/services/api";
 
 export default function Processing() {
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [failState, setFailState] = useState(null);
+    const [review, setReview] = useState(false);
+    const [checking, setChecking] = useState(false);
     const st = params.get("st");
+
+    // Retorna da InfinitePay para /pagamento-concluido com order_nsu na URL.
+    useEffect(() => {
+        const nsuParam = params.get("order_nsu");
+        if (nsuParam) setStoredOrderNsu(nsuParam);
+    }, [params]);
 
     useEffect(() => {
         if (st === "recusado" || st === "expirado") return;
-        const pid = getStoredPaymentId();
-        if (!pid) {
+        const nsu = params.get("order_nsu") || getStoredOrderNsu();
+        if (!nsu) {
             navigate("/inscricao/cadastro", { replace: true });
             return;
         }
         let cancelled = false;
         const poll = async () => {
             try {
-                const { data } = await apiService.paymentStatus(pid);
+                const { data } = await apiService.paymentStatus(nsu);
                 if (cancelled) return;
-                if (data.status === "aprovado") {
+                if (data.status === "PAID") {
                     navigate("/inscricao/confirmado", { replace: true });
-                } else if (data.status === "recusado" || data.status === "expirado") {
+                } else if (data.status === "PAYMENT_REVIEW") {
+                    setReview(true);
+                } else if (data.status === "FAILED" || data.status === "CANCELLED") {
                     setFailState(data.status);
                 }
             } catch {
@@ -32,19 +42,31 @@ export default function Processing() {
             }
         };
         poll();
-        const timer = setInterval(poll, 1500);
+        const timer = setInterval(poll, 4000);
         return () => {
             cancelled = true;
             clearInterval(timer);
         };
-    }, [st, navigate]);
+    }, [st, params, navigate]);
 
-    const state = failState || st;
+    const manualCheck = async () => {
+        setChecking(true);
+        try {
+            const nsu = params.get("order_nsu") || getStoredOrderNsu();
+            if (nsu) await apiService.checkPayment(nsu);
+        } catch {
+            // silencioso: o webhook continua sendo a via principal
+        } finally {
+            setChecking(false);
+        }
+    };
+
     const backToPayment = () => navigate("/inscricao/pagamento");
+    const state = failState || st;
 
     return (
         <CheckoutShell step={3}>
-            {state === "recusado" ? (
+            {state === "recusado" || state === "FAILED" || state === "CANCELLED" ? (
                 <StateBlock
                     testid="payment-refused"
                     icon={
@@ -52,8 +74,8 @@ export default function Processing() {
                             <X size={28} strokeWidth={1.5} />
                         </span>
                     }
-                    title="Pagamento recusado"
-                    text="Não foi possível concluir seu pagamento. Você pode tentar novamente."
+                    title="Pagamento não concluído"
+                    text="Não foi possível confirmar seu pagamento. Você pode tentar novamente — sua vaga continua reservada."
                     button={
                         <button
                             data-testid="retry-payment-button"
@@ -84,6 +106,19 @@ export default function Processing() {
                         </button>
                     }
                 />
+            ) : review ? (
+                <div className="text-center py-14" data-testid="payment-review">
+                    <span className="mx-auto w-16 h-16 rounded-full bg-gold/10 text-gold flex items-center justify-center">
+                        <Clock size={26} strokeWidth={1.5} />
+                    </span>
+                    <h1 className="mt-9 font-serif text-3xl sm:text-4xl text-ink leading-snug" data-testid="review-title">
+                        Pagamento em análise
+                    </h1>
+                    <p className="mt-4 text-smoke leading-relaxed max-w-sm mx-auto">
+                        Recebemos seu pagamento e estamos finalizando a confirmação. Você receberá o ingresso por
+                        e-mail e WhatsApp — pode fechar esta página.
+                    </p>
+                </div>
             ) : (
                 <div className="text-center py-14" data-testid="payment-processing">
                     <div
@@ -96,6 +131,14 @@ export default function Processing() {
                     <p className="mt-4 text-smoke" data-testid="processing-warning">
                         Não feche esta página.
                     </p>
+                    <button
+                        data-testid="manual-check-button"
+                        onClick={manualCheck}
+                        disabled={checking}
+                        className="mt-8 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-smoke/70 hover:text-gold transition-colors disabled:opacity-60"
+                    >
+                        <Search size={13} strokeWidth={1.5} /> {checking ? "Verificando..." : "Verificar novamente"}
+                    </button>
                     <p className="mt-10 text-[11px] uppercase tracking-[0.22em] text-smoke/60">
                         Pagamento processado de forma segura pela InfinitePay
                     </p>
@@ -117,4 +160,5 @@ function StateBlock({ icon, title, text, button, testid }) {
         </div>
     );
 }
+
 
