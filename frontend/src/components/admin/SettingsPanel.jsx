@@ -34,11 +34,11 @@ const TEXT_FIELDS = {
 };
 
 const COLORS = [
-    ["colorPaper", "Fundo claro"],
-    ["colorBeige", "Bege / caramelo"],
-    ["colorInk", "Marrom escuro"],
-    ["colorGold", "Dourado"],
-    ["colorRose", "Rosa queimado"],
+    ["colorPaper", "Fundo claro (creme)"],
+    ["colorBeige", "Verde sálvia (seção Sobre)"],
+    ["colorInk", "Marrom cacau (seções escuras)"],
+    ["colorGold", "Caramelo / tan (acentos)"],
+    ["colorRose", "Terracota (botões)"],
 ];
 
 export default function SettingsPanel() {
