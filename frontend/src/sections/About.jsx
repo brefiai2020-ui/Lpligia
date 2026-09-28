@@ -1,8 +1,7 @@
 import { Link } from "react-router-dom";
 import { Hourglass, HeartHandshake, Compass, Sparkles, ArrowUpRight } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
-import { Blob, Squiggle } from "@/components/Organic";
-import PortraitFrame from "@/components/PortraitFrame";
+import { Blob } from "@/components/Organic";
 import { useSettings } from "@/lib/settings";
 
 const CREDS = [
@@ -102,6 +101,42 @@ export default function About() {
                     </Reveal>
                 </div>
             </div>
+
+            <Reveal delay={0.1}>
+                <div
+                    className="relative mt-16 max-w-4xl mx-auto rounded-3xl overflow-hidden bg-ink aspect-video"
+                    data-testid="about-video"
+                >
+                    {s.videoUrl ? (
+                        <iframe
+                            src={s.videoUrl}
+                            title="Mensagem em vídeo da Dra. Lígia Jeane Matroski"
+                            className="absolute inset-0 w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                        />
+                    ) : (
+                        <>
+                            <div className="absolute inset-0 texture-grain opacity-30" aria-hidden="true" />
+                            <div
+                                className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(197,160,89,0.16),transparent_65%)]"
+                                aria-hidden="true"
+                            />
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 text-center px-6">
+                                <span className="w-16 h-16 rounded-full border border-gold/70 flex items-center justify-center font-serif italic text-gold text-2xl">
+                                    LJ
+                                </span>
+                                <p className="font-serif italic text-2xl text-cream leading-snug">
+                                    Mensagem em vídeo da Dra. Lígia
+                                </p>
+                                <p className="text-[10px] uppercase tracking-[0.22em] text-cream/65">
+                                    O vídeo pode ser configurado na área administrativa
+                                </p>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </Reveal>
         </section>
     );
 }

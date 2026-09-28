@@ -1,99 +1,146 @@
 {
-  "project_title": "Mentoria em Grupo - Dra. Lígia Jeane Matroski",
-  "design_archetype": "Organic Warm Psychology & High-End Editorial",
-  "context_type": "Marketing / Sales Landing Page",
-  "theme": {
-    "primary_mode": "Warm Multi-Layered Natural Tones",
-    "background_palette": {
-      "chocolate_dark": "#3A2E27",
-      "caramel_warm": "#A98E72",
-      "cream_light": "#F2EAE0",
-      "cream_pure": "#FAFAF7",
-      "gold_accent": "#C5A880",
-      "gold_light_contrast": "#E5C99F"
+  "project_title": "Mentoria em Grupo — Dra. Lígia Jeane Matroski (Redesign da Landing Page de Venda de Ingresso)",
+  "design_strategy": {
+    "context_type": "High-Conversion Mobile-First Ticket Sales Landing Page (Low Ticket)",
+    "aesthetic_archetype": "Organic & Earthy Editorial / Warm Psychological Sophistication",
+    "emotional_tone": "Acolhedora, sofisticada, segura, empática e editorial. Sem gatilhos agressivos de infoproduto (sem cronômetros falsos, sem setas vermelhas ou urgência apelativa). Urgência real e respeitosa (50 vagas, encontro presencial em 10/10/2026).",
+    "target_audience": "Público feminino entre 28 e 55 anos. Mais de 80% do tráfego vindo de dispositivos móveis."
+  },
+  "layout_architecture": {
+    "max_sections_constraint": 5,
+    "header_navigation": {
+      "type": "Minimalist Header (Glassmorphism / Warm Parchment Backdrop)",
+      "elements": [
+        "Marca/Nome: 'Dra. Lígia Jeane Matroski' em tipografia elegante com subtítulo 'Psicóloga • CRP 08/XXXX'",
+        "CTA Secundário/Direto: Botão compacto 'Garantir Vaga' direcionando para /inscricao/cadastro",
+        "Regra: Sem links de navegação adicionais no desktop ou mobile para evitar distrações e manter o foco único no ingresso."
+      ],
+      "data_testid": "nav-minimal-header"
+    },
+    "sections": [
+      {
+        "id": "hero",
+        "section_number": 1,
+        "title": "Hero de Alta Conversão com Promessa & Data",
+        "components": [
+          "Etiqueta/Eyebrow: 'Encontro Presencial Exclusivo • 10/10/2026 • Curitiba/PR'",
+          "Título H1: Promessa clara e profunda focada em reconexão, inteligência emocional e libertação de padrões",
+          "Subtítulo/Lead: Texto direto sobre a transformação vivida em grupo com mais de 20 anos de experiência clínica",
+          "Pill de Vagas Honestos: 'Apenas 50 vagas presenciais para garantir um ambiente intimista'",
+          "CTA Principal: Botão destacado 'Quero Minha Vaga no Encontro' (link para /inscricao/cadastro) com preço resumido a partir de R$ 189,90",
+          "Elemento Visual Curvo: Retrato da Dra. Lígia em moldura orgânica/arco arquitetônico com brilho sutil rosa queimado"
+        ],
+        "data_testid": "section-hero"
+      },
+      {
+        "id": "sobre-ligia",
+        "section_number": 2,
+        "title": "Sobre a Dra. Lígia Jeane Matroski (Autoridade & Conexão)",
+        "components": [
+          "Título H2: 'Mais de 20 anos guiando mulheres em sua jornada de cura e autonomia'",
+          "Cards de Credenciais: 3 pontos de autoridade (Ex.: Psicóloga Clínica, +2.000 Mulheres Atendidas, Especialista em Relações & Autoestima)",
+          "Foto Editorial: Imagem da mentora em ambiente acolhedor e iluminação natural de estúdio",
+          "Vídeo da Mentora (Quando Configurado): Player elegante com efeito de pulso no play para mensagem pessoal em vídeo",
+          "Citação/Frase de Impacto: Destaque editorial em Cormorant Garamond com aspas sutis e fundo tom marrom profundo"
+        ],
+        "data_testid": "section-sobre-ligia"
+      },
+      {
+        "id": "o-que-voce-vai-viver",
+        "section_number": 3,
+        "title": "O Que Você Vai Viver (Benefícios & Para Quem É)",
+        "components": [
+          "Título H2: 'Uma experiência profunda desenhada para o seu momento'",
+          "Grid de 3-4 Benefícios Principais: Cards em tom bege/creme com bordas suaves e ícones orgânicos (Clareza Emocional, Troca Segura em Grupo, Ferramentas Práticas de Aplicação Imediata, Diagnóstico Pessoal)",
+          "Seção 'Para Quem É': Chips/Tags curvilíneos com perfis de mulheres que mais se beneficiam (Ex.: 'Para quem busca equilíbrio entre carreira e vida pessoal', 'Para quem sente sobrecarga emocional', 'Para quem quer resgatar a autoconfiança')",
+          "Ilustração/Formas Orgânicas: Linhas de contorno suaves e curvas fluídas inspiradas no conceito da psique e acolhimento"
+        ],
+        "data_testid": "section-beneficios-para-quem-e"
+      },
+      {
+        "id": "como-funciona-investimento",
+        "section_number": 4,
+        "title": "Como Funciona + Investimento (Condições & Ingresso)",
+        "components": [
+          "3 Passos Compactos (Como Funciona): 1. Inscrição e confirmação imediata -> 2. Acesso ao grupo exclusivo de avisos -> 3. Encontro presencial em 10/10/2026",
+          "Card Principal de Investimento (Fundo Marrom Intenso com Texto Branco & Detalhes Rosa Queimado):",
+          "Opção 1 (Pix com Desconto Especial): R$ 189,90 à vista (Selo 'Melhor Valor')",
+          "Opção 2 (Cartão de Crédito): R$ 229,00 em até 3x de R$ 76,33",
+          "Indicador Transparente de Vagas: Barra de ocupação elegante 'Lote atual limitado a 50 participantes'",
+          "CTA Principal da Seção: Botão largo e responsivo 'Garantir Meu Ingresso Agora' -> /inscricao/cadastro",
+          "Garantia & Compra Segura: Selos discretos de pagamento instantâneo via Pix, ambiente seguro e confirmação por e-mail"
+        ],
+        "data_testid": "section-investimento"
+      },
+      {
+        "id": "duvidas-cta-final",
+        "section_number": 5,
+        "title": "Dúvidas Frequentes (FAQ Acordeão) + Encerramento",
+        "components": [
+          "Título H2: 'Perguntas Frequentes'",
+          "FAQ Acordeão Curto (4 a 5 perguntas estratégicas): Local e horário do encontro, formato da mentora em grupo, política de cancelamento/transferência, forma de recebimento do ingresso",
+          "Card Final de Acolhimento: Mensagem calorosa da Dra. Lígia convidando para a decisão",
+          "Botão CTA Final: 'Quero Estar no Encontro Presencial' -> /inscricao/cadastro"
+        ],
+        "data_testid": "section-faq-cta-final"
+      }
+    ],
+    "sticky_mobile_cta": {
+      "description": "Barra fixa no rodapé mobile acionada na rolagem para baixo/cima, garantindo acesso instantâneo ao checkout em telas sensíveis ao toque.",
+      "elements": [
+        "Preço em Destaque: 'Pix R$ 189,90 ou 3x R$ 76,33'",
+        "Aviso de Escassez Honesta: 'Apenas 50 vagas'",
+        "Botão de Ação: 'Garantir Vaga' -> /inscricao/cadastro"
+      ],
+      "data_testid": "sticky-mobile-cta-bar"
     }
   },
   "typography": {
-    "heading_font": "Cormorant Garamond, serif",
-    "heading_style": "italic font-serif font-medium tracking-tight",
-    "body_font": "Plus Jakarta Sans, sans-serif",
-    "hierarchy": {
-      "hero_title": "text-4xl sm:text-5xl lg:text-6xl font-serif italic text-cream_light leading-[1.15]",
-      "section_heading": "text-3xl sm:text-4xl lg:text-5xl font-serif italic text-chocolate_dark leading-tight",
-      "section_heading_dark_bg": "text-3xl sm:text-4xl lg:text-5xl font-serif italic text-cream_light leading-tight",
-      "card_title": "text-xl sm:text-2xl font-serif italic",
-      "body": "text-base sm:text-lg leading-relaxed font-sans",
-      "small_label": "text-xs sm:text-sm uppercase tracking-[0.2em] font-semibold"
+    "font_pairing": {
+      "headings": "Cormorant Garamond, Georgia, serif (Sensação editorial, refinada, acolhedora e humana)",
+      "body": "Manrope, system-ui, sans-serif (Altamente legível em telas pequenas de smartphone, moderna e límpida)",
+      "accent_mono": "JetBrains Mono, monospace (Apenas para pequenos dados numéricos como data e preços)"
+    },
+    "scale_rules": {
+      "h1_hero": "text-3xl sm:text-4xl lg:text-5xl font-serif font-medium leading-tight tracking-tight",
+      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-serif font-medium leading-snug",
+      "h3_card": "text-lg sm:text-xl font-sans font-semibold text-ink",
+      "body_text": "text-base leading-relaxed text-smoke",
+      "labels_eyebrow": "text-xs uppercase tracking-widest font-sans font-semibold text-rose"
     }
   },
-  "contrast_rules_mandatory": {
-    "caramel_background": {
-      "bg_hex": "#A98E72",
-      "allowed_text_colors": [
-        "#F2EAE0 (Cream)",
-        "#FFFFFF (Pure White)",
-        "#3A2E27 (Dark Chocolate)"
-      ],
-      "forbidden_text_colors": [
-        "#C5A880 (Gold)",
-        "#A98E72 (Self Caramel)",
-        "Any low-contrast tan"
-      ],
-      "rule": "On Caramel backgrounds, text MUST ALWAYS be Cream/White or Dark Chocolate. Gold text is strictly forbidden due to insufficient APCA contrast ratio."
-    },
-    "cream_background": {
-      "bg_hex": "#F2EAE0 or #FAFAF7",
-      "allowed_text_colors": [
-        "#3A2E27 (Dark Chocolate)",
-        "#241D18 (Charcoal Dark)",
-        "#504137 (Warm Dark Brown)"
-      ],
-      "forbidden_text_colors": [
-        "#C5A880 (Gold for body/headings)",
-        "#A98E72 (Caramel for body text)"
-      ],
-      "rule": "On Cream backgrounds, all body text, over-lines, and headings must use Dark Chocolate or Charcoal. Gold is permitted ONLY for decorative SVG lines or icon strokes with >= 2px width."
-    },
-    "chocolate_background": {
-      "bg_hex": "#3A2E27",
-      "allowed_text_colors": [
-        "#F2EAE0 (Cream)",
-        "#FFFFFF (White)",
-        "#E5C99F (High-Contrast Champagne Gold)"
-      ],
-      "forbidden_text_colors": [
-        "#A98E72 (Mid Caramel for body text)",
-        "Dark grays"
-      ],
-      "rule": "On Dark Chocolate backgrounds, text must be Cream or High-Contrast Champagne Gold (#E5C99F) to guarantee readability."
-    }
+  "colors": {
+    "palette_name": "Rosa Queimado & Marrom Orgânico Editorial",
+    "background_paper": "#F2EAE0 (Parchment claro suave)",
+    "background_cream": "#EDE3D6 (Creme de contraste para cards)",
+    "primary_dark_brown": "#3A2E27 (Marrom escuro orgânico / tom terra - substituto elegante ao preto puro)",
+    "primary_brown_accent": "#2C221D (Marrom profundo para a seção de Investimento e destaque)",
+    "burnt_rose": "#C4705C (Rosa Queimado principal / tom terracotta suave)",
+    "burnt_rose_light": "#DD1098 / #E29B8C (Rosa queimado claro para realces e hover)",
+    "text_ink": "#3A2E27 (Texto em marrom escuro sobre fundo claro)",
+    "text_white": "#FFFFFF (Fonte branca em contêineres e cards de tons marrons profundos)",
+    "line_border": "#988067 (Bordas sutis em tom argila/bege seco)",
+    "gold_accent": "#C5A880 (Dourado sutil para selos e detalhes de autoridade)",
+    "accessibility_rule": "Garantir contraste mínimo WCAG AA de 4.5:1. Nos cards de tom marrom escuro (#3A2E27 / #2C221D), a fonte é estritamente branca (#FFFFFF) ou rosa claro (#E29B8C)."
   },
-  "organic_design_language": {
-    "curved_section_dividers": "Use custom organic SVG wave/curve dividers between contrasting background sections (e.g. SVG path transitioning from Cream to Chocolate or Caramel).",
-    "overlapping_rounded_blocks": "Apply generous top border radii (e.g., rounded-t-[2.5rem] md:rounded-t-[4rem]) with negative top margin (-mt-8 or -mt-12) and elevated z-index so sections soft-overlap each other like organic layers.",
-    "blob_backgrounds": "Use subtle SVG organic blob shapes behind portrait photos, benefit cards, and callout statistics to create a soft psychological human touch.",
-    "psychology_squiggle_lines": "Integrate fine gold continuous line art ('squiggle' / traços de conexão mental / Rorschach-inspired fluid strokes) that trace on scroll or gently float as decorative accents in section margins."
+  "visual_enhancers": {
+    "organic_shapes": "Uso de bordas com raios assimétricos e contornos de arco (ex: rounded-t-[3rem] rounded-b-[1.5rem]), além de divisores SVG em ondas suaves entre seções.",
+    "textures": "Classe .texture-grain em seções marrons para textura sutil de papel de alta gramatura.",
+    "button_styles": "Botões em pílula (rounded-full) com tom Rosa Queimado (#C4705C) e fonte branca em negrito, efeito de elevação no hover (-translate-y-0.5 shadow-md) e sem animações bruscas.",
+    "micro_interactions": "Abertura suave do FAQ acordeão com chave 'accordion-down', feedback de foco acessível e transições suaves de 200ms."
   },
-  "component_path": "/app/frontend/src",
-  "preserved_functionalities": [
-    "Real-time spots counter state (Restam X vagas / Última vaga / Inscrições encerradas)",
-    "Modal signup flow: Name + Email + Phone input -> Option selection (Pix R$ 189,90 vs Cartão R$ 229,00 in 3x)",
-    "InfinitePay checkout redirect / mock gateway transition",
-    "Ticket generation page with unique QR code",
-    "FAQ Accordion interactive expand/collapse",
-    "Video player with 'DAR PLAY' preview state",
-    "Sticky mobile CTA bottom bar with live spot count",
-    "Footer admin link and all data-testid attributes intact"
-  ],
   "image_urls": {
-    "hero_background": "https://images.unsplash.com/photo-1729250829618-d02a3c0e8fdb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHszfHx3b21hbiUyMHBzeWNob2xvZ2lzdCUyMHBvcnRyYWl0JTIwZWxlZ2FudCUyMHByb2Zlc3Npb25hbCUyMHdhcm18ZW58MHx8fHwxNzkwNjI3MjIyfDA&ixlib=rb-4.1.0&q=85",
-    "dra_ligia_portrait": "https://images.unsplash.com/photo-1729250827839-9d969cfbcce0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHBzeWNob2xvZ2lzdCUyMHBvcnRyYWl0JTIwZWxlZ2FudCUyMHByb2Zlc3Npb25hbCUyMHdhcm18ZW58MHx8fHwxNzkwNjI3MjIyfDA&ixlib=rb-4.1.0&q=85",
-    "mentorship_ambiance": "https://images.unsplash.com/photo-1729250829867-ed80acae9e5c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHDFfHx3b21hbiUyMHBzeWNob2xvZ2lzdCUyMHBvcnRyYWl0JTIwZWxlZ2FudCUyMHByb2Zlc3Npb25hbCUyMHdhcm18ZW58MHx8fHwxNzkwNjI3MjIyfDA&ixlib=rb-4.1.0&q=85"
+    "mentora_portrait": "https://images.unsplash.com/photo-1592621385645-e41659e8aabe?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "mentora_consulting": "https://images.unsplash.com/photo-1734365294772-2f59212083d3?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "mentora_relaxed": "https://images.unsplash.com/photo-1612872513575-7e7666b96ff3?crop=entropy&cs=srgb&fm=jpg&q=85",
+    "mentora_studio": "https://images.unsplash.com/photo-1585156390654-19b776731080?crop=entropy&cs=srgb&fm=jpg&q=85"
   },
   "instructions_to_main_agent": [
-    "Refine LandingPage sections with organic shapes: SVG curved section transition dividers, overlapping rounded section containers (rounded-t-[3rem]), and fine gold psychology squiggles.",
-    "Fix all contrast issues strictly following contrast_rules_mandatory: replace gold text over caramel with cream/white, fix weak over-lines on light backgrounds to use dark chocolate.",
-    "Do NOT alter business logic, state handlers, API calls, or data-testid attributes.",
-    "Ensure mobile responsiveness and fixed bottom CTA functionality remain smooth and touch-friendly."
+    "1. Mantenha a estrutura em exatamente 5 seções principais para evitar sobrecarga de texto conforme pedido pela usuária.",
+    "2. Garanta que o botão CTA em todas as seções redirecione o usuário diretamente para /inscricao/cadastro.",
+    "3. Aplique a paleta de tons marrons profundos (#3A2E27) com texto branco e destaques em Rosa Queimado (#C4705C).",
+    "4. Certifique-se de que a barra fixa de CTA no rodapé mobile seja exibida apenas em dispositivos móveis e acionada por rolagem.",
+    "5. Garanta que todas as informações (textos, títulos, valores R$ 189,90 / R$ 229,00, vagas 50 e data 10/10/2026) sejam editáveis dinamicamente via configurações/admin.",
+    "6. Adicione o atributo data-testid em todos os elementos interativos, contêineres e botões para compatibilidade com testes automatizados."
   ]
 }

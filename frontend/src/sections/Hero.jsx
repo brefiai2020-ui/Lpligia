@@ -106,7 +106,7 @@ export default function Hero() {
                         )}
                         <button
                             data-testid="hero-secondary-cta"
-                            onClick={() => scrollToId("experiencia")}
+                            onClick={() => scrollToId("viver")}
                             className="h-14 px-6 whitespace-nowrap inline-flex items-center justify-center gap-2 text-sm uppercase tracking-[0.18em] text-cream border-b border-cream/40 hover:border-goldlight hover:text-goldlight transition-colors"
                         >
                             Conhecer a experiência <ArrowDown size={15} strokeWidth={1.5} />
