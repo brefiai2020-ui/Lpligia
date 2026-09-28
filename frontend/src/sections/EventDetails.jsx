@@ -15,7 +15,10 @@ export default function EventDetails() {
         },
     ];
     return (
-        <section className="bg-paper py-24 sm:py-32" data-testid="event-details">
+        <section
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-paper py-24 sm:py-32"
+            data-testid="event-details"
+        >
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
                 <Reveal>
                     <Eyebrow tone="dark">Detalhes do evento</Eyebrow>
@@ -27,7 +30,7 @@ export default function EventDetails() {
                     {DETAILS.map((d, i) => (
                         <Reveal key={d.label} delay={0.06 * i} className="h-full">
                             <div className="h-full bg-cream border border-line/60 rounded-2xl p-6 sm:p-7">
-                                <d.icon size={20} strokeWidth={1.4} className="text-gold" />
+                                <d.icon size={20} strokeWidth={1.4} className="text-rose" />
                                 <p className="mt-6 font-serif text-xl sm:text-2xl text-ink leading-snug">{d.value}</p>
                                 <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-smoke/70">{d.label}</p>
                             </div>

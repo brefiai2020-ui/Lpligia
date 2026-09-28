@@ -32,7 +32,7 @@ export default function Footer() {
                             </span>
                             <p className="font-serif text-2xl">Dra. Lígia Jeane Matroski</p>
                         </div>
-                        <p className="mt-3 text-sm text-cream/60 tracking-wide">Psicóloga clínica | Mentora</p>
+                    <p className="mt-3 text-sm text-cream/75 tracking-wide">Psicóloga clínica | Mentora</p>
                         <a
                             data-testid="footer-instagram-link"
                             href={instagramUrl}
@@ -68,13 +68,13 @@ export default function Footer() {
                         <Link
                             data-testid="footer-states-link"
                             to="/estados"
-                            className="text-[11px] uppercase tracking-[0.2em] text-cream/35 hover:text-gold mt-3 transition-colors"
+                            className="text-[11px] uppercase tracking-[0.2em] text-cream/55 hover:text-gold mt-3 transition-colors"
                         >
                             Estados da interface (demo)
                         </Link>
                     </div>
                 </div>
-                <div className="mt-12 pt-6 border-t border-cream/10 flex flex-col sm:flex-row justify-between gap-2 text-xs text-cream/40">
+                <div className="mt-12 pt-6 border-t border-cream/15 flex flex-col sm:flex-row justify-between gap-2 text-xs text-cream/55">
                     <p>© 2026 Dra. Lígia Jeane Matroski. Todos os direitos reservados.</p>
                     <p>Pagamento processado pelo Checkout InfinitePay.</p>
                 </div>

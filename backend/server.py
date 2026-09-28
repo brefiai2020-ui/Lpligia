@@ -89,6 +89,7 @@ DEFAULT_SETTINGS = {
     "colorBeige": "#A98E72",
     "colorInk": "#3A2E27",
     "colorGold": "#C5A880",
+    "colorRose": "#C4705C",
 }
 
 COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
@@ -589,6 +590,7 @@ class SettingsUpdate(BaseModel):
     colorBeige: Optional[str] = None
     colorInk: Optional[str] = None
     colorGold: Optional[str] = None
+    colorRose: Optional[str] = None
 
 
 # ---------- Rotas públicas ----------
@@ -1052,7 +1054,7 @@ async def admin_use_ticket(token: str, user: dict = Depends(get_current_admin)):
 @api_router.put("/admin/settings")
 async def admin_save_settings(input: SettingsUpdate, user: dict = Depends(get_current_admin)):
     data = {k: v for k, v in input.model_dump().items() if v is not None}
-    for key in ("colorPaper", "colorBeige", "colorInk", "colorGold"):
+    for key in ("colorPaper", "colorBeige", "colorInk", "colorGold", "colorRose"):
         if key in data and not COLOR_RE.match(data[key]):
             raise HTTPException(status_code=400, detail=f"Cor inválida em {key}.")
     if "pricePix" in data and data["pricePix"] < 0:

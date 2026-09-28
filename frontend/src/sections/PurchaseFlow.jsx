@@ -8,7 +8,10 @@ const STEPS = [
 
 export default function PurchaseFlow() {
     return (
-        <section className="bg-paper py-24 sm:py-32" data-testid="purchase-flow">
+        <section
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-paper py-24 sm:py-32"
+            data-testid="purchase-flow"
+        >
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
                 <Reveal>
                     <Eyebrow tone="dark">Como participar</Eyebrow>
@@ -25,7 +28,7 @@ export default function PurchaseFlow() {
                                     style={{ transform: "scaleX(1)", transformOrigin: "left" }}
                                     aria-hidden="true"
                                 />
-                                <span className="font-serif italic text-5xl text-gold">{`0${i + 1}`}</span>
+                                <span className="font-serif italic text-5xl text-rose">{`0${i + 1}`}</span>
                                 <p className="mt-5 text-ink leading-relaxed max-w-xs">{step}</p>
                             </div>
                         </Reveal>

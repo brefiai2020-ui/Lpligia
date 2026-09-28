@@ -97,6 +97,8 @@ select {
         --c-smoke-rgb: 105 95 88;
         --c-gold-rgb: 197 168 128;
         --c-goldlight-rgb: 216 204 183;
+        --c-rose-rgb: 196 112 92;
+        --c-roselight-rgb: 221 164 152;
         --background: 0 0% 100%;
         --foreground: 0 0% 3.9%;
         --card: 0 0% 100%;

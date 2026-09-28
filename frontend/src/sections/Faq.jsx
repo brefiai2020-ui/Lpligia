@@ -24,7 +24,10 @@ export default function Faq() {
     ];
 
     return (
-        <section className="bg-cream py-24 sm:py-32" data-testid="faq-section">
+        <section
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-cream py-24 sm:py-32"
+            data-testid="faq-section"
+        >
             <div className="max-w-3xl mx-auto px-5 sm:px-8">
                 <Reveal>
                     <Eyebrow center tone="dark">Dúvidas frequentes</Eyebrow>
@@ -48,7 +51,7 @@ export default function Faq() {
                                         <Plus
                                             size={20}
                                             strokeWidth={1.4}
-                                            className={`text-gold shrink-0 transition-transform duration-300 ${
+                                            className={`text-rose shrink-0 transition-transform duration-300 ${
                                                 isOpen ? "rotate-45" : ""
                                             }`}
                                         />

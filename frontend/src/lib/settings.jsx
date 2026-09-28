@@ -34,6 +34,7 @@ export const DEFAULT_SETTINGS = {
     colorBeige: "#A98E72",
     colorInk: "#3A2E27",
     colorGold: "#C5A880",
+    colorRose: "#C4705C",
 };
 
 export const formatBRL = (v) =>
@@ -62,6 +63,8 @@ export function applyTheme(s) {
     root.setProperty("--c-line-rgb", hexToRgb(mixHex(s.colorBeige, "#000000", 0.1)));
     root.setProperty("--c-smoke-rgb", hexToRgb(mixHex(s.colorInk, "#FFFFFF", 0.24)));
     root.setProperty("--c-goldlight-rgb", hexToRgb(mixHex(s.colorGold, "#FFFFFF", 0.45)));
+    root.setProperty("--c-rose-rgb", hexToRgb(s.colorRose || "#C4705C"));
+    root.setProperty("--c-roselight-rgb", hexToRgb(mixHex(s.colorRose || "#C4705C", "#FFFFFF", 0.4)));
 }
 
 const SettingsCtx = createContext(null);

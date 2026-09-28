@@ -28,6 +28,8 @@ module.exports = {
         smoke: 'rgb(var(--c-smoke-rgb) / <alpha-value>)',
         gold: 'rgb(var(--c-gold-rgb) / <alpha-value>)',
         goldlight: 'rgb(var(--c-goldlight-rgb) / <alpha-value>)',
+        rose: 'rgb(var(--c-rose-rgb) / <alpha-value>)',
+        roselight: 'rgb(var(--c-roselight-rgb) / <alpha-value>)',
         pine: '#2D5A3A',
         wine: '#8B2626',
         background: 'hsl(var(--background))',

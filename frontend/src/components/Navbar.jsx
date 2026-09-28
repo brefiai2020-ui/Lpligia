@@ -101,8 +101,8 @@ export default function Navbar() {
                                 s.soldOut
                                     ? "bg-smoke/10 text-smoke/60 cursor-not-allowed pointer-events-none border border-line"
                                     : onDark
-                                      ? "bg-cream text-ink hover:bg-gold"
-                                      : "bg-ink text-cream hover:bg-gold hover:text-ink"
+                                      ? "bg-cream text-ink hover:bg-rose hover:text-white"
+                                      : "bg-ink text-cream hover:bg-rose hover:text-white"
                             }`}
                         >
                             {ctaLabel}
@@ -149,13 +149,13 @@ export default function Navbar() {
                             to="/inscricao/cadastro"
                             onClick={() => setOpen(false)}
                             className={`mt-12 h-14 inline-flex items-center justify-center rounded-full font-semibold uppercase tracking-[0.18em] text-sm ${
-                                s.soldOut ? "bg-cream/15 text-cream/60 pointer-events-none" : "bg-gold text-ink"
+                                s.soldOut ? "bg-white/15 text-white/60 pointer-events-none" : "bg-rose text-white"
                             }`}
                         >
                             {ctaLabel}
                         </Link>
-                        <p className="mt-8 text-xs uppercase tracking-[0.25em] text-cream/50">
-                            {s.eventDateShort} · {s.seatsLabel}
+                        <p className="mt-8 text-xs uppercase tracking-[0.25em] text-cream/70">
+                            {s.eventDateShort}
                         </p>
                     </motion.div>
                 )}

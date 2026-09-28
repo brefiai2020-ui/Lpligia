@@ -25,7 +25,7 @@ export default function FixedCta() {
             <div className="m-3 p-2.5 rounded-full bg-ink/95 backdrop-blur border border-cream/10 shadow-2xl flex items-center justify-between gap-3 pointer-events-auto">
                 <div className="pl-3">
                     <p className="text-cream font-serif text-lg leading-none">{formatBRL(s.pricePix)}</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-cream/60 mt-0.5">no Pix · {s.seatsLabel}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-cream/75 mt-0.5">no Pix</p>
                 </div>
                 {s.soldOut ? (
                     <span
@@ -38,7 +38,7 @@ export default function FixedCta() {
                     <Link
                         data-testid="fixed-cta-button"
                         to="/inscricao/cadastro"
-                        className="h-11 px-6 inline-flex items-center rounded-full bg-gold text-ink text-[11px] font-bold uppercase tracking-[0.16em]"
+                        className="h-11 px-6 inline-flex items-center rounded-full bg-rose text-white text-[11px] font-bold uppercase tracking-[0.16em] hover:bg-cream hover:text-ink transition-colors duration-300"
                     >
                         Quero garantir minha vaga
                     </Link>

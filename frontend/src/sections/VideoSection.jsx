@@ -9,7 +9,10 @@ export default function VideoSection() {
     const [playing, setPlaying] = useState(false);
 
     return (
-        <section className="bg-paper py-24 sm:py-32" data-testid="video-section">
+        <section
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-paper py-24 sm:py-32"
+            data-testid="video-section"
+        >
             <div className="max-w-5xl mx-auto px-5 sm:px-8">
                 <Reveal className="text-center">
                     <Eyebrow center tone="dark">Vídeo</Eyebrow>
@@ -39,7 +42,7 @@ export default function VideoSection() {
                                 <p className="font-serif italic text-2xl text-cream leading-snug">
                                     Espaço reservado para o vídeo da Dra. Lígia.
                                 </p>
-                                <p className="text-[10px] uppercase tracking-[0.22em] text-cream/50">
+                                <p className="text-[10px] uppercase tracking-[0.22em] text-cream/65">
                                     A URL do vídeo pode ser configurada na área administrativa
                                 </p>
                             </div>
@@ -54,11 +57,11 @@ export default function VideoSection() {
                                     <button
                                         data-testid="video-play-button"
                                         onClick={() => setPlaying(true)}
-                                        className="relative w-20 h-20 rounded-full border border-gold/70 text-gold flex items-center justify-center transition-all duration-500 group-hover:scale-105 group-hover:bg-gold group-hover:text-ink"
+                                        className="relative w-20 h-20 rounded-full border border-rose/80 text-rose flex items-center justify-center transition-all duration-500 group-hover:scale-105 group-hover:bg-rose group-hover:text-white"
                                         aria-label="Dar play"
                                     >
                                         <span
-                                            className="absolute inset-0 rounded-full border border-gold/30 animate-ping-slow"
+                                            className="absolute inset-0 rounded-full border border-rose/40 animate-ping-slow"
                                             aria-hidden="true"
                                         />
                                         <Play size={22} strokeWidth={1.5} className="ml-1" />
@@ -66,7 +69,7 @@ export default function VideoSection() {
                                     <p className="text-[11px] uppercase tracking-[0.28em] text-cream/80">Dar play</p>
                                 </div>
                                 <div className="absolute bottom-6 inset-x-0 text-center hidden sm:block">
-                                    <p className="text-[10px] uppercase tracking-[0.3em] text-cream/40">
+                                    <p className="text-[10px] uppercase tracking-[0.3em] text-cream/55">
                                         Dra. Lígia Jeane Matroski · Mentoria em Grupo
                                     </p>
                                 </div>

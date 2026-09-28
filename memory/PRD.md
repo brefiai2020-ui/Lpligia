@@ -29,7 +29,13 @@ Landing page de vendas premium, mobile-first para a Mentoria em Grupo da Dra. L�
 T1 PIX 18990→PAID+1 vaga ✓ · T2 CARD 22900→PAID+1 vaga ✓ · T3 CARD 3x valor 22900 ✓ · T4 recusado/falhou→vaga NÃO ocupada ✓ · T5 pendente→não ocupa ✓ · T6 webhook duplicado→1 vaga só ✓ · T7 última vaga→1 ocupa, outro→PAYMENT_REVIEW ✓ · T8 capacidade esgotada→0 vagas e nova venda bloqueada ("Inscrições encerradas") ✓
 
 ## Redesign editorial (2026-09-28, referência da usuária)
-- Nova direção visual: paleta terrosa em camadas — chocolate #3A2E27, caramelo #A98E72, creme #F2EAE0, dourado latte #C5A880 (todos editáveis nos 4 color pickers do admin; derivados se ajustam sozinhos).
+- Nova direção visual: paleta terrosa em camadas — chocolate #3A2E27, caramelo #A98E72, creme #F2EAE0, dourado latte #C5A880 (todos editáveis nos color pickers do admin; derivados se ajustam sozinhos).
 - Hero com foto ambiente em tela cheia + overlay chocolate, título serif itálico com reveal linha a linha, chips (data/vagas/preço), CTA pill creme, selo giratório e indicador de scroll; parallax no fundo.
 - Experiência em seção escura (linhas editoriais com numerais itálicos dourados); Sobre a Lígia em caramelo com retrato em MOLDURA DE CELULAR + badge +20 anos e textos creme; títulos das seções em itálico; cards com hover lift; checkout/cadastro/ingresso seguem o mesmo tema.
 - Toda a funcionalidade preservada: vagas em tempo real, InfinitePay, Resend, WhatsApp, admin.
+
+## Refinamento orgânico + rosa queimado (2026-09-28)
+- Linguagem "psicologia": seções sobrepostas com cantos curvos (rounded-t-[2.5/4rem] + margem negativa), traços squiggle que se desenham no scroll (Squiggle), blobs orgânicos animados (Blob) atrás de oferta/retrato.
+- Rosa queimado #C4705C adicionado à paleta (token rose/roselight + 5º color picker no admin; derivados automáticos).
+- Regra de contraste aplicada: fonte branca sobre caramelo/rosa/chocolate (Sobre, Conexão, Experiência, CTA final); dourado nunca como texto sobre fundos claros; textos auxiliares escurecidos.
+- Preço e vagas limitados a 2 seções (Detalhes do evento + Oferta): hero mostra só a data, CTA final sem meta de valores, barra fixa só preço, menu mobile só data. FAQ mantém respostas (conteúdo solicitado no briefing original).

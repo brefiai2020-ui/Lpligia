@@ -18,7 +18,7 @@ export const Eyebrow = ({ children, center = false, tone = "gold" }) => {
         dark: "text-ink",
         light: "text-cream/90",
     };
-    const line = { gold: "bg-gold/60", dark: "bg-gold/70", light: "bg-cream/50" };
+    const line = { gold: "bg-gold/60", dark: "bg-rose/80", light: "bg-white/60" };
     return (
         <p
             className={`flex items-center gap-3 text-[11px] uppercase tracking-[0.28em] ${tones[tone]} ${

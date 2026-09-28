@@ -1,136 +1,99 @@
 {
   "project_title": "Mentoria em Grupo - Dra. Lígia Jeane Matroski",
-  "design_archetype": "Awwwards Editorial & Organic Warmth (Serif Italic + Earthy Layered Palette)",
-  "context_type": "Marketing / Sales Landing Page (Human, Feminine, High-Impact Editorial)",
-  "colors": {
-    "dark_chocolate": "#3A2E27",
-    "caramel_taupe": "#A98E72",
-    "creme_bone": "#F2EAE0",
-    "latte_gold": "#D4C3A3",
-    "accent_warm_gold": "#C5A880",
-    "text_primary_dark": "#2A211B",
-    "text_primary_light": "#F2EAE0",
-    "text_muted": "#7A6B60",
-    "border_subtle_light": "rgba(242, 234, 224, 0.18)",
-    "border_subtle_dark": "rgba(58, 46, 39, 0.12)",
-    "admin_pickers_supported": [
-      "fundo_claro (#F2EAE0)",
-      "bege_caramelo (#A98E72)",
-      "escuro (#3A2E27)",
-      "dourado (#C5A880)"
-    ]
+  "design_archetype": "Organic Warm Psychology & High-End Editorial",
+  "context_type": "Marketing / Sales Landing Page",
+  "theme": {
+    "primary_mode": "Warm Multi-Layered Natural Tones",
+    "background_palette": {
+      "chocolate_dark": "#3A2E27",
+      "caramel_warm": "#A98E72",
+      "cream_light": "#F2EAE0",
+      "cream_pure": "#FAFAF7",
+      "gold_accent": "#C5A880",
+      "gold_light_contrast": "#E5C99F"
+    }
   },
   "typography": {
-    "heading_font_family": "Cormorant Garamond, Playfair Display, serif",
-    "heading_style": "italic font-serif font-light tracking-tight",
-    "body_font_family": "Plus Jakarta Sans, DM Sans, sans-serif",
-    "body_style": "font-sans leading-relaxed tracking-normal",
-    "mono_font_family": "JetBrains Mono, monospace",
-    "scale": {
-      "h1_hero": "text-4xl sm:text-5xl lg:text-6xl font-light italic leading-[1.1]",
-      "h2_section": "text-2xl sm:text-3xl lg:text-4xl font-light italic leading-[1.2]",
-      "h3_card": "text-xl sm:text-2xl font-normal italic leading-[1.3]",
-      "body_lg": "text-lg sm:text-xl font-normal leading-relaxed",
-      "body_base": "text-base font-normal leading-relaxed",
-      "overline_label": "text-xs uppercase tracking-[0.25em] font-medium opacity-80"
+    "heading_font": "Cormorant Garamond, serif",
+    "heading_style": "italic font-serif font-medium tracking-tight",
+    "body_font": "Plus Jakarta Sans, sans-serif",
+    "hierarchy": {
+      "hero_title": "text-4xl sm:text-5xl lg:text-6xl font-serif italic text-cream_light leading-[1.15]",
+      "section_heading": "text-3xl sm:text-4xl lg:text-5xl font-serif italic text-chocolate_dark leading-tight",
+      "section_heading_dark_bg": "text-3xl sm:text-4xl lg:text-5xl font-serif italic text-cream_light leading-tight",
+      "card_title": "text-xl sm:text-2xl font-serif italic",
+      "body": "text-base sm:text-lg leading-relaxed font-sans",
+      "small_label": "text-xs sm:text-sm uppercase tracking-[0.2em] font-semibold"
     }
   },
-  "layout_and_spacing": {
-    "border_radius": "cards 16px to 24px (rounded-2xl or rounded-3xl), buttons pill (rounded-full)",
-    "padding_scale": "generous spacing (py-16, py-24, py-32 for desktop sections; px-6 or px-8 internal card padding)",
-    "grid_modes": {
-      "marketing_bento": "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8",
-      "pillars_grid": "grid-cols-1 md:grid-cols-3 gap-8",
-      "services_pills": "flex flex-wrap gap-3"
+  "contrast_rules_mandatory": {
+    "caramel_background": {
+      "bg_hex": "#A98E72",
+      "allowed_text_colors": [
+        "#F2EAE0 (Cream)",
+        "#FFFFFF (Pure White)",
+        "#3A2E27 (Dark Chocolate)"
+      ],
+      "forbidden_text_colors": [
+        "#C5A880 (Gold)",
+        "#A98E72 (Self Caramel)",
+        "Any low-contrast tan"
+      ],
+      "rule": "On Caramel backgrounds, text MUST ALWAYS be Cream/White or Dark Chocolate. Gold text is strictly forbidden due to insufficient APCA contrast ratio."
+    },
+    "cream_background": {
+      "bg_hex": "#F2EAE0 or #FAFAF7",
+      "allowed_text_colors": [
+        "#3A2E27 (Dark Chocolate)",
+        "#241D18 (Charcoal Dark)",
+        "#504137 (Warm Dark Brown)"
+      ],
+      "forbidden_text_colors": [
+        "#C5A880 (Gold for body/headings)",
+        "#A98E72 (Caramel for body text)"
+      ],
+      "rule": "On Cream backgrounds, all body text, over-lines, and headings must use Dark Chocolate or Charcoal. Gold is permitted ONLY for decorative SVG lines or icon strokes with >= 2px width."
+    },
+    "chocolate_background": {
+      "bg_hex": "#3A2E27",
+      "allowed_text_colors": [
+        "#F2EAE0 (Cream)",
+        "#FFFFFF (White)",
+        "#E5C99F (High-Contrast Champagne Gold)"
+      ],
+      "forbidden_text_colors": [
+        "#A98E72 (Mid Caramel for body text)",
+        "Dark grays"
+      ],
+      "rule": "On Dark Chocolate backgrounds, text must be Cream or High-Contrast Champagne Gold (#E5C99F) to guarantee readability."
     }
   },
-  "components_and_sections": [
-    {
-      "name": "Navbar",
-      "path": "src/components/Navbar.jsx",
-      "instructions": "Transitions from transparent over Hero to solid backdrop-blur-md (#3A2E27/90 or #F2EAE0/95) on scroll. Features brand logo/monogram, smooth anchor links (#sobre, #pilares, #detalhes, #investimento, #faq), remaining spots indicator badge, and 'Garantir Minha Vaga' pill button."
-    },
-    {
-      "name": "Hero Section",
-      "path": "src/sections/Hero.jsx",
-      "instructions": "Fullscreen editorial presentation with full-bleed warm therapeutic interior background photo (without face). Subtle dark gradient overlay (bg-black/40 via-black/20). Masked line-by-line reveal text animation. Big italic display serif headline: 'Um espaço seguro para transformar incertezas em clareza com a Dra. Lígia Jeane'. Subheadline, event date badge (10/10/2026 - 50 vagas), and creme pill CTA button with smooth scroll or modal trigger."
-    },
-    {
-      "name": "Marquee",
-      "path": "src/sections/Marquee.jsx",
-      "instructions": "Slow, elegant editorial drift ribbon with low-contrast warm text and serif italic key phrases separated by subtle dots or icons."
-    },
-    {
-      "name": "Emotional Block",
-      "path": "src/sections/Connection.jsx",
-      "instructions": "High-impact emotional section centered around 'Talvez você não precise de mais respostas.' Generous negative space, warm background texture, intimate tone of voice."
-    },
-    {
-      "name": "For You (6 Cards)",
-      "path": "src/sections/ForYou.jsx",
-      "instructions": "6 generous rounded cards (16-24px radius) titled 'Essa experiência é para você que...'. Deep chocolate or warm caramel border highlights, subtle hover lift, data-testid attributes for each item."
-    },
-    {
-      "name": "3 Pillars",
-      "path": "src/sections/Experience.jsx",
-      "instructions": "Three prominent pillars: 01 Consciência, 02 Reflexão, 03 Novas possibilidades. Numbered with large soft gold italic numerals (01, 02, 03) and editorial description blocks."
-    },
-    {
-      "name": "Dark Section with Mockup & Services",
-      "path": "src/sections/VideoSection.jsx",
-      "instructions": "Rich dark chocolate (#3A2E27) background section. 16:9 aspect ratio video container with custom 'DAR PLAY' trigger button, accompanied by laptop/tablet mockup visual and pill buttons list for mentorship features and deliverables."
-    },
-    {
-      "name": "Sobre a Lígia",
-      "path": "src/sections/About.jsx",
-      "instructions": "Caramel/taupe (#A98E72) background section. Professional photo inside a realistic Phone Frame mockup (Moldura de Celular). Displays Monogram LJ placeholder gracefully if official photo is not uploaded in admin. Bio highlight: 20+ years of clinical psychology & mentorship experience, approach, and credentials."
-    },
-    {
-      "name": "Impact Quote",
-      "path": "src/sections/ImpactQuote.jsx",
-      "instructions": "A bold, reflective sentence in large Cormorant Garamond italic serif with warm background accent."
-    },
-    {
-      "name": "Event Details & Real-Time Seats",
-      "path": "src/sections/EventDetails.jsx",
-      "instructions": "Clear event schedule details (10/10/2026, Online ao Vivo, Grupo Fechado). Real-time seats counter with 3 states: 'Restam X vagas', 'Última vaga disponível', 'Inscrições encerradas'."
-    },
-    {
-      "name": "Offer & Pricing",
-      "path": "src/sections/Offer.jsx",
-      "instructions": "Transparent pricing cards comparing Pix (R$ 189,90) vs Cartão (R$ 229,00 em até 3x). Highlights benefits, immediate checkout access via InfinitePay, and 3 purchase steps."
-    },
-    {
-      "name": "FAQ Accordion",
-      "path": "src/sections/Faq.jsx",
-      "instructions": "Shadcn accordion styled with custom warm borders and readable contrast. Covers event mechanics, recording access, refund policy, and privacy."
-    },
-    {
-      "name": "Final CTA & Fixed Mobile CTA",
-      "path": "src/sections/FinalCta.jsx",
-      "instructions": "Compelling wrap-up CTA banner. Includes sticky mobile bottom bar with seat counter and quick registration CTA."
-    },
-    {
-      "name": "Footer",
-      "path": "src/components/Footer.jsx",
-      "instructions": "Dark chocolate background with logo, CRP credentials, terms & privacy modals, copyright 2026."
-    }
+  "organic_design_language": {
+    "curved_section_dividers": "Use custom organic SVG wave/curve dividers between contrasting background sections (e.g. SVG path transitioning from Cream to Chocolate or Caramel).",
+    "overlapping_rounded_blocks": "Apply generous top border radii (e.g., rounded-t-[2.5rem] md:rounded-t-[4rem]) with negative top margin (-mt-8 or -mt-12) and elevated z-index so sections soft-overlap each other like organic layers.",
+    "blob_backgrounds": "Use subtle SVG organic blob shapes behind portrait photos, benefit cards, and callout statistics to create a soft psychological human touch.",
+    "psychology_squiggle_lines": "Integrate fine gold continuous line art ('squiggle' / traços de conexão mental / Rorschach-inspired fluid strokes) that trace on scroll or gently float as decorative accents in section margins."
+  },
+  "component_path": "/app/frontend/src",
+  "preserved_functionalities": [
+    "Real-time spots counter state (Restam X vagas / Última vaga / Inscrições encerradas)",
+    "Modal signup flow: Name + Email + Phone input -> Option selection (Pix R$ 189,90 vs Cartão R$ 229,00 in 3x)",
+    "InfinitePay checkout redirect / mock gateway transition",
+    "Ticket generation page with unique QR code",
+    "FAQ Accordion interactive expand/collapse",
+    "Video player with 'DAR PLAY' preview state",
+    "Sticky mobile CTA bottom bar with live spot count",
+    "Footer admin link and all data-testid attributes intact"
   ],
   "image_urls": {
-    "hero_background": "https://images.unsplash.com/photo-1701817822150-2d218d8610e6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwzfHx3YXJtJTIwdGhlcmFwZXV0aWMlMjBvZmZpY2UlMjB0aGVyYXB5JTIwaW50ZXJpb3IlMjBjb3p5JTIwbWluaW1hbGlzdHxlbnwwfHx8fDE3OTA2MjE2MzR8MA&ixlib=rb-4.1.0&q=85",
-    "hero_background_alt": "https://images.unsplash.com/photo-1601617956235-c97e358d054f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwyfHx3YXJtJTIwdGhlcmFwZXV0aWMlMjBvZmZpY2UlMjB0aGVyYXB5JTIwaW50ZXJpb3IlMjBjb3p5JTIwbWluaW1hbGlzdHxlbnwwfHx8fDE3OTA2MjE2MzR8MA&ixlib=rb-4.1.0&q=85",
-    "editorial_portrait_bg": "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzV8MHwxfHNlYXJjaH3zfHx3YXJtJTIwbmV1dHJhbCUyMGVkaXRvcmlhbCUyMGFlc3RoZXRpYyUyMHBvcnRyYWl0JTIwcHJvZmlsZSUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzkwNjIxNjM0fDA&ixlib=rb-4.1.0&q=85",
-    "abstract_warm_texture": "https://images.unsplash.com/photo-1658934475116-990b909c3038?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzV8MHwxfHNlYXJjaHwxfHx3YXJtJTIwbmV1dHJhbCUyMGVkaXRvcmlhbCUyMGFlc3RoZXRpYyUyMHBvcnRyYWl0JTIwcHJvZmlsZSUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzkwNjIxNjM0fDA&ixlib=rb-4.1.0&q=85"
+    "hero_background": "https://images.unsplash.com/photo-1729250829618-d02a3c0e8fdb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHszfHx3b21hbiUyMHBzeWNob2xvZ2lzdCUyMHBvcnRyYWl0JTIwZWxlZ2FudCUyMHByb2Zlc3Npb25hbCUyMHdhcm18ZW58MHx8fHwxNzkwNjI3MjIyfDA&ixlib=rb-4.1.0&q=85",
+    "dra_ligia_portrait": "https://images.unsplash.com/photo-1729250827839-9d969cfbcce0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHw0fHx3b21hbiUyMHBzeWNob2xvZ2lzdCUyMHBvcnRyYWl0JTIwZWxlZ2FudCUyMHByb2Zlc3Npb25hbCUyMHdhcm18ZW58MHx8fHwxNzkwNjI3MjIyfDA&ixlib=rb-4.1.0&q=85",
+    "mentorship_ambiance": "https://images.unsplash.com/photo-1729250829867-ed80acae9e5c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzh8MHwxfHNlYXJjaHDFfHx3b21hbiUyMHBzeWNob2xvZ2lzdCUyMHBvcnRyYWl0JTIwZWxlZ2FudCUyMHByb2Zlc3Npb25hbCUyMHdhcm18ZW58MHx8fHwxNzkwNjI3MjIyfDA&ixlib=rb-4.1.0&q=85"
   },
-  "motion_and_effects": {
-    "smooth_scroll": "Lenis smooth scroll enabled",
-    "text_reveal": "Framer motion line-by-line reveal with subtle vertical motion and opacity stagger",
-    "parallax": "Subtle background shift on scroll",
-    "marquee": "Slow, unhurried continuous translation",
-    "hover_states": "Soft scale-102 transition and shadow-lg on cards, pill button light shimmer"
-  },
-  "testing_requirements": {
-    "data_testid_policy": "All interactive elements (buttons, inputs, links, tabs, accordion triggers, CTA buttons, seat counter badges, price cards) MUST include kebab-case data-testid attributes (e.g. data-testid='hero-cta-button', data-testid='seats-counter-badge', data-testid='checkout-pix-button')."
-  },
-  "instructions_to_main_agent": "Ensure all 14 functional sections are retained while applying the Awwwards editorial redesign. Preserve state logic, checkout router flows, backend API endpoints, seat counter logic, and admin setting color pickers. Do not invent testimonials or false data. Maintain mobile-first responsive design with fixed CTA."
+  "instructions_to_main_agent": [
+    "Refine LandingPage sections with organic shapes: SVG curved section transition dividers, overlapping rounded section containers (rounded-t-[3rem]), and fine gold psychology squiggles.",
+    "Fix all contrast issues strictly following contrast_rules_mandatory: replace gold text over caramel with cream/white, fix weak over-lines on light backgrounds to use dark chocolate.",
+    "Do NOT alter business logic, state handlers, API calls, or data-testid attributes.",
+    "Ensure mobile responsiveness and fixed bottom CTA functionality remain smooth and touch-friendly."
+  ]
 }

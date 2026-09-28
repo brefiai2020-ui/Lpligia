@@ -35,9 +35,10 @@ const TEXT_FIELDS = {
 
 const COLORS = [
     ["colorPaper", "Fundo claro"],
-    ["colorBeige", "Bege / cards"],
-    ["colorInk", "Escuro / seções"],
-    ["colorGold", "Destaque (dourado)"],
+    ["colorBeige", "Bege / caramelo"],
+    ["colorInk", "Marrom escuro"],
+    ["colorGold", "Dourado"],
+    ["colorRose", "Rosa queimado"],
 ];
 
 export default function SettingsPanel() {

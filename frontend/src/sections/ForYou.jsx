@@ -1,5 +1,6 @@
 import { Sprout, Repeat, Compass, Eye, PauseCircle, Aperture } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
+import { Squiggle } from "@/components/Organic";
 
 const ITEMS = [
     { icon: Sprout, text: "Está vivendo uma fase de mudanças." },
@@ -12,19 +13,23 @@ const ITEMS = [
 
 export default function ForYou() {
     return (
-        <section className="bg-paper py-24 sm:py-32" data-testid="for-you-section">
+        <section
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-paper py-24 sm:py-32"
+            data-testid="for-you-section"
+        >
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
                 <Reveal>
                     <Eyebrow tone="dark">Para quem é</Eyebrow>
                     <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
                         Essa experiência é para você que...
                     </h2>
+                    <Squiggle className="w-44 mt-6" color="rgb(var(--c-rose-rgb))" />
                 </Reveal>
                 <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {ITEMS.map((item, i) => (
                         <Reveal key={i} delay={0.06 * i} className="h-full">
                             <div className="h-full bg-cream border border-line/50 rounded-3xl p-7 hover:border-gold hover:-translate-y-1 hover:shadow-lg transition-all duration-300">
-                                <span className="w-11 h-11 rounded-full border border-gold/60 text-gold flex items-center justify-center">
+                                <span className="w-11 h-11 rounded-full border border-rose/70 text-rose flex items-center justify-center">
                                     <item.icon size={19} strokeWidth={1.4} />
                                 </span>
                                 <p className="mt-6 text-ink leading-relaxed">{item.text}</p>

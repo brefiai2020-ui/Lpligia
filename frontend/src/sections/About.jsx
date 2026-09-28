@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Hourglass, HeartHandshake, Compass, Sparkles, ArrowUpRight } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
+import { Blob, Squiggle } from "@/components/Organic";
 import PortraitFrame from "@/components/PortraitFrame";
 import { useSettings } from "@/lib/settings";
 
@@ -37,7 +38,7 @@ export function PhonePortrait() {
                 </div>
             </div>
             <div
-                className="absolute -right-5 top-14 w-24 h-24 rounded-full bg-gold text-ink flex flex-col items-center justify-center shadow-lg rotate-3"
+                className="absolute -right-5 top-14 w-24 h-24 rounded-full bg-rose text-white flex flex-col items-center justify-center shadow-lg rotate-3"
                 data-testid="about-experience-badge"
             >
                 <span className="font-serif italic text-2xl leading-none">+20</span>
@@ -53,8 +54,13 @@ export default function About() {
     const instagramUrl = s.instagram ? `https://instagram.com/${s.instagram.replace("@", "")}` : "https://instagram.com/";
 
     return (
-        <section id="sobre" className="bg-beige py-24 sm:py-32 scroll-mt-20 relative overflow-hidden" data-testid="about-section">
+        <section
+            id="sobre"
+            className="relative z-10 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-8 md:-mt-12 bg-beige py-24 sm:py-32 scroll-mt-20 overflow-hidden"
+            data-testid="about-section"
+        >
             <div className="absolute inset-0 texture-grain opacity-10" aria-hidden="true" />
+            <Blob className="-top-10 -left-16 w-72 h-72 bg-cream/15" />
             <div className="relative max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-12 gap-16 lg:gap-10 items-center">
                 <Reveal className="lg:col-span-5">
                     <PhonePortrait />
@@ -63,11 +69,11 @@ export default function About() {
                 <div className="lg:col-span-7">
                     <Reveal>
                         <Eyebrow tone="light">Sobre a Lígia</Eyebrow>
-                        <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl lg:text-5xl text-cream leading-tight">
+                        <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
                             Quem vai conduzir essa experiência?
                         </h2>
-                        <p className="mt-5 font-serif italic text-2xl text-ink">Dra. Lígia Jeane Matroski</p>
-                        <p className="mt-5 text-ink/85 leading-relaxed max-w-xl">
+                        <p className="mt-5 font-serif italic text-2xl text-white/90">Dra. Lígia Jeane Matroski</p>
+                        <p className="mt-5 text-white/95 leading-relaxed max-w-xl">
                             Psicóloga clínica e mentora há mais de 20 anos, com uma trajetória dedicada ao
                             desenvolvimento humano, despertar e expansão da consciência.
                         </p>
@@ -77,10 +83,10 @@ export default function About() {
                             {CREDS.map((c) => (
                                 <div
                                     key={c.label}
-                                    className="flex items-center gap-3 bg-cream/15 border border-cream/30 rounded-xl px-5 py-4"
+                                    className="flex items-center gap-3 bg-white/15 border border-white/40 rounded-xl px-5 py-4"
                                 >
-                                    <c.icon size={18} strokeWidth={1.4} className="text-cream shrink-0" />
-                                    <span className="text-sm text-cream">{c.label}</span>
+                                    <c.icon size={18} strokeWidth={1.4} className="text-white shrink-0" />
+                                    <span className="text-sm text-white">{c.label}</span>
                                 </div>
                             ))}
                         </div>
@@ -89,7 +95,7 @@ export default function About() {
                             href={instagramUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="mt-10 h-14 px-9 inline-flex items-center gap-2 rounded-full bg-cream text-ink text-sm uppercase tracking-[0.18em] hover:bg-ink hover:text-cream transition-colors duration-300"
+                            className="mt-10 h-14 px-9 inline-flex items-center gap-2 rounded-full bg-white text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
                         >
                             Conhecer o trabalho da Lígia <ArrowUpRight size={16} strokeWidth={1.5} />
                         </a>

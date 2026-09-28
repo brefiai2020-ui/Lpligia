@@ -43,7 +43,7 @@ export default function Hero() {
                         transition={{ duration: 0.7, delay: 0.1, ease }}
                         className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-goldlight"
                     >
-                        <span className="h-px w-10 bg-goldlight/70" aria-hidden="true" /> Mentoria em grupo
+                        <span className="h-px w-10 bg-rose" aria-hidden="true" /> Mentoria em grupo
                     </motion.p>
 
                     <h1 className="mt-7 font-serif italic font-light text-[2.8rem] leading-[1.06] sm:text-6xl lg:text-7xl text-cream">
@@ -80,15 +80,6 @@ export default function Hero() {
                         <span className="px-4 py-2 rounded-full bg-cream/10 border border-cream/25 backdrop-blur text-[11px] uppercase tracking-[0.2em] text-cream">
                             {s.eventDateLabel}
                         </span>
-                        <span
-                            className="px-4 py-2 rounded-full bg-cream/10 border border-cream/25 backdrop-blur text-[11px] uppercase tracking-[0.2em] text-cream"
-                            data-testid="hero-seats-label"
-                        >
-                            {s.seatsLabel}
-                        </span>
-                        <span className="px-4 py-2 rounded-full bg-gold/20 border border-gold/40 backdrop-blur text-[11px] uppercase tracking-[0.2em] text-goldlight">
-                            {formatBRL(s.pricePix)} no Pix
-                        </span>
                     </motion.div>
 
                     <motion.div
@@ -108,7 +99,7 @@ export default function Hero() {
                             <Link
                                 data-testid="hero-cta-button"
                                 to="/inscricao/cadastro"
-                                className="h-14 px-9 whitespace-nowrap inline-flex items-center justify-center rounded-full bg-cream text-ink text-sm uppercase tracking-[0.18em] hover:bg-gold transition-colors duration-300"
+                                className="h-14 px-9 whitespace-nowrap inline-flex items-center justify-center rounded-full bg-cream text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
                             >
                                 Quero garantir minha vaga
                             </Link>
@@ -126,10 +117,9 @@ export default function Hero() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.8, delay: 1.3 }}
-                        className="mt-8 flex items-center gap-2 text-xs text-cream/60"
+                        className="mt-8 flex items-center gap-2 text-xs text-cream/75"
                         data-testid="hero-quote-card"
                     >
-                        <ShieldCheck size={14} strokeWidth={1.5} className="text-goldlight" />
                         <span className="font-serif italic text-base text-goldlight mr-2">
                             “{s.heroQuote}”
                         </span>
