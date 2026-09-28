@@ -1,0 +1,139 @@
+{
+  "project_name": "Mentoria em Grupo Dra. Lígia Jeane Matroski",
+  "design_archetype": "ARCHETYPE 5: LUXURY & EDITORIAL HUMANISM (Acolhimento, Profundidade e Sofisticação)",
+  "theme_strategy": {
+    "primary_mode": "Light Editorial Warm Neutral",
+    "concept": "Menos é Mais - Design editorial, sereno e orgânico com espaço negativo abundante e tipografia refinada, evitando visual agressivo de infoproduto."
+  },
+  "typography": {
+    "headline_font": "Cormorant Garamond, Bodoni Moda, Playfair Display, serif",
+    "body_font": "Plus Jakarta Sans, Manrope, sans-serif",
+    "mono_accent_font": "JetBrains Mono, monospace (para códigos de ingresso e números de pilar)",
+    "scale": {
+      "h1": "text-3xl sm:text-5xl lg:text-6xl font-serif tracking-tight leading-[1.15]",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl font-serif tracking-normal leading-[1.25]",
+      "h3": "text-xl sm:text-2xl font-serif tracking-normal leading-snug",
+      "h4": "text-lg sm:text-xl font-medium tracking-wide",
+      "body": "text-base text-stone-700 leading-relaxed font-normal",
+      "body_sm": "text-sm text-stone-600 leading-relaxed",
+      "caption": "text-xs tracking-[0.2em] uppercase font-medium text-stone-500"
+    }
+  },
+  "colors": {
+    "off_white": "#FAF8F5",
+    "beige_light": "#F3ECE3",
+    "beige_card": "#F8F4EE",
+    "charcoal_black": "#171615",
+    "warm_gray": "#4A4643",
+    "stone_border": "#E5DEC",
+    "subtle_gold": "#C5A059",
+    "soft_gold_light": "#EAD8B1",
+    "accent_success": "#2D5A3A",
+    "accent_error": "#8B2626",
+    "background_main": "bg-[#FAF8F5]",
+    "background_alt": "bg-[#F3ECE3]",
+    "card_bg": "bg-[#F8F4EE] border border-[#E5DEC1]/50 shadow-sm rounded-2xl"
+  },
+  "layout_and_spacing": {
+    "padding_system": "Generous spacing philosophy (p-6, p-10, p-16, p-24, p-32)",
+    "container_max_width": "max-w-6xl mx-auto px-4 sm:px-6 lg:px-8",
+    "bento_grid_style": "Mode A Tetris / Editorial Cards com bordas finas #E5DEC1/50, sombras suaves e cantos arredondados (rounded-2xl ou rounded-3xl)",
+    "mobile_first_rules": "Padding responsivo p-4 sm:p-8, imagens max-h-[75vh], botões grandes touch-friendly (min h-12 ou h-14) e CTA flutuante opcional no rodapé mobile."
+  },
+  "media_assets": {
+    "mentor_photo_portrait": "https://images.unsplash.com/photo-1581403341630-a6e0b9d2d257?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwzfHxlbGVnYW50JTIwd29tYW4lMjBwb3J0cmFpdCUyMHdhcm0lMjBhZXN0aGV0aWMlMjBwcm9maWxlJTIwcHN5Y2hvbG9neSUyMG1lbnRvcnxlbnwwfHx8fDE3OTA2MTQ3Mjd8MA&ixlib=rb-4.1.0&q=85",
+    "mentor_photo_secondary": "https://images.unsplash.com/photo-1552699611-e2c208d5d9cf?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2OTF8MHwxfHNlYXJjaHwxfHxlbGVnYW50JTIwd29tYW4lMjBwb3J0cmFpdCUyMHdhcm0lMjBhZXN0aGV0aWMlMjBwcm9maWxlJTIwcHN5Y2hvbG9neSUyMG1lbnRvcnxlbnwwfHx8fDE3OTA2MTQ3Mjd8MA&ixlib=rb-4.1.0&q=85",
+    "architectural_texture": "https://images.unsplash.com/photo-1601993957728-1e56ab70c5a8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODd8MHwxfHNlYXJjaHw0fHx3YXJtJTIwYmVpZ2UlMjBlZGl0b3JpYWwlMjB0ZXh0dXJlJTIwY2FsbSUyMGFlc3RoZXRpYyUyMHJvb20lMjBhcmNoaXRlY3R1cmFsJTIwZm9jdXN8ZW58MHx8fHwxNzkwNjE0NzM0fDA&ixlib=rb-4.1.0&q=85",
+    "abstract_organic_waves": "https://images.unsplash.com/photo-1714636608872-048fc9231892?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODd8MHwxfHNlYXJjaHwxfHx3YXJtJTIwYmVpZ2UlMjBlZGl0b3JpYWwlMjB0ZXh0dXJlJTIwY2FsbSUyMGFlc3RoZXRpYyUyMHJvb20lMjBhcmNoaXRlY3R1cmFsJTIwZm9jdXN8ZW58MHx8fHwxNzkwNjE0NzM0fDA&ixlib=rb-4.1.0&q=85",
+    "monogram_placeholder": "LJ Monogram Badge em vetor elegante dourado com degradê fosco caso o usuário queira alternar."
+  },
+  "landing_page_structure": {
+    "1_header": "Header transparente com glassmorphism (backdrop-blur-md bg-[#FAF8F5]/80 no scroll), logo 'DRA. LÍGIA JEANE MATROSKI', nav links ('A experiência', 'Sobre a Lígia', 'Mentoria'), botão CTA 'QUERO PARTICIPAR', menu hambúrguer com Drawer responsivo no mobile.",
+    "2_hero": "Headline: 'Tudo começa quando você decide olhar para dentro.', subheadline refinada, badges de evento (10 DE OUTUBRO DE 2026 / MENTORIA EM GRUPO / 50 VAGAS / R$ 100), CTAs ('QUERO GARANTIR MINHA VAGA' e 'CONHECER A EXPERIÊNCIA'), foto editorial de destaque, e a citação inspiradora: 'Um encontro para parar, olhar e se escutar.'.",
+    "3_emotional_block": "Seção acolhedora com fundo beige pastel (#F3ECE3) e a frase marcante: 'Talvez você não precise de mais respostas.' com reflexão profunda.",
+    "4_for_you_section": "6 cards minimalistas 'Essa experiência é para você que...' com ícones delicados e bordas sutis.",
+    "5_pillars_section": "Seção 'Um encontro para olhar para você.' com 3 pilares numerados (01 CONSCIÊNCIA, 02 REFLEXÃO, 03 NOVAS POSSIBILIDADES) com numeração em tom dourado suave.",
+    "6_video_section": "Player de vídeo 16:9 de alta elegância, com capa customizada em tons warm neutral, botão play interativo, preparado para receber URL do YouTube/Vimeo/MP4 futura e título 'Antes de decidir participar, quero conversar com você.'.",
+    "7_about_section": "Seção Sobre a Dra. Lígia com retrato em moldura arredondada, selos '+20 anos de experiência', 'Psicóloga Clínica', 'Mentora', 'Desenvolvimento Humano' e botão 'CONHECER O TRABALHO DA LÍGIA'.",
+    "8_impact_quote": "Banner de alto contraste (fundo Charcoal #171615 com texto creme e dourado): 'Você não precisa ter todas as respostas. Precisa se permitir olhar.'.",
+    "9_event_details": "4 cards minimalistas de destaque (Data: 10 de Outubro de 2026, Formato: Mentoria em Grupo Online, Vagas: 50 vagas exclusivas, Investimento: R$ 100,00).",
+    "10_offer_section": "Card de oferta premium 'Seu próximo passo pode começar aqui.', destaques de MENTORIA EM GRUPO, R$ 100,00, 10 DE OUTUBRO, 50 VAGAS, botão principal 'QUERO GARANTIR MINHA VAGA', e microcopy: 'Pagamento seguro pelo Checkout InfinitePay.'.",
+    "11_checkout_flow_steps": "Fluxo de compra em 3 passos explicativos (01 Faça sua inscrição / 02 Realize o pagamento pelo Checkout InfinitePay / 03 Receba sua confirmação e seu ingresso digital).",
+    "12_faq_accordion": "FAQ Sanfona (Accordion) com as 6 perguntas e respostas oficiais da mentoria com interação fluida.",
+    "13_final_cta": "Bloco de encerramento emocional 'Reserve esse momento para você.' reafirmando as informações do evento e botão 'QUERO PARTICIPAR'.",
+    "14_footer": "Footer institucional minimalista com nome da mentora, registro de Psicóloga Clínica | Mentora, link de Instagram @draligijeanematroski, e modais/links para Política de Privacidade e Termos de Uso."
+  },
+  "registration_funnel_routes": {
+    "step_1_register": {
+      "route": "/inscricao/cadastro",
+      "title": "Vamos reservar sua vaga?",
+      "fields": ["Nome Completo", "WhatsApp", "E-mail", "CPF"],
+      "consent_checkbox": "Declaro que li e aceito os Termos de Uso e Política de Privacidade para participar da mentoria em grupo.",
+      "button": "CONTINUAR PARA PAGAMENTO"
+    },
+    "step_2_payment": {
+      "route": "/inscricao/pagamento",
+      "title": "Quase lá!",
+      "summary_box": {
+        "event": "Mentoria em Grupo",
+        "mentor": "Dra. Lígia Jeane Matroski",
+        "date": "10/10/2026",
+        "total": "R$ 100,00"
+      },
+      "payment_options_mockup": "Opções de pagamento Pix com visual de QR Code copia-e-cola e Cartão de Crédito via InfinitePay",
+      "button": "PAGAR COM INFINITEPAY"
+    },
+    "step_3_processing": {
+      "route": "/inscricao/processando",
+      "title": "Estamos confirmando seu pagamento...",
+      "elements": "Loader circular minimalista com brilho dourado suave e orientação 'Não feche esta página.'"
+    },
+    "step_4_confirmed": {
+      "route": "/inscricao/confirmado",
+      "title": "Pagamento confirmado!",
+      "icon": "Ícone de verificação ✓ em verde sereno / dourado",
+      "code": "MNT-2026-8942",
+      "buttons": ["ACESSAR MEU INGRESSO", "ENVIAR INGRESSO PELO WHATSAPP"]
+    },
+    "step_5_digital_ticket": {
+      "route": "/inscricao/ingresso",
+      "title": "Seu Ingresso Digital",
+      "ticket_card_style": "Ticket visual premium com bordas recortadas (stub ticket design), código MNT-2026-8942, QR Code interativo mockup, detalhes da participante e instruções de acesso.",
+      "buttons": ["ADICIONAR AO CELULAR (PASSBOOK / PDF)", "ENVIAR PELO WHATSAPP"]
+    }
+  },
+  "visual_states_management": {
+    "payment_states": ["Aguardando Pagamento", "Processando", "Aprovado", "Recusado (com botão tentar novamente)", "Expirado (com botão gerar novo código)"],
+    "sold_out_state": "Se ativado 'vagas_esgotadas = true', os botões mudam para 'Inscrições encerradas' (desabilitados) e exibe mensagem acolhedora de fila de espera."
+  },
+  "mock_services_integration": {
+    "createRegistration": "Função assíncrona mockada que grava dados em localStorage e simula resposta de API do Supabase/Backend.",
+    "createInfinitePayCheckout": "Função que simula a geração do payload de pagamento da InfinitePay e navega para /inscricao/processando.",
+    "checkPaymentStatus": "Função de simulação de webhook de confirmação em 3 segundos.",
+    "generateTicket": "Função que compõe os dados do bilhete digital MNT-2026-XXXX.",
+    "sendWhatsAppConfirmation": "Função que dispara mensagem pré-formatada do WhatsApp com link do ingresso."
+  },
+  "testing_attributes": {
+    "requirement": "Todos os elementos interativos, formulários, botões, modais e textos informativos devem conter o atributo data-testid em formato kebab-case.",
+    "examples": [
+      "data-testid=\"nav-link-experiencia\"",
+      "data-testid=\"hero-cta-button\"",
+      "data-testid=\"form-input-nome\"",
+      "data-testid=\"form-input-whatsapp\"",
+      "data-testid=\"form-input-email\"",
+      "data-testid=\"form-input-cpf\"",
+      "data-testid=\"form-checkbox-consent\"",
+      "data-testid=\"submit-registration-button\"",
+      "data-testid=\"infinitepay-checkout-button\"",
+      "data-testid=\"ticket-qr-code\"",
+      "data-testid=\"whatsapp-share-button\""
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Respeite integralmente as diretrizes de estético menos-é-mais: não crie layouts poluídos ou com excesso de sombras pesadas.",
+    "Garanta que a experiência em dispositivos móveis seja prioridade total com fontes legíveis e espaçamentos confortáveis.",
+    "Utilize a biblioteca Lucide Icons ou Phosphor Icons com traço fino e elegante.",
+    "Assegure que os modais de Política de Privacidade e Termos de Uso funcionem e sejam acessíveis.",
+    "Insira micro-interações do Framer Motion para entradas suaves de fade-in e slide-up."
+  ]
+}
