@@ -39,3 +39,10 @@ T1 PIX 18990→PAID+1 vaga ✓ · T2 CARD 22900→PAID+1 vaga ✓ · T3 CARD 3x 
 - Rosa queimado #C4705C adicionado à paleta (token rose/roselight + 5º color picker no admin; derivados automáticos).
 - Regra de contraste aplicada: fonte branca sobre caramelo/rosa/chocolate (Sobre, Conexão, Experiência, CTA final); dourado nunca como texto sobre fundos claros; textos auxiliares escurecidos.
 - Preço e vagas limitados a 2 seções (Detalhes do evento + Oferta): hero mostra só a data, CTA final sem meta de valores, barra fixa só preço, menu mobile só data. FAQ mantém respostas (conteúdo solicitado no briefing original).
+
+## Correção mobile: espaços e textos cortados (2026-09-28, reportado pela usuária)
+- Citação do hero ("Um encontro para parar...") e "Pagamento seguro" agora quebram em linhas separadas no mobile (flex-wrap no hero-quote-card).
+- Letreiro (marquee) com respiro inferior (pt-5 pb-12 md:pb-16) — o card caramelo seguinte sobrepõe só espaço vazio, nunca o texto; ganhou data-testid="marquee".
+- Respiros mobile reduzidos em todas as seções da landing (py-24→py-16; ImpactQuote py-28→py-20), desktop preservado (sm:py-32/40).
+- Barra fixa de CTA inteligente: aparece só depois de 560px rolando PARA CIMA; some ao rolar para baixo e quando a seção final-cta (id="final-cta") está visível; rodapé com pb-28 mobile para nada ficar encoberto.
+- Verificado pelo testing agent (iteration_1.json): 100% mobile+desktop, sem overflow, sem erros de console; regressão de CTAs→/inscricao/cadastro, FAQ, menu mobile, /admin e GET /api/settings 200.

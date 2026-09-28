@@ -1,0 +1,30 @@
+{
+  "summary": "Mobile (390x844) and Desktop (1440x900) UI regression tests for the 'Mentoria em Grupo' landing page. All reported mobile issues (hero quote overlap with 'Pagamento seguro', marquee cutoff, FixedCta covering content) are FIXED. Backend /api/settings returns 200. No console errors, no horizontal overflow, all key navigations (hero/offer/final CTA -> /inscricao/cadastro, footer-admin-link -> /admin) work.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "detailed_findings": {
+    "mobile_hero_quote_card": "PASS - width=350, height=48 (two lines). Quote 'Um encontro para parar...' and 'Pagamento seguro' render on separate lines via flex-wrap. No cut text.",
+    "mobile_marquee_reflexao": "PASS - Marquee 'Reflexão • Novas possibilidades' renders fully visible above the caramel Connection card in the boundary region; no half-cut at any scroll position (screenshot verified).",
+    "mobile_fixed_cta_behavior": "PASS - Verified with computed opacity/transform: at scroll=0 opacity=0 (hidden); scrolling DOWN past 560 opacity=0 (hidden); scrolling UP mid-page opacity=1 (visible); scrolling DOWN again opacity=0 (hidden); at bottom with final-cta in view opacity=0 (hidden). Footer + admin link fully legible at bottom.",
+    "mobile_horizontal_overflow": "PASS - scrollWidth=390 == innerWidth=390.",
+    "desktop_layout": "PASS - scrollWidth=1440==innerWidth=1440; hero-quote-card renders 672x24 (single visual line with 'Pagamento seguro' aligned). No console/page errors.",
+    "regression_navigation": "PASS - hero-cta-button, offer-cta-button, final-cta-button all navigate to /inscricao/cadastro (form with 6 inputs renders). faq-item-0 accordion toggles. nav-mobile-toggle opens/closes. footer-admin-link -> /admin shows login form (2 inputs, Entrar button).",
+    "backend_settings": "GET /api/settings -> 200 with full JSON payload (event_name, pricePix=189.9, priceCard=229, slotsTotal=50, etc.)"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "FixedCta.jsx uses opacity+transform for hide/show, so DOM is always visible; is_visible() returns True even when hidden. Not a bug but worth noting for future tests (use computed opacity).",
+    "Marquee element selector via TreeWalker matched a very generic child div ('flex items-center shrink-0'); consider adding a data-testid='marquee' to Marquee.jsx for more robust testing."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Landing page mobile fixes verified end-to-end. FixedCta visibility is animated via framer-motion opacity/transform — playwright's is_visible() is not sufficient; use getComputedStyle(el).opacity to assert hide/show. Marquee lacks a data-testid; if regression testing needed, prefer text-based locator or ask main agent to add data-testid='marquee'."
+}
