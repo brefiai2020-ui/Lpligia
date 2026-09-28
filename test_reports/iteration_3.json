@@ -1,0 +1,22 @@
+{
+  "summary": "Verificação ponta a ponta do acesso admin conforme reportado pela usuária ('Acesso ao Adm não funciona'). Backend + UI testados no host público https://olhar-dentro.preview.emergentagent.com. TODOS OS FLUXOS PASSARAM: (1) footer-admin-link navega para /admin; (2) senha errada -> 'E-mail ou senha incorretos.' (1 tentativa apenas, sem risco de lockout); (3) admin@draligia.com / Mentoria2026! autentica e carrega painel; (4) tabs Inscritas/Pagamentos/Editar site funcionam e /api/admin/registrations retorna 200 com dados reais (2 inscritas aguardando); (5) logout limpa token e re-exibe login; (6) sanity backend: /api/auth/me 200 role=admin, /api/admin/dashboard 200 com token e 401 sem token. CONCLUSÃO: sistema de login admin está 100% operante — usuária provavelmente estava digitando a senha errada (case-sensitive: Mentoria2026! com 'M' maiúsculo e '!' final).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [],
+  "action_items": [
+    "Informar à usuária que o login está operante. Credenciais oficiais: admin@draligia.com / Mentoria2026! (atenção: 'M' maiúsculo inicial, '2026' e '!' no final — case-sensitive).",
+    "Nenhuma correção de código necessária."
+  ],
+  "critical_code_review_comments": [
+    "AdminLogin.jsx: campos email/password não possuem atributo 'required' nem validação client-side — usuária pode submeter vazio (backend retorna 401 corretamente, mas seria melhor UX bloquear no cliente).",
+    "AdminLogin.jsx: não há indicador visual do bloqueio de 15min após 5 tentativas — se a usuária realmente ficar bloqueada, verá apenas 'E-mail ou senha incorretos.' sem saber o motivo. Considerar exibir contagem regressiva/mensagem específica quando backend retornar erro de lockout."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "admin@draligia.com / Mentoria2026! (validadas via UI real com sucesso)",
+  "seed_data_creation": "Nenhuma. 2 inscritas 'aguardando' pré-existentes visíveis no painel (Karina Vivo, Teste Layout Novo).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Login admin verificado 100% funcional em 28/09/2026. Nenhum bloqueio ativo em login_attempts. Token JWT de ~225 chars persistido em localStorage.lj_admin_token. Bug reportado pela usuária é PEBKAC (senha digitada incorretamente), não bug de código.",
+  "rca of the issue": "RCA: A usuária reportou 'Acesso ao Adm não funciona', mas todos os testes ponta a ponta (curl + Playwright na UI real) confirmam que o login funciona corretamente com admin@draligia.com / Mentoria2026!. Logs de backend mostraram 401 vindos do navegador dela — ou seja, senha digitada incorretamente. Como o sistema é case-sensitive e contém caractere especial '!', é provável erro de digitação (ex.: 'mentoria2026!' com m minúsculo, ou faltando o '!' no final, ou 'Mentoria2026' sem exclamação). Mitigação: comunicar explicitamente à usuária a senha exata destacando maiúscula/minúscula e o '!' final."
+}

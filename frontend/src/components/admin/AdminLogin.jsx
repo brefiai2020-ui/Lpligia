@@ -31,6 +31,8 @@ export default function AdminLogin({ onLogin }) {
                     <input
                         data-testid="admin-login-email"
                         type="email"
+                        required
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full py-3.5 px-4 rounded-xl border border-line bg-cream text-ink focus:border-gold transition-colors"
@@ -41,6 +43,8 @@ export default function AdminLogin({ onLogin }) {
                     <input
                         data-testid="admin-login-password"
                         type="password"
+                        required
+                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full py-3.5 px-4 rounded-xl border border-line bg-cream text-ink focus:border-gold transition-colors"
