@@ -2,21 +2,26 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
-
-const QA = [
-    { q: "Quando será a mentoria?", a: "10 de outubro de 2026." },
-    { q: "Qual o investimento?", a: "R$ 100,00." },
-    { q: "Quantas vagas estão disponíveis?", a: "50 vagas." },
-    { q: "Como faço o pagamento?", a: "O pagamento será realizado pelo Checkout InfinitePay." },
-    {
-        q: "Como receberei meu ingresso?",
-        a: "Após a confirmação do pagamento, você receberá as instruções para acessar seu ingresso digital.",
-    },
-    { q: "Preciso imprimir o ingresso?", a: "Não. O ingresso digital poderá ser apresentado pelo celular." },
-];
+import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function Faq() {
+    const { settings: s } = useSettings();
     const [open, setOpen] = useState(0);
+
+    const QA = [
+        { q: "Quando será a mentoria?", a: `${s.eventDateLabel}.` },
+        {
+            q: "Qual o investimento?",
+            a: `${formatBRL(s.pricePix)} no Pix ou ${formatBRL(s.priceCard)} no cartão em até ${s.installments}x.`,
+        },
+        { q: "Quantas vagas estão disponíveis?", a: `${s.slotsTotal} vagas.` },
+        { q: "Como faço o pagamento?", a: "O pagamento será realizado pelo Checkout InfinitePay." },
+        {
+            q: "Como receberei meu ingresso?",
+            a: "Após a confirmação do pagamento, você receberá as instruções para acessar seu ingresso digital.",
+        },
+        { q: "Preciso imprimir o ingresso?", a: "Não. O ingresso digital poderá ser apresentado pelo celular." },
+    ];
 
     return (
         <section className="bg-cream py-24 sm:py-32" data-testid="faq-section">

@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { toast } from "sonner";
 import CheckoutShell from "@/components/CheckoutShell";
-import { createRegistration } from "@/services/mockServices";
-import { FLAGS } from "@/config";
+import { apiService, formatApiError, setStoredRegistrationId } from "@/services/api";
+import { useSettings } from "@/lib/settings";
 
 const maskPhone = (v) => {
     v = v.replace(/\D/g, "").slice(0, 11);
@@ -19,10 +19,12 @@ const maskCpf = (v) => {
 
 export default function Signup() {
     const navigate = useNavigate();
+    const { settings: s } = useSettings();
     const [params] = useSearchParams();
-    const soldOut = FLAGS.soldOut || params.get("st") === "esgotado";
+    const soldOut = s.soldOut || params.get("st") === "esgotado";
     const [fields, setFields] = useState({ nome: "", whatsapp: "", email: "", cpf: "", consent: false });
     const [errors, setErrors] = useState({});
+    const [formError, setFormError] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
     const set = (key, value) => setFields((f) => ({ ...f, [key]: value }));
@@ -39,15 +41,17 @@ export default function Signup() {
 
     const onSubmit = async (ev) => {
         ev.preventDefault();
+        setFormError("");
         const e = validate();
         setErrors(e);
         if (Object.keys(e).length) return;
         setSubmitting(true);
         try {
-            await createRegistration(fields);
+            const { data } = await apiService.createRegistration(fields);
+            setStoredRegistrationId(data.id);
             navigate("/inscricao/pagamento");
-        } catch {
-            toast.error("Não foi possível concluir agora. Tente novamente.");
+        } catch (err) {
+            setFormError(formatApiError(err, "Não foi possível concluir agora. Tente novamente."));
             setSubmitting(false);
         }
     };
@@ -87,9 +91,9 @@ export default function Signup() {
             ) : (
                 <>
                     <h1 className="font-serif text-4xl sm:text-5xl text-ink leading-tight" data-testid="signup-title">
-                        Vamos reservar sua vaga?
+                        {s.formTitle}
                     </h1>
-                    <p className="mt-4 text-smoke">Leva menos de um minuto.</p>
+                    <p className="mt-4 text-smoke">{s.formSubtitle}</p>
 
                     <form onSubmit={onSubmit} className="mt-10 space-y-6" noValidate data-testid="signup-form">
                         <Field label="Nome completo" error={errors.nome}>
@@ -99,7 +103,7 @@ export default function Signup() {
                                 value={fields.nome}
                                 onChange={(e) => set("nome", e.target.value)}
                                 placeholder="Seu nome completo"
-                                className="w-full h-13 py-3.5 px-4 rounded-xl border border-line bg-cream text-ink placeholder:text-smoke/40 focus:border-gold transition-colors"
+                                className="w-full py-3.5 px-4 rounded-xl border border-line bg-cream text-ink placeholder:text-smoke/40 focus:border-gold transition-colors"
                             />
                         </Field>
 
@@ -146,11 +150,15 @@ export default function Signup() {
                                 onChange={(e) => set("consent", e.target.checked)}
                                 className="mt-1 w-4 h-4 accent-[#C5A059]"
                             />
-                            <span className="text-sm text-smoke leading-relaxed">
-                                Concordo com o uso dos meus dados para fins de inscrição e comunicação sobre o evento.
-                            </span>
+                            <span className="text-sm text-smoke leading-relaxed">{s.consentText}</span>
                         </label>
                         {errors.consent && <p className="text-xs text-wine -mt-3">{errors.consent}</p>}
+
+                        {formError && (
+                            <p className="text-xs text-wine" data-testid="form-error">
+                                {formError}
+                            </p>
+                        )}
 
                         <button
                             data-testid="submit-registration-button"
@@ -176,3 +184,4 @@ function Field({ label, error, children }) {
         </div>
     );
 }
+

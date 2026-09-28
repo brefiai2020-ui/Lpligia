@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Play } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { Monogram } from "@/components/Monogram";
-import { VIDEO_URL, EVENT } from "@/config";
+import { useSettings } from "@/lib/settings";
 
 export default function VideoSection() {
+    const { settings: s } = useSettings();
     const [playing, setPlaying] = useState(false);
 
     return (
@@ -27,10 +28,10 @@ export default function VideoSection() {
                         className="mt-12 relative rounded-3xl overflow-hidden bg-ink aspect-video group"
                         data-testid="video-player"
                     >
-                        {VIDEO_URL ? (
+                        {s.videoUrl ? (
                             <iframe
-                                src={VIDEO_URL}
-                                title={EVENT.mentor}
+                                src={s.videoUrl}
+                                title="Dra. Lígia Jeane Matroski"
                                 className="absolute inset-0 w-full h-full"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
@@ -42,7 +43,7 @@ export default function VideoSection() {
                                     Espaço reservado para o vídeo da Dra. Lígia.
                                 </p>
                                 <p className="text-[10px] uppercase tracking-[0.22em] text-cream/50">
-                                    A URL do vídeo será conectada em config.js
+                                    A URL do vídeo pode ser configurada na área administrativa
                                 </p>
                             </div>
                         ) : (

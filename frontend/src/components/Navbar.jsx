@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { scrollToId } from "@/lib/scroll";
-import { FLAGS } from "@/config";
+import { useSettings, formatBRL } from "@/lib/settings";
 
 const LINKS = [
     { label: "A experiência", id: "experiencia" },
@@ -12,6 +12,7 @@ const LINKS = [
 ];
 
 export default function Navbar() {
+    const { settings: s } = useSettings();
     const [scrolled, setScrolled] = useState(false);
     const [open, setOpen] = useState(false);
     const location = useLocation();
@@ -41,7 +42,7 @@ export default function Navbar() {
         }
     };
 
-    const ctaLabel = FLAGS.soldOut ? "Inscrições encerradas" : "Quero participar";
+    const ctaLabel = s.soldOut ? "Inscrições encerradas" : "Quero participar";
 
     return (
         <>
@@ -85,7 +86,7 @@ export default function Navbar() {
                             data-testid="nav-cta-button"
                             to="/inscricao/cadastro"
                             className={`h-11 px-6 inline-flex items-center rounded-full text-[13px] uppercase tracking-[0.18em] transition-colors duration-300 ${
-                                FLAGS.soldOut
+                                s.soldOut
                                     ? "bg-cream/60 text-smoke/60 cursor-not-allowed pointer-events-none border border-line"
                                     : "bg-ink text-paper hover:bg-gold hover:text-ink"
                             }`}
@@ -134,7 +135,7 @@ export default function Navbar() {
                             to="/inscricao/cadastro"
                             onClick={() => setOpen(false)}
                             className={`mt-12 h-14 inline-flex items-center justify-center rounded-full font-semibold uppercase tracking-[0.18em] text-sm ${
-                                FLAGS.soldOut ? "bg-cream/15 text-cream/60 pointer-events-none" : "bg-gold text-ink"
+                                s.soldOut ? "bg-cream/15 text-cream/60 pointer-events-none" : "bg-gold text-ink"
                             }`}
                         >
                             {ctaLabel}

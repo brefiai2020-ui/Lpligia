@@ -10,6 +10,8 @@ import Processing from "@/pages/Processing";
 import Confirmed from "@/pages/Confirmed";
 import Ticket from "@/pages/Ticket";
 import StatesPreview from "@/pages/StatesPreview";
+import Admin from "@/pages/Admin";
+import { SettingsProvider } from "@/lib/settings";
 
 class ErrorBoundary extends Component {
     constructor(props) {
@@ -64,30 +66,33 @@ function SmoothScroll() {
 export default function App() {
     return (
         <ErrorBoundary>
-            <BrowserRouter>
-                <SmoothScroll />
-                <ScrollToTop />
-                <Routes>
-                    <Route path="/" element={<LandingPage />} />
-                    <Route path="/inscricao/cadastro" element={<Signup />} />
-                    <Route path="/inscricao/pagamento" element={<Payment />} />
-                    <Route path="/inscricao/processando" element={<Processing />} />
-                    <Route path="/inscricao/confirmado" element={<Confirmed />} />
-                    <Route path="/inscricao/ingresso" element={<Ticket />} />
-                    <Route path="/estados" element={<StatesPreview />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-                <Toaster
-                    position="top-center"
-                    toastOptions={{
-                        style: {
-                            background: "#171615",
-                            color: "#FAF8F5",
-                            borderRadius: "12px",
-                        },
-                    }}
-                />
-            </BrowserRouter>
+            <SettingsProvider>
+                <BrowserRouter>
+                    <SmoothScroll />
+                    <ScrollToTop />
+                    <Routes>
+                        <Route path="/" element={<LandingPage />} />
+                        <Route path="/inscricao/cadastro" element={<Signup />} />
+                        <Route path="/inscricao/pagamento" element={<Payment />} />
+                        <Route path="/inscricao/processando" element={<Processing />} />
+                        <Route path="/inscricao/confirmado" element={<Confirmed />} />
+                        <Route path="/inscricao/ingresso" element={<Ticket />} />
+                        <Route path="/estados" element={<StatesPreview />} />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                    <Toaster
+                        position="top-center"
+                        toastOptions={{
+                            style: {
+                                background: "#171615",
+                                color: "#FAF8F5",
+                                borderRadius: "12px",
+                            },
+                        }}
+                    />
+                </BrowserRouter>
+            </SettingsProvider>
         </ErrorBoundary>
     );
 }

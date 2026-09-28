@@ -1,35 +1,29 @@
-# PRD — Landing Page Premium | Mentoria em Grupo — Dra. Lígia Jeane Matroski
+# PRD — Landing Page Premium + Admin | Mentoria em Grupo — Dra. Lígia Jeane Matroski
 
 ## Problema original
-Criar SOMENTE O FRONTEND de uma landing page de vendas premium, responsiva e mobile-first para a Mentoria em Grupo da Dra. Lígia Jeane Matroski (10/10/2026, R$ 100, 50 vagas, pagamento via InfinitePay), com estética acolhedora, sofisticada e feminina ("menos é mais"), incluindo o fluxo visual completo de inscrição (5 telas), estados de pagamento e funções mockadas preparadas para integração futura (InfinitePay, Supabase, WhatsApp, QR real). Sem backend, sem banco, sem auth.
+Landing page de vendas premium, responsiva e mobile-first para a Mentoria em Grupo da Dra. Lígia Jeane Matroski, com estética acolhedora e sofisticada ("menos é mais"), fluxo visual de inscrição em 5 telas, estados de pagamento e funções preparadas para integração. Evolução solicitada: preços Pix R$ 189,90 / Cartão R$ 229,00 em até 3x, área admin (inscritos + edição do site), e-mails via Resend e WhatsApp do ingresso.
 
 ## Arquitetura
-- React (CRA/craco) + Tailwind + framer-motion + lenis + react-router-dom v7. Sem backend.
-- Rotas: `/` (landing 14 seções), `/inscricao/cadastro`, `/inscricao/pagamento`, `/inscricao/processando` (+`?st=recusado|expirado`), `/inscricao/confirmado`, `/inscricao/ingresso`, `/estados` (galeria de estados).
-- `src/config.js`: constantes do evento + `PORTRAIT_URL` (foto oficial), `VIDEO_URL`, `FLAGS.soldOut`.
-- `src/services/mockServices.js`: createRegistration, createInfinitePayCheckout, checkPaymentStatus, generateTicket, sendWhatsAppConfirmation — todos mockados (localStorage), pontos de integração marcados com TODO(INTEGRAÇÃO).
-- Identidade: Cormorant Garamond (títulos) + Manrope (texto) + JetBrains Mono (códigos); paleta off-white/bege/preto quente/cinza/dourado (#FAF8F5 · #F3ECE3 · #171615 · #4A4643 · #C5A059).
-- Placeholder do retrato: moldura em arco com monograma "LJ" — substituído automaticamente ao definir PORTRAIT_URL.
+- React (CRA/craco) + Tailwind (cores via CSS vars RGB → editáveis em runtime) + framer-motion + lenis + react-router-dom.
+- Backend FastAPI + MongoDB (motor): coleções users (admin JWT/bcrypt), registrations, payments, site_settings, login_attempts.
+- Rotas site: `/`, `/inscricao/{cadastro|pagamento|processando|confirmado|ingresso}`, `/estados` (demo), `/admin` (login JWT + painéis).
+- API: POST /api/registrations, POST /api/registrations/{id}/checkout, GET /api/payments/{id}/status (auto-aprova ~3s MOCK + e-mail), GET /api/registrations/{id}, POST /api/auth/login|logout, GET /api/auth/me, GET/PUT /api/admin/registrations (+DELETE, +resend-email), GET /api/settings (público), PUT /api/admin/settings.
+- E-mails (Resend via proxy Emergent, guardrails G1–G6): template server-side "Pagamento confirmado — Ingresso MNT-2026-XXXX" com data, forma, valor e código. Enviado na aprovação automática, na aprovação manual do admin e no botão reenviar.
+- WhatsApp: botões dos ingressos abrem wa.me com mensagem pronta (número de destino configurável no admin).
+
+## Admin (/admin — login admin@draligia.com, ver /app/memory/test_credentials.md)
+- Inscritos: contadores, tabela (nome, contato, CPF, status, ingresso, data), editar (nome/whatsapp/e-mail/status — marcar Pago gera código e envia e-mail), apagar, reenviar e-mail.
+- Editar site: vagas esgotadas (toggle), datas, nota horário/local, instagram, WhatsApp, vagas, preços Pix/Cartão/parcelas, URL da foto, URL do vídeo, textos (hero, conexão, impacto, CTA final, formulário, consentimento) e 4 cores do site (derivados ajustam automaticamente).
 
 ## Personas
-- Mulher 28–55, chega por WhatsApp/Instagram no celular, busca autoconhecimento; decide em mobile.
-- Dra. Lígia (dona): precisa de página que transmita exclusividade e permita plugar pagamentos/ingresso depois.
+- Mulher 28–55, chega por WhatsApp/Instagram no celular; decide em mobile.
+- Dra. Lígia (dona): edita conteúdo/preços/mídias sem programar; acompanha e confirma inscritos.
 
-## Requisitos core (estáticos)
-14 seções da landing (header transparente→sólido, hero, marquee, conexão, para quem é, 3 pilares, vídeo 16:9, sobre, frase de impacto, detalhes, oferta, 3 passos, FAQ, CTA final, footer com modais legais) + 5 telas do fluxo + 6 estados (aguardando, processando, aprovado, recusado, expirado, esgotado com bloqueio) + CTA fixo mobile + microcopy sem falsa urgência + data-testids.
-
-## Implementado (2026-09-28)
-- Landing completa com animações (reveal mascarado no hero, parallax discreto, marquee editorial, hover suaves).
-- Fluxo de inscrição e2e funcional com dados simulados: cadastro (máscaras WhatsApp/CPF + consentimento) → pagamento (resumo + PAGAR COM INFINITEPAY visual) → processando (auto-aprova ~3s) → confirmado (código MNT-2026-XXXX) → ingresso digital (QR mockup, perfuração de ticket).
-- Estados recusado/expirado via `?st=`; esgotado via `FLAGS.soldOut` ou `?st=esgotado`; galeria em /estados.
-- Favicon SVG monograma; SEO/meta pt-BR.
+## Implementado
+- 2026-09-28: landing completa (14 seções, animações, CTA fixo mobile), fluxo de inscrição e2e com pagamento MOCK (auto-aprova), estados (aguardando/processando/aprovado/recusado/expirado/esgotado), ingresso com QR mockup.
+- 2026-09-28: preços Pix 189,90 / Cartão 229,00 (3x) em todo o site; backend real (MongoDB) com auth admin JWT + brute force; área /admin (inscritos + editor do site); e-mails Resend funcionais; WhatsApp wa.me real nos botões.
 
 ## Backlog
-- P0: foto oficial (PORTRAIT_URL) e vídeo real (VIDEO_URL) — ambos já suportados.
-- P1: integração InfinitePay real (checkout + status), Supabase/backend para registros, WhatsApp API, QR real.
-- P2: conteúdo das políticas (Privacy/Termos são placeholders honestos), horário/local quando definidos.
-
-## Próximas tarefas
-1. Receber foto oficial e vídeo da Dra. Lígia e plugar em config.js.
-2. Integrar InfinitePay real nas funções mockadas.
-3. Conectar backend (Supabase) + QR real do ingresso.
+- P0: foto oficial e vídeo real (admin colar URLs) — já suportados.
+- P1: InfinitePay real (checkout/status/webhook) substituindo o MOCK de auto-aprovação.
+- P2: conteúdo real de Política/Termos; horário/local quando definidos; envio automático de WhatsApp via API oficial (requer credenciais do usuário).

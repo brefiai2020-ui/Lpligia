@@ -4,12 +4,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ShieldCheck } from "lucide-react";
 import PortraitFrame from "@/components/PortraitFrame";
 import { scrollToId } from "@/lib/scroll";
-import { FLAGS } from "@/config";
+import { useSettings, formatBRL } from "@/lib/settings";
 
-const LINES = ["Tudo começa quando", "você decide olhar", "para dentro."];
 const ease = [0.22, 1, 0.36, 1];
 
 export default function Hero() {
+    const { settings: s } = useSettings();
+    const LINES = (s.heroTitle || "").split("\n").filter(Boolean);
     const ref = useRef(null);
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
     const y = useTransform(scrollYProgress, [0, 1], [0, 60]);
@@ -55,8 +56,7 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 0.75, ease }}
                             className="mt-6 max-w-md text-base sm:text-lg text-smoke leading-relaxed"
                         >
-                            Uma experiência de mentoria em grupo para mulheres que desejam ampliar a consciência,
-                            compreender seus padrões e abrir espaço para novas possibilidades.
+                            {s.heroSubtitle}
                         </motion.p>
 
                         <motion.div
@@ -66,13 +66,13 @@ export default function Hero() {
                             className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] uppercase tracking-[0.22em] text-ink/80"
                             data-testid="hero-event-meta"
                         >
-                            <span>10 de outubro de 2026</span>
+                            <span>{s.eventDateLabel}</span>
                             <span className="text-gold" aria-hidden="true">·</span>
                             <span>Mentoria em grupo</span>
                             <span className="text-gold" aria-hidden="true">·</span>
-                            <span>50 vagas</span>
+                            <span>{s.slotsTotal} vagas</span>
                             <span className="text-gold" aria-hidden="true">·</span>
-                            <span>R$ 100</span>
+                            <span>{formatBRL(s.pricePix)} no Pix</span>
                         </motion.div>
 
                         <motion.div
@@ -81,7 +81,7 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 1.05, ease }}
                             className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4"
                         >
-                            {FLAGS.soldOut ? (
+                            {s.soldOut ? (
                                 <span
                                     data-testid="hero-cta-soldout"
                                     className="h-14 px-9 inline-flex items-center justify-center rounded-full bg-cream/50 text-smoke/60 cursor-not-allowed text-sm uppercase tracking-[0.18em] border border-line"
@@ -112,8 +112,8 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 1.3 }}
                             className="mt-6 flex items-center gap-2 text-xs text-smoke/80"
                         >
-                            <ShieldCheck size={14} strokeWidth={1.5} className="text-gold" /> 50 vagas disponíveis ·
-                            Investimento de R$ 100 · Pagamento seguro
+                            <ShieldCheck size={14} strokeWidth={1.5} className="text-gold" /> {s.slotsTotal} vagas
+                            disponíveis · A partir de {formatBRL(s.pricePix)} · Pagamento seguro
                         </motion.p>
                     </motion.div>
 
@@ -131,7 +131,7 @@ export default function Hero() {
                                     data-testid="hero-quote-card"
                                 >
                                     <p className="font-serif italic text-lg sm:text-xl text-ink leading-snug">
-                                        “Um encontro para parar, olhar e se escutar.”
+                                        “{s.heroQuote}”
                                     </p>
                                 </div>
                             }

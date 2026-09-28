@@ -2,25 +2,29 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
-import { toast } from "sonner";
 import CheckoutShell from "@/components/CheckoutShell";
-import { generateTicket, getTicket, sendWhatsAppConfirmation } from "@/services/mockServices";
-import { EVENT } from "@/config";
+import { apiService, getStoredRegistrationId } from "@/services/api";
+import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function Confirmed() {
-    const [ticket, setTicket] = useState(getTicket());
+    const { settings: s } = useSettings();
+    const [reg, setReg] = useState(null);
+    const rid = getStoredRegistrationId();
 
     useEffect(() => {
-        if (ticket) return;
-        generateTicket().then(setTicket);
-    }, [ticket]);
+        if (!rid) return;
+        apiService
+            .getRegistration(rid)
+            .then(({ data }) => setReg(data))
+            .catch(() => {});
+    }, [rid]);
 
-    const share = async () => {
-        await sendWhatsAppConfirmation(ticket);
-        toast.message("Simulado", {
-            description: "O envio pelo WhatsApp será ativado na integração.",
-        });
-    };
+    const waText = encodeURIComponent(
+        `Olá! Acabei de garantir minha vaga na Mentoria em Grupo com a Dra. Lígia Jeane Matroski (${s.eventDateShort}). Meu ingresso: ${reg?.ticket_code || "MNT-2026-XXXX"}`,
+    );
+    const waLink = s.whatsappNumber
+        ? `https://wa.me/${s.whatsappNumber.replace(/\D/g, "")}?text=${waText}`
+        : `https://wa.me/?text=${waText}`;
 
     return (
         <CheckoutShell step={3}>
@@ -34,25 +38,34 @@ export default function Confirmed() {
                     <Check size={36} strokeWidth={1.5} />
                 </motion.div>
 
-                <h1
-                    className="mt-9 font-serif text-4xl sm:text-5xl text-ink leading-tight"
-                    data-testid="confirmed-title"
-                >
+                <h1 className="mt-9 font-serif text-4xl sm:text-5xl text-ink leading-tight" data-testid="confirmed-title">
                     Pagamento confirmado!
                 </h1>
                 <p className="mt-5 text-smoke leading-relaxed max-w-md mx-auto">
-                    Sua vaga para a Mentoria em Grupo com a {EVENT.mentor} está confirmada.
+                    Sua vaga para a Mentoria em Grupo com a Dra. Lígia Jeane Matroski está confirmada.
+                    {reg?.email_sent !== false && " Enviamos a confirmação e seu ingresso para o seu e-mail."}
                 </p>
 
-                <div className="mt-9 bg-cream border border-line/60 rounded-2xl px-7 py-6 text-left max-w-sm mx-auto" data-testid="confirmed-details">
+                <div
+                    className="mt-9 bg-cream border border-line/60 rounded-2xl px-7 py-6 text-left max-w-sm mx-auto"
+                    data-testid="confirmed-details"
+                >
                     <div className="flex items-center justify-between gap-4">
                         <span className="text-[11px] uppercase tracking-[0.2em] text-smoke/70">Data</span>
-                        <span className="text-ink">10 de outubro de 2026</span>
+                        <span className="text-ink">{s.eventDateLabel}</span>
                     </div>
+                    {reg?.method && (
+                        <div className="mt-3 pt-3 border-t border-line flex items-center justify-between gap-4">
+                            <span className="text-[11px] uppercase tracking-[0.2em] text-smoke/70">Pagamento</span>
+                            <span className="text-ink">
+                                {reg.method === "pix" ? "Pix" : "Cartão"} · {formatBRL(reg.amount || 0)}
+                            </span>
+                        </div>
+                    )}
                     <div className="mt-3 pt-3 border-t border-line flex items-center justify-between gap-4">
                         <span className="text-[11px] uppercase tracking-[0.2em] text-smoke/70">Ingresso</span>
                         <span className="font-mono text-sm text-ink" data-testid="ticket-code">
-                            {ticket?.code || "MNT-2026-····"}
+                            {reg?.ticket_code || "MNT-2026-····"}
                         </span>
                     </div>
                 </div>
@@ -65,15 +78,18 @@ export default function Confirmed() {
                     >
                         Acessar meu ingresso
                     </Link>
-                    <button
+                    <a
                         data-testid="whatsapp-share-button"
-                        onClick={share}
-                        className="h-14 rounded-full border border-ink text-ink text-sm uppercase tracking-[0.18em] hover:border-gold hover:text-gold transition-colors duration-300"
+                        href={waLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="h-14 rounded-full border border-ink text-ink text-sm uppercase tracking-[0.18em] hover:border-gold hover:text-gold transition-colors duration-300 inline-flex items-center justify-center"
                     >
                         Enviar ingresso pelo WhatsApp
-                    </button>
+                    </a>
                 </div>
             </div>
         </CheckoutShell>
     );
 }
+

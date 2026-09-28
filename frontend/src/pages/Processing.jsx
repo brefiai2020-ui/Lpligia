@@ -1,31 +1,50 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { X, Clock } from "lucide-react";
 import CheckoutShell from "@/components/CheckoutShell";
-import { checkPaymentStatus, generateTicket } from "@/services/mockServices";
+import { apiService, getStoredPaymentId } from "@/services/api";
 
 export default function Processing() {
     const navigate = useNavigate();
     const [params] = useSearchParams();
+    const [failState, setFailState] = useState(null);
     const st = params.get("st");
 
     useEffect(() => {
         if (st === "recusado" || st === "expirado") return;
+        const pid = getStoredPaymentId();
+        if (!pid) {
+            navigate("/inscricao/cadastro", { replace: true });
+            return;
+        }
         let cancelled = false;
-        (async () => {
-            const res = await checkPaymentStatus("mock");
-            if (cancelled) return;
-            await generateTicket();
-            if (res.status === "approved") navigate("/inscricao/confirmado", { replace: true });
-        })();
+        const poll = async () => {
+            try {
+                const { data } = await apiService.paymentStatus(pid);
+                if (cancelled) return;
+                if (data.status === "aprovado") {
+                    navigate("/inscricao/confirmado", { replace: true });
+                } else if (data.status === "recusado" || data.status === "expirado") {
+                    setFailState(data.status);
+                }
+            } catch {
+                // segue tentando
+            }
+        };
+        poll();
+        const timer = setInterval(poll, 1500);
         return () => {
             cancelled = true;
+            clearInterval(timer);
         };
     }, [st, navigate]);
 
+    const state = failState || st;
+    const backToPayment = () => navigate("/inscricao/pagamento");
+
     return (
         <CheckoutShell step={3}>
-            {st === "recusado" ? (
+            {state === "recusado" ? (
                 <StateBlock
                     testid="payment-refused"
                     icon={
@@ -38,14 +57,14 @@ export default function Processing() {
                     button={
                         <button
                             data-testid="retry-payment-button"
-                            onClick={() => navigate("/inscricao/pagamento")}
+                            onClick={backToPayment}
                             className="h-14 px-9 rounded-full bg-ink text-paper text-sm uppercase tracking-[0.18em] hover:bg-gold hover:text-ink transition-colors"
                         >
                             Tentar novamente
                         </button>
                     }
                 />
-            ) : st === "expirado" ? (
+            ) : state === "expirado" ? (
                 <StateBlock
                     testid="payment-expired"
                     icon={
@@ -58,7 +77,7 @@ export default function Processing() {
                     button={
                         <button
                             data-testid="reprocess-payment-button"
-                            onClick={() => navigate("/inscricao/pagamento")}
+                            onClick={backToPayment}
                             className="h-14 px-9 rounded-full bg-ink text-paper text-sm uppercase tracking-[0.18em] hover:bg-gold hover:text-ink transition-colors"
                         >
                             Refazer pagamento
@@ -98,3 +117,4 @@ function StateBlock({ icon, title, text, button, testid }) {
         </div>
     );
 }
+

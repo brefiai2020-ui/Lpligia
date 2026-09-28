@@ -1,14 +1,19 @@
 import { Calendar, Users, Ticket, Wallet } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
-
-const DETAILS = [
-    { icon: Calendar, value: "10 de outubro de 2026", label: "Data do encontro" },
-    { icon: Users, value: "Mentoria em grupo", label: "Formato" },
-    { icon: Ticket, value: "Apenas 50 vagas", label: "Exclusividade" },
-    { icon: Wallet, value: "R$ 100", label: "Investimento" },
-];
+import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function EventDetails() {
+    const { settings: s } = useSettings();
+    const DETAILS = [
+        { icon: Calendar, value: s.eventDateLabel, label: "Data do encontro" },
+        { icon: Users, value: "Mentoria em grupo", label: "Formato" },
+        { icon: Ticket, value: `Apenas ${s.slotsTotal} vagas`, label: "Exclusividade" },
+        {
+            icon: Wallet,
+            value: `${formatBRL(s.pricePix)} no Pix`,
+            label: `ou ${formatBRL(s.priceCard)} no cartão em até ${s.installments}x`,
+        },
+    ];
     return (
         <section className="bg-paper py-24 sm:py-32" data-testid="event-details">
             <div className="max-w-6xl mx-auto px-5 sm:px-8">
@@ -31,7 +36,7 @@ export default function EventDetails() {
                 </div>
                 <Reveal delay={0.2}>
                     <p className="mt-6 text-xs text-smoke/70 tracking-wide" data-testid="details-pending-note">
-                        Horário e local serão informados em breve.
+                        {s.eventPlaceNote}
                     </p>
                 </Reveal>
             </div>

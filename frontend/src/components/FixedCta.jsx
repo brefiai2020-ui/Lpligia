@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FLAGS, EVENT } from "@/config";
+import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function FixedCta() {
+    const { settings: s } = useSettings();
     const [show, setShow] = useState(false);
 
     useEffect(() => {
@@ -23,10 +24,10 @@ export default function FixedCta() {
         >
             <div className="m-3 p-2.5 rounded-full bg-ink/95 backdrop-blur border border-cream/10 shadow-2xl flex items-center justify-between gap-3 pointer-events-auto">
                 <div className="pl-3">
-                    <p className="text-cream font-serif text-lg leading-none">{EVENT.priceShort}</p>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-cream/60 mt-0.5">{EVENT.slots}</p>
+                    <p className="text-cream font-serif text-lg leading-none">{formatBRL(s.pricePix)}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-cream/60 mt-0.5">no Pix · {s.slotsTotal} vagas</p>
                 </div>
-                {FLAGS.soldOut ? (
+                {s.soldOut ? (
                     <span
                         data-testid="fixed-cta-soldout"
                         className="h-11 px-5 inline-flex items-center rounded-full bg-cream/15 text-cream/70 text-[11px] uppercase tracking-[0.16em]"

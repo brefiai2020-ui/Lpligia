@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, X } from "lucide-react";
-import { EVENT } from "@/config";
+import { useSettings } from "@/lib/settings";
 
 const LEGAL = {
     privacidade: {
@@ -16,6 +16,10 @@ const LEGAL = {
 
 export default function Footer() {
     const [modal, setModal] = useState(null);
+    const { settings: s } = useSettings();
+    const instagramUrl = s.instagram
+        ? `https://instagram.com/${s.instagram.replace("@", "")}`
+        : "https://instagram.com/";
 
     return (
         <footer className="bg-ink text-cream" data-testid="footer">
@@ -26,17 +30,17 @@ export default function Footer() {
                             <span className="w-10 h-10 rounded-full border border-gold/50 flex items-center justify-center font-serif italic text-gold">
                                 LJ
                             </span>
-                            <p className="font-serif text-2xl">{EVENT.mentor}</p>
+                            <p className="font-serif text-2xl">Dra. Lígia Jeane Matroski</p>
                         </div>
                         <p className="mt-3 text-sm text-cream/60 tracking-wide">Psicóloga clínica | Mentora</p>
                         <a
                             data-testid="footer-instagram-link"
-                            href={EVENT.instagramUrl}
+                            href={instagramUrl}
                             target="_blank"
                             rel="noreferrer"
                             className="mt-4 inline-flex items-center gap-2 text-sm text-cream/80 hover:text-gold transition-colors"
                         >
-                            <Instagram size={16} strokeWidth={1.5} /> {EVENT.instagram}
+                            <Instagram size={16} strokeWidth={1.5} /> {s.instagram}
                         </a>
                     </div>
                     <div className="flex flex-col md:items-end gap-2 text-sm">
@@ -64,7 +68,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="mt-12 pt-6 border-t border-cream/10 flex flex-col sm:flex-row justify-between gap-2 text-xs text-cream/40">
-                    <p>© 2026 {EVENT.mentor}. Todos os direitos reservados.</p>
+                    <p>© 2026 Dra. Lígia Jeane Matroski. Todos os direitos reservados.</p>
                     <p>Pagamento processado pelo Checkout InfinitePay.</p>
                 </div>
             </div>

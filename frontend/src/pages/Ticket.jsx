@@ -3,27 +3,32 @@ import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import CheckoutShell from "@/components/CheckoutShell";
 import QrMock from "@/components/QrMock";
-import { generateTicket, getTicket, sendWhatsAppConfirmation } from "@/services/mockServices";
-import { EVENT } from "@/config";
+import { apiService, getStoredRegistrationId } from "@/services/api";
+import { useSettings } from "@/lib/settings";
 
 export default function Ticket() {
-    const [ticket, setTicket] = useState(getTicket());
+    const { settings: s } = useSettings();
+    const [reg, setReg] = useState(null);
+    const rid = getStoredRegistrationId();
 
     useEffect(() => {
-        if (ticket) return;
-        generateTicket().then(setTicket);
-    }, [ticket]);
+        if (!rid) return;
+        apiService
+            .getRegistration(rid)
+            .then(({ data }) => setReg(data))
+            .catch(() => {});
+    }, [rid]);
+
+    const waText = encodeURIComponent(
+        `Olá! Esta é a confirmação da minha vaga na Mentoria em Grupo com a Dra. Lígia Jeane Matroski (${s.eventDateTicket}). Ingresso: ${reg?.ticket_code || "MNT-2026-XXXX"} — ${reg?.nome || "NOME DA PARTICIPANTE"}`,
+    );
+    const waLink = s.whatsappNumber
+        ? `https://wa.me/${s.whatsappNumber.replace(/\D/g, "")}?text=${waText}`
+        : `https://wa.me/?text=${waText}`;
 
     const addToPhone = () => {
-        toast.message("Simulado", {
-            description: "O ingresso poderá ser salvo no celular (Passbook/PDF) após a integração.",
-        });
-    };
-
-    const share = async () => {
-        await sendWhatsAppConfirmation(ticket);
-        toast.message("Simulado", {
-            description: "O envio pelo WhatsApp será ativado na integração.",
+        toast.message("Em preparação", {
+            description: "O download do ingresso (Passbook/PDF) será ativado na integração.",
         });
     };
 
@@ -39,21 +44,21 @@ export default function Ticket() {
             >
                 <div className="relative bg-ink text-cream px-8 py-9 text-center">
                     <div className="absolute inset-0 texture-grain opacity-20" aria-hidden="true" />
-                    <p className="relative text-[10px] uppercase tracking-[0.3em] text-gold">{EVENT.productName}</p>
-                    <h2 className="relative mt-3 font-serif text-2xl leading-snug">{EVENT.mentor}</h2>
+                    <p className="relative text-[10px] uppercase tracking-[0.3em] text-gold">Mentoria em Grupo</p>
+                    <h2 className="relative mt-3 font-serif text-2xl leading-snug">Dra. Lígia Jeane Matroski</h2>
                 </div>
 
                 <div className="px-8 py-8">
                     <div>
                         <p className="text-[10px] uppercase tracking-[0.24em] text-smoke/70">Nome</p>
                         <p className="mt-1.5 font-serif text-2xl text-ink uppercase leading-snug" data-testid="ticket-name">
-                            {ticket?.name || "NOME DA PARTICIPANTE"}
+                            {reg?.nome || "NOME DA PARTICIPANTE"}
                         </p>
                     </div>
                     <div className="mt-5">
                         <p className="text-[10px] uppercase tracking-[0.24em] text-smoke/70">Data</p>
                         <p className="mt-1.5 text-ink tracking-[0.14em]" data-testid="ticket-date">
-                            {EVENT.dateTicket}
+                            {s.eventDateTicket}
                         </p>
                     </div>
 
@@ -64,9 +69,9 @@ export default function Ticket() {
                     </div>
 
                     <div className="flex flex-col items-center gap-4">
-                        <QrMock seed={ticket?.code || "MNT-2026"} />
+                        <QrMock seed={reg?.ticket_code || "MNT-2026"} />
                         <p className="font-mono text-sm text-ink tracking-wider" data-testid="ticket-code-display">
-                            {ticket?.code || "MNT-2026-XXXX"}
+                            {reg?.ticket_code || "MNT-2026-XXXX"}
                         </p>
                         <p className="text-xs text-smoke text-center leading-relaxed">
                             Apresente este QR Code no momento do acesso.
@@ -87,13 +92,15 @@ export default function Ticket() {
                 >
                     Adicionar ao celular
                 </button>
-                <button
+                <a
                     data-testid="whatsapp-ticket-button"
-                    onClick={share}
-                    className="h-14 rounded-full border border-ink text-ink text-sm uppercase tracking-[0.18em] hover:border-gold hover:text-gold transition-colors duration-300"
+                    href={waLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="h-14 rounded-full border border-ink text-ink text-sm uppercase tracking-[0.18em] hover:border-gold hover:text-gold transition-colors duration-300 inline-flex items-center justify-center"
                 >
                     Enviar pelo WhatsApp
-                </button>
+                </a>
                 <Link
                     to="/"
                     className="text-center text-xs uppercase tracking-[0.2em] text-smoke/70 hover:text-gold pt-2"
@@ -104,3 +111,4 @@ export default function Ticket() {
         </CheckoutShell>
     );
 }
+

@@ -1,24 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "sonner";
 import { QrCode, CreditCard, ShieldCheck, Lock } from "lucide-react";
 import CheckoutShell from "@/components/CheckoutShell";
-import { createInfinitePayCheckout } from "@/services/mockServices";
-import { getRegistration } from "@/services/mockServices";
-import { FLAGS, EVENT } from "@/config";
+import {
+    apiService,
+    formatApiError,
+    getStoredRegistrationId,
+    setStoredPaymentId,
+} from "@/services/api";
+import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function Payment() {
     const navigate = useNavigate();
+    const { settings: s } = useSettings();
+    const [method, setMethod] = useState("pix");
     const [loading, setLoading] = useState(false);
-    const registration = getRegistration();
-    const name = registration?.nome || "NOME DA PARTICIPANTE";
+    const [name, setName] = useState("NOME DA PARTICIPANTE");
+    const rid = getStoredRegistrationId();
 
-    if (FLAGS.soldOut) {
+    useEffect(() => {
+        if (!rid) return;
+        apiService
+            .getRegistration(rid)
+            .then(({ data }) => setName(data.nome || "NOME DA PARTICIPANTE"))
+            .catch(() => {});
+    }, [rid]);
+
+    const total = method === "pix" ? s.pricePix : s.priceCard;
+
+    const onPay = async () => {
+        setLoading(true);
+        try {
+            const { data } = await apiService.createCheckout(rid, method);
+            setStoredPaymentId(data.payment_id);
+            navigate("/inscricao/processando");
+        } catch (e) {
+            toast.error(formatApiError(e));
+            setLoading(false);
+        }
+    };
+
+    if (s.soldOut) {
         return (
             <CheckoutShell step={2}>
                 <div className="text-center py-16" data-testid="payment-soldout">
                     <h1 className="font-serif text-4xl text-ink">Inscrições encerradas</h1>
                     <p className="mt-4 text-smoke">As inscrições para esta edição foram encerradas.</p>
-                    <Link to="/" className="mt-8 inline-block text-xs uppercase tracking-[0.2em] text-smoke/70 hover:text-gold">
+                    <Link
+                        to="/"
+                        className="mt-8 inline-block text-xs uppercase tracking-[0.2em] text-smoke/70 hover:text-gold"
+                    >
                         Voltar para a página do evento
                     </Link>
                 </div>
@@ -26,11 +58,23 @@ export default function Payment() {
         );
     }
 
-    const onPay = async () => {
-        setLoading(true);
-        await createInfinitePayCheckout();
-        navigate("/inscricao/processando");
-    };
+    if (!rid) {
+        return (
+            <CheckoutShell step={2}>
+                <div className="text-center py-16" data-testid="payment-no-registration">
+                    <h1 className="font-serif text-4xl text-ink">Faça sua inscrição primeiro</h1>
+                    <p className="mt-4 text-smoke">Para acessar o pagamento, reserve sua vaga no formulário.</p>
+                    <Link
+                        data-testid="payment-go-signup"
+                        to="/inscricao/cadastro"
+                        className="mt-8 inline-flex h-13 py-3.5 px-8 items-center rounded-full bg-ink text-paper text-sm uppercase tracking-[0.18em] hover:bg-gold hover:text-ink transition-colors"
+                    >
+                        Ir para a inscrição
+                    </Link>
+                </div>
+            </CheckoutShell>
+        );
+    }
 
     return (
         <CheckoutShell step={2}>
@@ -46,29 +90,43 @@ export default function Payment() {
             <div className="mt-10 bg-cream border border-line/60 rounded-3xl p-7 sm:p-9" data-testid="payment-summary">
                 <div className="space-y-4 text-sm">
                     <Row label="Participante" value={name} />
-                    <Row label="Evento" value={EVENT.productName} />
-                    <Row label="Condução" value={EVENT.mentor} />
-                    <Row label="Data" value={EVENT.dateShort} />
+                    <Row label="Evento" value="Mentoria em Grupo" />
+                    <Row label="Condução" value="Dra. Lígia Jeane Matroski" />
+                    <Row label="Data" value={s.eventDateShort} />
                 </div>
                 <div className="mt-7 pt-6 border-t border-line flex items-end justify-between">
                     <span className="text-[11px] uppercase tracking-[0.22em] text-smoke">Total</span>
                     <span className="font-serif text-4xl text-ink" data-testid="payment-total">
-                        {EVENT.price}
+                        {formatBRL(total)}
                     </span>
                 </div>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-3 border border-line/60 rounded-2xl px-5 py-4 bg-paper">
-                    <QrCode size={18} strokeWidth={1.4} className="text-gold shrink-0" />
-                    <span className="text-sm text-ink">Pix</span>
-                </div>
-                <div className="flex items-center gap-3 border border-line/60 rounded-2xl px-5 py-4 bg-paper">
-                    <CreditCard size={18} strokeWidth={1.4} className="text-gold shrink-0" />
-                    <span className="text-sm text-ink">Cartão</span>
-                </div>
+                <button
+                    data-testid="payment-method-pix"
+                    onClick={() => setMethod("pix")}
+                    className={`flex flex-col items-start gap-1.5 rounded-2xl px-5 py-4 text-left border transition-colors ${
+                        method === "pix" ? "border-gold bg-beige" : "border-line/60 bg-paper hover:border-gold/50"
+                    }`}
+                >
+                    <QrCode size={18} strokeWidth={1.4} className="text-gold" />
+                    <span className="text-sm text-ink">Pix · {formatBRL(s.pricePix)}</span>
+                </button>
+                <button
+                    data-testid="payment-method-cartao"
+                    onClick={() => setMethod("cartao")}
+                    className={`flex flex-col items-start gap-1.5 rounded-2xl px-5 py-4 text-left border transition-colors ${
+                        method === "cartao" ? "border-gold bg-beige" : "border-line/60 bg-paper hover:border-gold/50"
+                    }`}
+                >
+                    <CreditCard size={18} strokeWidth={1.4} className="text-gold" />
+                    <span className="text-sm text-ink">
+                        Cartão · {formatBRL(s.priceCard)}
+                        <span className="block text-[11px] text-smoke">em até {s.installments}x</span>
+                    </span>
+                </button>
             </div>
-            <p className="mt-2 text-xs text-smoke/70">Você escolhe a forma de pagamento no checkout.</p>
 
             <button
                 data-testid="infinitepay-checkout-button"
@@ -96,3 +154,4 @@ function Row({ label, value }) {
         </div>
     );
 }
+

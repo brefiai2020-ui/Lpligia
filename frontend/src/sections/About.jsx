@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Hourglass, HeartHandshake, Compass, Sparkles, ArrowUpRight } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
 import PortraitFrame from "@/components/PortraitFrame";
-import { EVENT } from "@/config";
+import { useSettings } from "@/lib/settings";
 
 const CREDS = [
     { icon: Hourglass, label: "+20 anos de experiência" },
@@ -12,6 +12,8 @@ const CREDS = [
 ];
 
 export default function About() {
+    const { settings: s } = useSettings();
+    const instagramUrl = s.instagram ? `https://instagram.com/${s.instagram.replace("@", "")}` : "https://instagram.com/";
     return (
         <section id="sobre" className="bg-paper py-24 sm:py-32 scroll-mt-20" data-testid="about-section">
             <div className="max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-12 gap-14 lg:gap-16 items-center">
@@ -34,7 +36,7 @@ export default function About() {
                         <h2 className="mt-5 font-serif text-3xl sm:text-4xl lg:text-5xl text-ink leading-tight">
                             Quem vai conduzir essa experiência?
                         </h2>
-                        <p className="mt-5 font-serif italic text-2xl text-gold">{EVENT.mentor}</p>
+                        <p className="mt-5 font-serif italic text-2xl text-gold">Dra. Lígia Jeane Matroski</p>
                         <p className="mt-5 text-smoke leading-relaxed max-w-xl">
                             Psicóloga clínica e mentora há mais de 20 anos, com uma trajetória dedicada ao
                             desenvolvimento humano, despertar e expansão da consciência.
@@ -54,7 +56,7 @@ export default function About() {
                         </div>
                         <a
                             data-testid="about-instagram-button"
-                            href={EVENT.instagramUrl}
+                            href={instagramUrl}
                             target="_blank"
                             rel="noreferrer"
                             className="mt-10 h-14 px-9 inline-flex items-center gap-2 rounded-full border border-ink text-ink text-sm uppercase tracking-[0.18em] hover:bg-ink hover:text-paper transition-colors duration-300"
