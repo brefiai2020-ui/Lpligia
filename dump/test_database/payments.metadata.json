@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"order_nsu":{"$numberInt":"1"}},"name":"order_nsu_1","unique":true},{"v":{"$numberInt":"2"},"key":{"transaction_nsu":{"$numberInt":"1"}},"name":"transaction_nsu_1"}],"uuid":"61d87528768a48d0b8dd0b821a5484cb","collectionName":"payments","type":"collection"}

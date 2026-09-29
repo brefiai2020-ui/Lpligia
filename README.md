@@ -39,7 +39,7 @@ cp .env.example .env   # preencha as variáveis (veja seção J)
 4. Copie a connection string e monte `MONGO_URL`:
 
 ```
-MONGO_URL=mongodb+srv://USUARIO:SENHA@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
+MONGO_URL=mongodb+srv://<usuario>:<senha>@cluster0.xxxxx.mongodb.net/?retryWrites=true&w=majority
 DB_NAME=mentoria
 ```
 
