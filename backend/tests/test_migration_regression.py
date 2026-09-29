@@ -1,13 +1,16 @@
-"""Regression tests for Etapa 1 da migração (Emergent cleanup, send_email stub)."""
+"""Regression tests: limpeza de dependências + fluxos principais (inscrição, vagas, tickets)."""
 import os
 import time
 import uuid
 import pytest
 import requests
+from dotenv import load_dotenv
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://olhar-dentro.preview.emergentagent.com").rstrip("/")
-ADMIN_EMAIL = "admin@draligia.com"
-ADMIN_PASSWORD = "Mentoria2026!"
+load_dotenv()  # backend/.env — arquivo nunca versionado
+
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "http://localhost:8001").rstrip("/")
+ADMIN_EMAIL = os.environ["ADMIN_EMAIL"]
+ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
 
 
 @pytest.fixture(scope="session")
@@ -59,8 +62,11 @@ def test_login_wrong_password(sess):
     assert r.status_code == 401
 
 
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000").rstrip("/")
+
+
 def test_html_no_emergent_scripts():
-    r = requests.get(BASE_URL + "/")
+    r = requests.get(FRONTEND_URL + "/")
     assert r.status_code == 200
     body = r.text.lower()
     assert "assets.emergent.sh" not in body

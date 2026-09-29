@@ -35,8 +35,8 @@ api_router = APIRouter(prefix="/api")
 JWT_SECRET = os.environ["JWT_SECRET"]
 JWT_ALGORITHM = "HS256"
 
-# Email: etapa de migração — o proxy de e-mail do Emergent foi removido.
-# A substituição pela API direta do Resend (RESEND_API_KEY + EMAIL_FROM_NAME) será feita na próxima etapa.
+# Email: Resend direto (API HTTP oficial). Credenciais 100% por variável de ambiente.
+RESEND_URL = "https://api.resend.com/emails"
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 
 # InfinitePay / WhatsApp / URLs
@@ -292,10 +292,31 @@ def _assert_safe_email(subject: str, html: str) -> None:
 
 
 async def send_email(*, to: str, subject: str, html: str, reply_to: Optional[str] = None) -> Optional[str]:
-    # Etapa de migração: o proxy de e-mail do Emergent foi removido.
-    # A substituição pela API direta do Resend (RESEND_API_KEY + EMAIL_FROM_NAME) será feita na próxima etapa.
-    logger.warning(f"Envio de e-mail não configurado nesta etapa — mensagem registrada: to={to} subject={subject}")
-    return None
+    _assert_safe_email(subject, html)
+    api_key = os.environ.get("RESEND_API_KEY", "").strip()
+    address = os.environ.get("EMAIL_FROM", "").strip()
+    from_name = os.environ.get("EMAIL_FROM_NAME", "").strip()
+    if not api_key or not address:
+        logger.warning(f"E-mail não enviado (RESEND_API_KEY/EMAIL_FROM ausentes): to={to} subject={subject}")
+        return None
+    sender = f"{from_name} <{address}>" if from_name else address
+    payload = {"from": sender, "to": [to], "subject": subject, "html": html}
+    if reply_to:
+        payload["reply_to"] = reply_to
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client_http:
+            resp = await client_http.post(
+                RESEND_URL,
+                headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+                json=payload,
+            )
+        if resp.is_success:
+            return resp.json().get("id")
+        logger.error(f"Email send failed: {resp.status_code} {resp.text[:200]}")
+        return None
+    except Exception as e:
+        logger.error(f"Email send error: {e}")
+        return None
 
 
 def ticket_email_html(nome: str, code: str, method_label: str, amount: str, date_label: str) -> str:
