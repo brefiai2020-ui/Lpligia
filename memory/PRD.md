@@ -25,6 +25,13 @@ Landing page de vendas premium, mobile-first para a Mentoria em Grupo da Dra. L�
 - P1: foto oficial e vídeo real (admin cola URLs — já suportado).
 - P2: conteúdo real de Política/Termos; horário/local do evento; relatório de vendas exportável.
 
+## ETAPA 1 da migração executada (2026-09-28) — segurança e limpeza
+- .gitignore (raiz): bloco de proteção (.env, .env.*, !.env.example, node_modules, build, __pycache__, *.pyc, .emergent/, memory/, test_reports/, auth_testing.md, test_result.md, screenshots/) — antes disso .env NÃO estava coberto.
+- backend/server.py: proxy de e-mail do Emergent REMOVIDO (EMAIL_BASE_URL/EMERGENT_EMAIL_KEY apagados); send_email() = stub com mesma assinatura (loga warning, retorna None — e-mails desativados até a etapa Resend); seed_admin() sem fallback "Mentoria2026!" (ADMIN_PASSWORD obrigatório via env, RuntimeError se ausente).
+- backend/requirements.txt: emergentintegrations==0.2.1 removida (não era importada). frontend/public/index.html: script assets.emergent.sh + bloco PostHog (ap.emergent.sh) removidos. frontend/package.json+yarn.lock: @emergentbase/overlay e visual-edits removidos (yarn remove). craco.config.js enxuto (preservado makeDevServerV5Compatible — compat CRA5/wds5, NÃO era do Emergent). frontend/plugins/ removida.
+- NOVOS: backend/.env.example + frontend/.env.example (só nomes). Rodapé de varredura: ZERO refs Emergent no código; EMERGENT_EMAIL_KEY só no backend/.env (protegido, não exportado); senha admin só em docs internos agora gitignored.
+- Validado (iteration_5.json + pytest backend/tests/test_migration_regression.py): 12/12 backend, fluxo inscrição→webhook sandbox→PAID→CONFIRMED (MNT-2026-0004) sem e-mail (esperado), admin 200, vagas atômicas OK, HTML servido sem emergent.sh, 22 rotas intactas (antes=depois; nº 23 anterior era erro de contagem). Dados de teste criados e mantidos: 'TEST Migracao' ×2 (1 consumiu vaga → 49 disponíveis; admin pode apagar na aba Inscritas).
+
 ## Nova paleta terra & sálvia (2026-09-28, referência da usuária)
 - Referência visual (Pinterest, marca de psicóloga): verde sálvia, caramelo/tan, creme, terracota, marrom cacau. Mapeamento nos 5 tokens (lib/settings.jsx E site_settings no Mongo — valores do banco sobrepõem defaults): Paper #EFEAD9, Beige #5F7355 (sálvia PROFUNDA em vez do sálvia claro do swatch para manter contraste AA do texto branco), Ink #4E362A (cacau profundo), Gold #C4A57E (tan), Rose #C67C5F (terracota).
 - Labels dos color pickers do admin atualizados (Verde sálvia / Marrom cacau / Caramelo-tan / Terracota); placeholders globais escurecidos (ink/0.7) para legibilidade sobre fundos derivados.
