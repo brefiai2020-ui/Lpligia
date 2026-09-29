@@ -83,3 +83,20 @@ android-sdk/
 
 # overlay black-box crash/user-report dumps — session data, never history
 **/.emergent/recordings/
+
+# ==== Migração: segredos e arquivos internos (não publicar) ====
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env
+node_modules/
+build/
+__pycache__/
+*.pyc
+.emergent/
+memory/
+test_reports/
+auth_testing.md
+test_result.md
+screenshots/

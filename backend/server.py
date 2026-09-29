@@ -35,9 +35,8 @@ api_router = APIRouter(prefix="/api")
 JWT_SECRET = os.environ["JWT_SECRET"]
 JWT_ALGORITHM = "HS256"
 
-# Email (proxy gerenciado Emergent — constante, nunca de env)
-EMAIL_BASE_URL = "https://integrations.emergentagent.com"
-EMAIL_KEY = os.environ["EMERGENT_EMAIL_KEY"]
+# Email: etapa de migração — o proxy de e-mail do Emergent foi removido.
+# A substituição pela API direta do Resend (RESEND_API_KEY + EMAIL_FROM_NAME) será feita na próxima etapa.
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 
 # InfinitePay / WhatsApp / URLs
@@ -293,25 +292,10 @@ def _assert_safe_email(subject: str, html: str) -> None:
 
 
 async def send_email(*, to: str, subject: str, html: str, reply_to: Optional[str] = None) -> Optional[str]:
-    _assert_safe_email(subject, html)
-    payload = {"to": [to], "subject": subject, "html": html, "from_name": EMAIL_FROM_NAME}
-    if reply_to or os.environ.get("EMAIL_REPLY_TO"):
-        payload["contact_email"] = reply_to or os.environ.get("EMAIL_REPLY_TO")
-    try:
-        async with httpx.AsyncClient(timeout=30) as client_http:
-            resp = await client_http.post(
-                f"{EMAIL_BASE_URL}/api/v1/email/send",
-                headers={"X-Email-Key": EMAIL_KEY},
-                json=payload,
-            )
-        resp.raise_for_status()
-        return resp.json().get("id")
-    except httpx.HTTPStatusError as e:
-        logger.error(f"Email send failed: {e.response.status_code} {e.response.text}")
-        raise HTTPException(status_code=502, detail="Falha ao enviar e-mail.")
-    except Exception as e:
-        logger.error(f"Email send error: {str(e)}")
-        raise HTTPException(status_code=500, detail="Falha ao enviar e-mail.")
+    # Etapa de migração: o proxy de e-mail do Emergent foi removido.
+    # A substituição pela API direta do Resend (RESEND_API_KEY + EMAIL_FROM_NAME) será feita na próxima etapa.
+    logger.warning(f"Envio de e-mail não configurado nesta etapa — mensagem registrada: to={to} subject={subject}")
+    return None
 
 
 def ticket_email_html(nome: str, code: str, method_label: str, amount: str, date_label: str) -> str:
@@ -1076,7 +1060,9 @@ async def admin_save_settings(input: SettingsUpdate, user: dict = Depends(get_cu
 
 async def seed_admin():
     email = os.environ.get("ADMIN_EMAIL", "admin@draligia.com").lower()
-    password = os.environ.get("ADMIN_PASSWORD", "Mentoria2026!")
+    password = os.environ.get("ADMIN_PASSWORD")
+    if not password:
+        raise RuntimeError("ADMIN_PASSWORD não definido: configure a variável de ambiente antes de iniciar.")
     existing = await db.users.find_one({"email": email})
     if existing is None:
         await db.users.insert_one({
