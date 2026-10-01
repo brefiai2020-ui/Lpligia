@@ -1,21 +1,24 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, ShieldCheck } from "lucide-react";
+import { ArrowDown, Play, ShieldCheck } from "lucide-react";
 import { scrollToId } from "@/lib/scroll";
 import { useSettings } from "@/lib/settings";
 
-// Ambiente terapêutico acolhedor (sem rosto)
 const HERO_BG =
     "https://images.unsplash.com/photo-1701817822150-2d218d8610e6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwzfHx3YXJtdGhlcmFwaXN0aWNfb2ZmaWNlX3RoZXJhcHlfc2Vzc2lvbl9pbnRlcmlvcl9jb3p5X21pbmltYWxpc3R8ZW58MHx8fHwxNzkwNjIxNjM0fDA&ixlib=rb-4.1.0&q=85";
 
-const HERO_VIDEO =
-    "https://www.youtube.com/embed/Qr7sQUDWGw4?rel=0&iv_load_policy=3&playsinline=1";
+const HERO_VIDEO_ID = "Qr7sQUDWGw4";
+
+const HERO_VIDEO_THUMBNAIL =
+    `https://i.ytimg.com/vi/${HERO_VIDEO_ID}/maxresdefault.jpg`;
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function Hero() {
     const { settings: s } = useSettings();
+    const [videoStarted, setVideoStarted] = useState(false);
+
     const LINES = (s.heroTitle || "").split("\n").filter(Boolean);
     const ref = useRef(null);
 
@@ -42,6 +45,7 @@ export default function Hero() {
             className="relative min-h-screen flex items-center overflow-hidden bg-ink"
             data-testid="section-hero"
         >
+            {/* FUNDO */}
             <motion.div
                 style={{ y: yBg }}
                 className="absolute inset-0 scale-110"
@@ -58,23 +62,25 @@ export default function Hero() {
                 />
             </motion.div>
 
+            {/* CAMADA ESCURA */}
             <div
-                className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/65 to-ink/35"
+                className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/65 to-ink/30"
                 aria-hidden="true"
             />
 
             <div
-                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-ink/40"
+                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-ink/35"
                 aria-hidden="true"
             />
 
+            {/* CONTEÚDO */}
             <div className="relative max-w-7xl mx-auto px-5 sm:px-8 w-full pt-28 pb-24">
-                <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                <div className="grid lg:grid-cols-12 gap-12 lg:gap-14 items-center">
 
-                    {/* CONTEÚDO PRINCIPAL */}
+                    {/* TEXTO */}
                     <motion.div
                         style={{ y: yText }}
-                        className="lg:col-span-6 max-w-2xl"
+                        className="lg:col-span-5 max-w-2xl"
                     >
                         <motion.p
                             initial={{ opacity: 0, y: 16 }}
@@ -93,7 +99,7 @@ export default function Hero() {
                             Terapia em grupo
                         </motion.p>
 
-                        <h1 className="mt-7 font-serif italic font-light text-[2.8rem] leading-[1.06] sm:text-6xl lg:text-7xl text-cream">
+                        <h1 className="mt-7 font-serif italic font-light text-[2.8rem] leading-[1.06] sm:text-6xl lg:text-[4.7rem] text-cream">
                             {LINES.map((line, i) => (
                                 <span
                                     key={i}
@@ -212,33 +218,70 @@ export default function Hero() {
                         </motion.p>
                     </motion.div>
 
-                    {/* VÍDEO */}
+                    {/* VÍDEO / THUMBNAIL */}
                     <motion.div
-                        initial={{ opacity: 0, x: 30 }}
+                        initial={{ opacity: 0, x: 35 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{
                             duration: 0.9,
                             delay: 0.35,
                             ease,
                         }}
-                        className="lg:col-span-6 w-full"
+                        className="lg:col-span-7 w-full"
                         data-testid="hero-video"
                     >
-                        <div className="relative w-full rounded-[2rem] overflow-hidden border border-cream/25 bg-ink/60 shadow-2xl">
-                            <div className="aspect-video w-full">
-                                <iframe
-                                    src={HERO_VIDEO}
-                                    title="Vídeo da terapia em grupo"
-                                    className="w-full h-full block"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen
-                                />
-                            </div>
+                        <div className="relative w-full overflow-hidden rounded-[1.8rem] shadow-2xl bg-black">
+
+                            {!videoStarted ? (
+                                <button
+                                    type="button"
+                                    onClick={() => setVideoStarted(true)}
+                                    aria-label="Assistir ao vídeo"
+                                    className="group relative block w-full aspect-video overflow-hidden"
+                                >
+                                    {/* THUMBNAIL */}
+                                    <img
+                                        src={HERO_VIDEO_THUMBNAIL}
+                                        alt="Vídeo da Dra. Lígia Jeane Matroski"
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
+                                    />
+
+                                    {/* LEVE ESCURECIMENTO */}
+                                    <span
+                                        className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"
+                                        aria-hidden="true"
+                                    />
+
+                                    {/* PLAY */}
+                                    <span
+                                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-rose text-white flex items-center justify-center shadow-2xl transition-transform duration-300 group-hover:scale-110"
+                                        aria-hidden="true"
+                                    >
+                                        <Play
+                                            size={30}
+                                            strokeWidth={0}
+                                            fill="currentColor"
+                                            className="ml-1"
+                                        />
+                                    </span>
+                                </button>
+                            ) : (
+                                <div className="relative w-full aspect-video">
+                                    <iframe
+                                        src={`https://www.youtube.com/embed/${HERO_VIDEO_ID}?autoplay=1&rel=0&playsinline=1`}
+                                        title="Vídeo da terapia em grupo"
+                                        className="absolute inset-0 w-full h-full border-0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                    />
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 </div>
             </div>
 
+            {/* INDICADOR DE SCROLL */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
