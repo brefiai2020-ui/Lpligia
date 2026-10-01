@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ShieldCheck } from "lucide-react";
 import { scrollToId } from "@/lib/scroll";
-import { useSettings, formatBRL } from "@/lib/settings";
+import { useSettings } from "@/lib/settings";
 
-// Ambiente terapêutico acolhedor (sem rosto) — trocado automaticamente quando a foto oficial
-// for configurada no admin? Não: este fundo é atmosférico e permanece; a foto oficial entra na seção Sobre.
+// Ambiente terapêutico acolhedor (sem rosto)
 const HERO_BG =
     "https://images.unsplash.com/photo-1701817822150-2d218d8610e6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwzfHx3YXJtdGhlcmFwaXN0aWNfb2ZmaWNlX3RoZXJhcHlfc2Vzc2lvbl9pbnRlcmlvcl9jb3p5X21pbmltYWxpc3R8ZW58MHx8fHwxNzkwNjIxNjM0fDA&ixlib=rb-4.1.0&q=85";
+
+// Vídeo oficial da experiência
+const HERO_VIDEO = "https://www.youtube.com/embed/Qr7sQUDWGw4";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -16,6 +18,7 @@ export default function Hero() {
     const { settings: s } = useSettings();
     const LINES = (s.heroTitle || "").split("\n").filter(Boolean);
     const ref = useRef(null);
+
     const { scrollYProgress } = useScroll({
         target: ref,
         offset: ["start start", "end start"],
@@ -56,155 +59,190 @@ export default function Hero() {
             </motion.div>
 
             <div
-                className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/25"
+                className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/65 to-ink/35"
                 aria-hidden="true"
             />
 
             <div
-                className="absolute inset-0 bg-gradient-to-t from-ink/80 via-transparent to-ink/40"
+                className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-ink/40"
                 aria-hidden="true"
             />
 
             <div className="relative max-w-6xl mx-auto px-5 sm:px-8 w-full pt-28 pb-24">
-                <motion.div
-                    style={{ y: yText }}
-                    className="max-w-2xl"
-                >
-                    <motion.p
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.7,
-                            delay: 0.1,
-                            ease,
-                        }}
-                        className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-goldlight"
-                    >
-                        <span
-                            className="h-px w-10 bg-rose"
-                            aria-hidden="true"
-                        />{" "}
-                        Terapia em grupo
-                    </motion.p>
+                <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
 
-                    <h1 className="mt-7 font-serif italic font-light text-[2.8rem] leading-[1.06] sm:text-6xl lg:text-7xl text-cream">
-                        {LINES.map((line, i) => (
-                            <span
-                                key={i}
-                                className="block overflow-hidden pb-1"
-                            >
-                                <motion.span
-                                    className={`block ${
-                                        i === LINES.length - 1
-                                            ? "text-goldlight"
-                                            : ""
-                                    }`}
-                                    initial={{ y: "110%" }}
-                                    animate={{ y: 0 }}
-                                    transition={{
-                                        duration: 1,
-                                        delay: 0.25 + i * 0.14,
-                                        ease,
-                                    }}
-                                >
-                                    {line}
-                                </motion.span>
-                            </span>
-                        ))}
-                    </h1>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.8,
-                            delay: 0.75,
-                            ease,
-                        }}
-                        className="mt-6 max-w-lg text-base sm:text-lg text-cream/80 leading-relaxed"
-                    >
-                        {s.heroSubtitle}
-                    </motion.p>
-
+                    {/* CONTEÚDO */}
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.8,
-                            delay: 0.9,
-                            ease,
-                        }}
-                        className="mt-8 flex flex-wrap items-center gap-2.5"
-                        data-testid="hero-event-meta"
+                        style={{ y: yText }}
+                        className="lg:col-span-7 max-w-2xl"
                     >
-                        <span className="px-4 py-2 rounded-full bg-cream/10 border border-cream/25 backdrop-blur text-[11px] uppercase tracking-[0.2em] text-cream">
-                            {s.eventDateLabel}
-                        </span>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            duration: 0.8,
-                            delay: 1.05,
-                            ease,
-                        }}
-                        className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4"
-                    >
-                        {s.soldOut ? (
-                            <span
-                                data-testid="hero-cta-soldout"
-                                className="h-14 px-9 inline-flex items-center justify-center rounded-full bg-cream/15 text-cream/60 cursor-not-allowed text-sm uppercase tracking-[0.18em] border border-cream/25"
-                            >
-                                Inscrições encerradas
-                            </span>
-                        ) : (
-                            <Link
-                                data-testid="hero-cta-button"
-                                to="/inscricao/cadastro"
-                                className="h-14 px-9 whitespace-nowrap inline-flex items-center justify-center rounded-full bg-cream text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
-                            >
-                                Venha viver essa experiência única
-                            </Link>
-                        )}
-
-                        <button
-                            data-testid="hero-secondary-cta"
-                            onClick={() => scrollToId("viver")}
-                            className="h-14 px-6 whitespace-nowrap inline-flex items-center justify-center gap-2 text-sm uppercase tracking-[0.18em] text-cream border-b border-cream/40 hover:border-goldlight hover:text-goldlight transition-colors"
+                        <motion.p
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.7,
+                                delay: 0.1,
+                                ease,
+                            }}
+                            className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-goldlight"
                         >
-                            Conhecer a experiência{" "}
-                            <ArrowDown
-                                size={15}
-                                strokeWidth={1.5}
+                            <span
+                                className="h-px w-10 bg-rose"
+                                aria-hidden="true"
                             />
-                        </button>
+                            Terapia em grupo
+                        </motion.p>
+
+                        <h1 className="mt-7 font-serif italic font-light text-[2.8rem] leading-[1.06] sm:text-6xl lg:text-7xl text-cream">
+                            {LINES.map((line, i) => (
+                                <span
+                                    key={i}
+                                    className="block overflow-hidden pb-1"
+                                >
+                                    <motion.span
+                                        className={`block ${
+                                            i === LINES.length - 1
+                                                ? "text-goldlight"
+                                                : ""
+                                        }`}
+                                        initial={{ y: "110%" }}
+                                        animate={{ y: 0 }}
+                                        transition={{
+                                            duration: 1,
+                                            delay: 0.25 + i * 0.14,
+                                            ease,
+                                        }}
+                                    >
+                                        {line}
+                                    </motion.span>
+                                </span>
+                            ))}
+                        </h1>
+
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.8,
+                                delay: 0.75,
+                                ease,
+                            }}
+                            className="mt-6 max-w-lg text-base sm:text-lg text-cream/80 leading-relaxed"
+                        >
+                            {s.heroSubtitle}
+                        </motion.p>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.8,
+                                delay: 0.9,
+                                ease,
+                            }}
+                            className="mt-8 flex flex-wrap items-center gap-2.5"
+                            data-testid="hero-event-meta"
+                        >
+                            <span className="px-4 py-2 rounded-full bg-cream/10 border border-cream/25 backdrop-blur text-[11px] uppercase tracking-[0.2em] text-cream">
+                                {s.eventDateLabel}
+                            </span>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.8,
+                                delay: 1.05,
+                                ease,
+                            }}
+                            className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4"
+                        >
+                            {s.soldOut ? (
+                                <span
+                                    data-testid="hero-cta-soldout"
+                                    className="h-14 px-9 inline-flex items-center justify-center rounded-full bg-cream/15 text-cream/60 cursor-not-allowed text-sm uppercase tracking-[0.18em] border border-cream/25"
+                                >
+                                    Inscrições encerradas
+                                </span>
+                            ) : (
+                                <Link
+                                    data-testid="hero-cta-button"
+                                    to="/inscricao/cadastro"
+                                    className="h-14 px-9 whitespace-nowrap inline-flex items-center justify-center rounded-full bg-cream text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
+                                >
+                                    Venha viver essa experiência única
+                                </Link>
+                            )}
+
+                            <button
+                                data-testid="hero-secondary-cta"
+                                onClick={() => scrollToId("viver")}
+                                className="h-14 px-6 whitespace-nowrap inline-flex items-center justify-center gap-2 text-sm uppercase tracking-[0.18em] text-cream border-b border-cream/40 hover:border-goldlight hover:text-goldlight transition-colors"
+                            >
+                                Conhecer a experiência
+                                <ArrowDown
+                                    size={15}
+                                    strokeWidth={1.5}
+                                />
+                            </button>
+                        </motion.div>
+
+                        <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{
+                                duration: 0.8,
+                                delay: 1.3,
+                            }}
+                            className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-cream/75"
+                            data-testid="hero-quote-card"
+                        >
+                            <span className="font-serif italic text-base text-goldlight">
+                                “{s.heroQuote}”
+                            </span>
+
+                            <span className="inline-flex items-center gap-1.5">
+                                <ShieldCheck
+                                    size={13}
+                                    strokeWidth={1.5}
+                                />
+                                Pagamento seguro
+                            </span>
+                        </motion.p>
                     </motion.div>
 
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                    {/* VÍDEO */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
                         transition={{
-                            duration: 0.8,
-                            delay: 1.3,
+                            duration: 0.9,
+                            delay: 0.45,
+                            ease,
                         }}
-                        className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-cream/75"
-                        data-testid="hero-quote-card"
+                        className="lg:col-span-5"
+                        data-testid="hero-video"
                     >
-                        <span className="font-serif italic text-base text-goldlight">
-                            “{s.heroQuote}”
-                        </span>
+                        <div className="relative rounded-[2rem] overflow-hidden border border-cream/25 bg-ink/60 shadow-2xl backdrop-blur-sm">
+                            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink/35 via-transparent to-transparent z-10" />
 
-                        <span className="inline-flex items-center gap-1.5">
-                            <ShieldCheck
-                                size={13}
-                                strokeWidth={1.5}
-                            />{" "}
-                            Pagamento seguro
-                        </span>
-                    </motion.p>
-                </motion.div>
+                            <div className="aspect-video w-full">
+                                <iframe
+                                    src={HERO_VIDEO}
+                                    title="Vídeo da terapia em grupo com Dra. Lígia Jeane Matroski"
+                                    className="w-full h-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowFullScreen
+                                />
+                            </div>
+                        </div>
+
+                        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.25em] text-cream/60">
+                            Uma experiência para olhar para dentro
+                        </p>
+                    </motion.div>
+                </div>
             </div>
 
             <motion.div
