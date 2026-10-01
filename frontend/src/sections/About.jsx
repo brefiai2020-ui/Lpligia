@@ -1,8 +1,16 @@
-import { HeartHandshake, Compass, Hourglass, Sparkles, ArrowUpRight } from "lucide-react";
+import {
+    HeartHandshake,
+    Compass,
+    Hourglass,
+    Sparkles,
+    ArrowUpRight,
+} from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
 import { Blob } from "@/components/Organic";
-import { useSettings } from "@/lib/settings";
 import ligiaPhoto from "../ligia-jeane.jpg";
+
+const INSTAGRAM_URL =
+    "https://www.instagram.com/draligiajeanematroski";
 
 const CREDS = [
     { icon: Hourglass, label: "+20 anos de experiência" },
@@ -24,7 +32,6 @@ export function PhonePortrait() {
 
             <div className="relative rounded-[2.8rem] bg-ink p-2.5 shadow-2xl">
                 <div className="relative rounded-[2.2rem] overflow-hidden aspect-[9/18] bg-gradient-to-b from-cream via-paper to-beige/60">
-
                     <span
                         className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 rounded-full bg-ink z-10"
                         aria-hidden="true"
@@ -55,12 +62,6 @@ export function PhonePortrait() {
 }
 
 export default function About() {
-    const { settings: s } = useSettings();
-
-    const instagramUrl = s.instagram
-        ? `https://instagram.com/${s.instagram.replace("@", "")}`
-        : "https://instagram.com/";
-
     return (
         <section
             id="sobre"
@@ -126,12 +127,12 @@ export default function About() {
 
                         <a
                             data-testid="about-instagram-button"
-                            href={instagramUrl}
+                            href={INSTAGRAM_URL}
                             target="_blank"
                             rel="noreferrer"
                             className="mt-10 h-14 px-9 inline-flex items-center gap-2 rounded-full bg-white text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
                         >
-                            Conhecer o trabalho da Lígia
+                            Conhecer o Trabalho da Dra Ligia Jeane
 
                             <ArrowUpRight
                                 size={16}
