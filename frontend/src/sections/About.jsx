@@ -1,14 +1,8 @@
-import { Link } from "react-router-dom";
-import {
-    Hourglass,
-    HeartHandshake,
-    Compass,
-    Sparkles,
-    ArrowUpRight,
-} from "lucide-react";
+import { HeartHandshake, Compass, Hourglass, Sparkles, ArrowUpRight } from "lucide-react";
 import { Reveal, Eyebrow } from "@/components/Reveal";
 import { Blob } from "@/components/Organic";
 import { useSettings } from "@/lib/settings";
+import ligiaPhoto from "../ligia-jeane.jpg";
 
 const CREDS = [
     { icon: Hourglass, label: "+20 anos de experiência" },
@@ -17,10 +11,7 @@ const CREDS = [
     { icon: Sparkles, label: "Expansão de consciência" },
 ];
 
-// Retrato em moldura de celular. Sem foto oficial no admin, exibe o monograma com elegância.
 export function PhonePortrait() {
-    const { settings: s } = useSettings();
-
     return (
         <div
             className="relative w-56 sm:w-64 mx-auto"
@@ -33,30 +24,17 @@ export function PhonePortrait() {
 
             <div className="relative rounded-[2.8rem] bg-ink p-2.5 shadow-2xl">
                 <div className="relative rounded-[2.2rem] overflow-hidden aspect-[9/18] bg-gradient-to-b from-cream via-paper to-beige/60">
+
                     <span
                         className="absolute top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 rounded-full bg-ink z-10"
                         aria-hidden="true"
                     />
 
-                    {s.photoUrl ? (
-                        <img
-                            src={s.photoUrl}
-                            alt="Dra. Lígia Jeane Matroski"
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center gap-6">
-                            <span className="w-24 h-24 rounded-full border border-gold/70 flex items-center justify-center font-serif italic text-gold text-4xl">
-                                LJ
-                            </span>
-
-                            <span className="text-[10px] uppercase tracking-[0.3em] text-smoke/70 text-center px-8 leading-relaxed">
-                                Foto oficial
-                                <br />
-                                em breve
-                            </span>
-                        </div>
-                    )}
+                    <img
+                        src={ligiaPhoto}
+                        alt="Dra. Lígia Jeane Matroski"
+                        className="w-full h-full object-cover object-center"
+                    />
                 </div>
             </div>
 
@@ -94,14 +72,18 @@ export default function About() {
                 aria-hidden="true"
             />
 
-            <Blob className="-top-10 -left-16 w-72 h-72 bg-cream/15" />
+            <Blob
+                className="-top-10 -left-16 w-72 h-72 bg-cream/15"
+            />
 
             <div className="relative max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-12 gap-16 lg:gap-10 items-center">
+
                 <Reveal className="lg:col-span-5">
                     <PhonePortrait />
                 </Reveal>
 
                 <div className="lg:col-span-7">
+
                     <Reveal>
                         <Eyebrow tone="light">
                             Sobre a Lígia
@@ -150,12 +132,14 @@ export default function About() {
                             className="mt-10 h-14 px-9 inline-flex items-center gap-2 rounded-full bg-white text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
                         >
                             Conhecer o trabalho da Lígia
+
                             <ArrowUpRight
                                 size={16}
                                 strokeWidth={1.5}
                             />
                         </a>
                     </Reveal>
+
                 </div>
             </div>
         </section>
