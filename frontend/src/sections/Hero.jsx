@@ -9,8 +9,8 @@ import { useSettings } from "@/lib/settings";
 const HERO_BG =
     "https://images.unsplash.com/photo-1701817822150-2d218d8610e6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwzfHx3YXJtdGhlcmFwaXN0aWNfb2ZmaWNlX3RoZXJhcHlfc2Vzc2lvbl9pbnRlcmlvcl9jb3p5X21pbmltYWxpc3R8ZW58MHx8fHwxNzkwNjIxNjM0fDA&ixlib=rb-4.1.0&q=85";
 
-// Vídeo oficial da experiência
-const HERO_VIDEO = "https://www.youtube.com/embed/Qr7sQUDWGw4";
+const HERO_VIDEO =
+    "https://www.youtube.com/embed/Qr7sQUDWGw4?rel=0&iv_load_policy=3&playsinline=1";
 
 const ease = [0.22, 1, 0.36, 1];
 
@@ -68,13 +68,13 @@ export default function Hero() {
                 aria-hidden="true"
             />
 
-            <div className="relative max-w-6xl mx-auto px-5 sm:px-8 w-full pt-28 pb-24">
-                <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            <div className="relative max-w-7xl mx-auto px-5 sm:px-8 w-full pt-28 pb-24">
+                <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
-                    {/* CONTEÚDO */}
+                    {/* CONTEÚDO PRINCIPAL */}
                     <motion.div
                         style={{ y: yText }}
-                        className="lg:col-span-7 max-w-2xl"
+                        className="lg:col-span-6 max-w-2xl"
                     >
                         <motion.p
                             initial={{ opacity: 0, y: 16 }}
@@ -214,33 +214,27 @@ export default function Hero() {
 
                     {/* VÍDEO */}
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
                         transition={{
                             duration: 0.9,
-                            delay: 0.45,
+                            delay: 0.35,
                             ease,
                         }}
-                        className="lg:col-span-5"
+                        className="lg:col-span-6 w-full"
                         data-testid="hero-video"
                     >
-                        <div className="relative rounded-[2rem] overflow-hidden border border-cream/25 bg-ink/60 shadow-2xl backdrop-blur-sm">
-                            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-ink/35 via-transparent to-transparent z-10" />
-
+                        <div className="relative w-full rounded-[2rem] overflow-hidden border border-cream/25 bg-ink/60 shadow-2xl">
                             <div className="aspect-video w-full">
                                 <iframe
                                     src={HERO_VIDEO}
-                                    title="Vídeo da terapia em grupo com Dra. Lígia Jeane Matroski"
-                                    className="w-full h-full"
+                                    title="Vídeo da terapia em grupo"
+                                    className="w-full h-full block"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     allowFullScreen
                                 />
                             </div>
                         </div>
-
-                        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.25em] text-cream/60">
-                            Uma experiência para olhar para dentro
-                        </p>
                     </motion.div>
                 </div>
             </div>
