@@ -1,25 +1,24 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown, Play, ShieldCheck } from "lucide-react";
+import { ArrowDown, ShieldCheck } from "lucide-react";
 import { scrollToId } from "@/lib/scroll";
 import { useSettings } from "@/lib/settings";
 
 const HERO_BG =
     "https://images.unsplash.com/photo-1701817822150-2d218d8610e6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzZ8MHwxfHNlYXJjaHwzfHx3YXJtdGhlcmFwaXN0aWNfb2ZmaWNlX3RoZXJhcHlfc2Vzc2lvbl9pbnRlcmlvcl9jb3p5X21pbmltYWxpc3R8ZW58MHx8fHwxNzkwNjIxNjM0fDA&ixlib=rb-4.1.0&q=85";
 
-const HERO_VIDEO_ID = "Qr7sQUDWGw4";
-
-const HERO_VIDEO_THUMBNAIL =
-    `https://i.ytimg.com/vi/${HERO_VIDEO_ID}/maxresdefault.jpg`;
+const VIMEO_VIDEO_ID = "1232149917";
 
 const ease = [0.22, 1, 0.36, 1];
 
 export default function Hero() {
     const { settings: s } = useSettings();
-    const [videoStarted, setVideoStarted] = useState(false);
 
-    const LINES = (s.heroTitle || "").split("\n").filter(Boolean);
+    const LINES = (s.heroTitle || "")
+        .split("\n")
+        .filter(Boolean);
+
     const ref = useRef(null);
 
     const { scrollYProgress } = useScroll({
@@ -30,13 +29,13 @@ export default function Hero() {
     const yBg = useTransform(
         scrollYProgress,
         [0, 1],
-        ["0%", "14%"],
+        ["0%", "14%"]
     );
 
     const yText = useTransform(
         scrollYProgress,
         [0, 1],
-        [0, 40],
+        [0, 40]
     );
 
     return (
@@ -45,7 +44,6 @@ export default function Hero() {
             className="relative min-h-screen flex items-center overflow-hidden bg-ink"
             data-testid="section-hero"
         >
-            {/* FUNDO */}
             <motion.div
                 style={{ y: yBg }}
                 className="absolute inset-0 scale-110"
@@ -62,7 +60,6 @@ export default function Hero() {
                 />
             </motion.div>
 
-            {/* CAMADA ESCURA */}
             <div
                 className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/65 to-ink/30"
                 aria-hidden="true"
@@ -73,122 +70,105 @@ export default function Hero() {
                 aria-hidden="true"
             />
 
-            {/* CONTEÚDO */}
             <div className="relative max-w-7xl mx-auto px-5 sm:px-8 w-full pt-28 pb-24">
                 <div className="grid lg:grid-cols-12 gap-12 lg:gap-14 items-center">
 
-                    {/* TEXTO */}
                     <motion.div
                         style={{ y: yText }}
                         className="lg:col-span-5 max-w-2xl"
                     >
                         <motion.p
-                            initial={{ opacity: 0, y: 16 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
                                 duration: 0.7,
                                 delay: 0.1,
                                 ease,
                             }}
-                            className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-goldlight"
+                            className="text-xs sm:text-sm uppercase tracking-[0.28em] text-goldlight"
                         >
-                            <span
-                                className="h-px w-10 bg-rose"
-                                aria-hidden="true"
-                            />
                             Terapia em grupo
                         </motion.p>
 
-                        <h1 className="mt-7 font-serif italic font-light text-[2.8rem] leading-[1.06] sm:text-6xl lg:text-[4.7rem] text-cream">
-                            {LINES.map((line, i) => (
+                        <motion.h1
+                            initial={{ opacity: 0, y: 25 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.9,
+                                delay: 0.18,
+                                ease,
+                            }}
+                            className="mt-5 font-serif italic font-light text-5xl sm:text-6xl lg:text-7xl text-cream leading-[0.95]"
+                        >
+                            {LINES.map((line, index) => (
                                 <span
-                                    key={i}
-                                    className="block overflow-hidden pb-1"
+                                    key={`${line}-${index}`}
+                                    className="block"
                                 >
-                                    <motion.span
-                                        className={`block ${
-                                            i === LINES.length - 1
-                                                ? "text-goldlight"
-                                                : ""
-                                        }`}
-                                        initial={{ y: "110%" }}
-                                        animate={{ y: 0 }}
-                                        transition={{
-                                            duration: 1,
-                                            delay: 0.25 + i * 0.14,
-                                            ease,
-                                        }}
-                                    >
-                                        {line}
-                                    </motion.span>
+                                    {line}
                                 </span>
                             ))}
-                        </h1>
+                        </motion.h1>
 
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
                                 duration: 0.8,
-                                delay: 0.75,
+                                delay: 0.32,
                                 ease,
                             }}
-                            className="mt-6 max-w-lg text-base sm:text-lg text-cream/80 leading-relaxed"
+                            className="mt-7 text-base sm:text-lg text-cream/85 leading-relaxed max-w-xl"
                         >
                             {s.heroSubtitle}
                         </motion.p>
 
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                duration: 0.8,
-                                delay: 0.9,
+                                duration: 0.7,
+                                delay: 0.42,
                                 ease,
                             }}
-                            className="mt-8 flex flex-wrap items-center gap-2.5"
-                            data-testid="hero-event-meta"
+                            className="mt-7 inline-flex items-center rounded-full border border-cream/25 bg-ink/20 backdrop-blur-sm px-5 py-2.5"
                         >
-                            <span className="px-4 py-2 rounded-full bg-cream/10 border border-cream/25 backdrop-blur text-[11px] uppercase tracking-[0.2em] text-cream">
+                            <span className="text-sm uppercase tracking-[0.15em] text-cream">
                                 {s.eventDateLabel}
                             </span>
                         </motion.div>
 
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                duration: 0.8,
-                                delay: 1.05,
+                                duration: 0.7,
+                                delay: 0.52,
                                 ease,
                             }}
-                            className="mt-10 flex flex-col sm:flex-row sm:items-center gap-4"
+                            className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4"
                         >
                             {s.soldOut ? (
-                                <span
-                                    data-testid="hero-cta-soldout"
-                                    className="h-14 px-9 inline-flex items-center justify-center rounded-full bg-cream/15 text-cream/60 cursor-not-allowed text-sm uppercase tracking-[0.18em] border border-cream/25"
-                                >
+                                <span className="h-14 px-8 inline-flex items-center justify-center rounded-full bg-white/20 text-cream text-sm uppercase tracking-[0.16em]">
                                     Inscrições encerradas
                                 </span>
                             ) : (
                                 <Link
-                                    data-testid="hero-cta-button"
-                                    to="/inscricao/cadastro"
-                                    className="h-14 px-9 whitespace-nowrap inline-flex items-center justify-center rounded-full bg-cream text-ink text-sm uppercase tracking-[0.18em] hover:bg-rose hover:text-white transition-colors duration-300"
+                                    to="/inscricao"
+                                    className="h-14 px-8 inline-flex items-center justify-center rounded-full bg-rose text-white text-sm uppercase tracking-[0.16em] hover:bg-white hover:text-ink transition-colors duration-300 shadow-lg"
                                 >
                                     Venha viver essa experiência única
                                 </Link>
                             )}
 
                             <button
-                                data-testid="hero-secondary-cta"
-                                onClick={() => scrollToId("viver")}
-                                className="h-14 px-6 whitespace-nowrap inline-flex items-center justify-center gap-2 text-sm uppercase tracking-[0.18em] text-cream border-b border-cream/40 hover:border-goldlight hover:text-goldlight transition-colors"
+                                type="button"
+                                onClick={() => scrollToId("sobre")}
+                                className="h-14 px-5 inline-flex items-center gap-2 text-sm text-cream/85 hover:text-white transition-colors"
                             >
                                 Conhecer a experiência
                                 <ArrowDown
-                                    size={15}
+                                    size={16}
                                     strokeWidth={1.5}
                                 />
                             </button>
@@ -199,18 +179,17 @@ export default function Hero() {
                             animate={{ opacity: 1 }}
                             transition={{
                                 duration: 0.8,
-                                delay: 1.3,
+                                delay: 0.65,
                             }}
-                            className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-cream/75"
-                            data-testid="hero-quote-card"
+                            className="mt-7 flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-cream/70"
                         >
-                            <span className="font-serif italic text-base text-goldlight">
+                            <span className="font-serif italic text-base text-cream/90">
                                 “{s.heroQuote}”
                             </span>
 
-                            <span className="inline-flex items-center gap-1.5">
+                            <span className="flex items-center gap-2">
                                 <ShieldCheck
-                                    size={13}
+                                    size={15}
                                     strokeWidth={1.5}
                                 />
                                 Pagamento seguro
@@ -218,10 +197,15 @@ export default function Hero() {
                         </motion.p>
                     </motion.div>
 
-                    {/* VÍDEO / THUMBNAIL */}
                     <motion.div
-                        initial={{ opacity: 0, x: 35 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{
+                            opacity: 0,
+                            x: 35,
+                        }}
+                        animate={{
+                            opacity: 1,
+                            x: 0,
+                        }}
                         transition={{
                             duration: 0.9,
                             delay: 0.35,
@@ -231,80 +215,35 @@ export default function Hero() {
                         data-testid="hero-video"
                     >
                         <div className="relative w-full overflow-hidden rounded-[1.8rem] shadow-2xl bg-black">
-
-                            {!videoStarted ? (
-                                <button
-                                    type="button"
-                                    onClick={() => setVideoStarted(true)}
-                                    aria-label="Assistir ao vídeo"
-                                    className="group relative block w-full aspect-video overflow-hidden"
-                                >
-                                    {/* THUMBNAIL */}
-                                    <img
-                                        src={HERO_VIDEO_THUMBNAIL}
-                                        alt="Vídeo da Dra. Lígia Jeane Matroski"
-                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"
-                                    />
-
-                                    {/* LEVE ESCURECIMENTO */}
-                                    <span
-                                        className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300"
-                                        aria-hidden="true"
-                                    />
-
-                                    {/* PLAY */}
-                                    <span
-                                        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-rose text-white flex items-center justify-center shadow-2xl transition-transform duration-300 group-hover:scale-110"
-                                        aria-hidden="true"
-                                    >
-                                        <Play
-                                            size={30}
-                                            strokeWidth={0}
-                                            fill="currentColor"
-                                            className="ml-1"
-                                        />
-                                    </span>
-                                </button>
-                            ) : (
-                                <div className="relative w-full aspect-video">
-                                    <iframe
-                                        src={`https://www.youtube.com/embed/${HERO_VIDEO_ID}?autoplay=1&rel=0&playsinline=1`}
-                                        title="Vídeo da terapia em grupo"
-                                        className="absolute inset-0 w-full h-full border-0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowFullScreen
-                                    />
-                                </div>
-                            )}
+                            <div className="relative w-full aspect-video">
+                                <iframe
+                                    src={`https://player.vimeo.com/video/${VIMEO_VIDEO_ID}?autoplay=0&title=0&byline=0&portrait=0&badge=0&dnt=1`}
+                                    title="Vídeo da Dra. Lígia Jeane Matroski"
+                                    className="absolute inset-0 w-full h-full border-0"
+                                    allow="autoplay; fullscreen; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            </div>
                         </div>
                     </motion.div>
+
                 </div>
             </div>
 
-            {/* INDICADOR DE SCROLL */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
-                    delay: 1.6,
                     duration: 1,
+                    delay: 1.1,
                 }}
-                className="absolute bottom-7 left-1/2 -translate-x-1/2 text-cream/60"
-                aria-hidden="true"
+                className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-cream/55"
             >
-                <motion.div
-                    animate={{ y: [0, 8, 0] }}
-                    transition={{
-                        repeat: Infinity,
-                        duration: 2.2,
-                        ease: "easeInOut",
-                    }}
-                >
-                    <ArrowDown
-                        size={18}
-                        strokeWidth={1.4}
-                    />
-                </motion.div>
+                <span className="text-[9px] uppercase tracking-[0.3em]">
+                    Scroll
+                </span>
+
+                <span className="w-px h-8 bg-cream/30" />
             </motion.div>
 
             <RotatingBadge />
@@ -315,36 +254,35 @@ export default function Hero() {
 function RotatingBadge() {
     return (
         <div
-            className="absolute bottom-16 right-8 w-24 h-24 hidden lg:block"
+            className="hidden xl:flex absolute right-8 bottom-8 w-24 h-24 rounded-full border border-cream/20 items-center justify-center"
             aria-hidden="true"
         >
-            <svg
-                viewBox="0 0 100 100"
-                className="w-full h-full animate-spin-slower"
-            >
-                <defs>
-                    <path
-                        id="badge-circle"
-                        d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
-                    />
-                </defs>
-
-                <text
-                    className="fill-cream/80"
-                    style={{
-                        fontSize: "9px",
-                        letterSpacing: "2.6px",
-                        textTransform: "uppercase",
-                        fontFamily: "Manrope, sans-serif",
-                    }}
+            <div className="absolute inset-0 animate-[spin_18s_linear_infinite]">
+                <svg
+                    viewBox="0 0 100 100"
+                    className="w-full h-full"
                 >
-                    <textPath href="#badge-circle">
-                        Terapia em grupo · 10.10.2026 ·
-                    </textPath>
-                </text>
-            </svg>
+                    <defs>
+                        <path
+                            id="badge-path"
+                            d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
+                        />
+                    </defs>
 
-            <span className="absolute inset-0 flex items-center justify-center font-serif italic text-goldlight text-lg">
+                    <text
+                        fill="currentColor"
+                        className="text-cream/60"
+                        fontSize="7"
+                        letterSpacing="2"
+                    >
+                        <textPath href="#badge-path">
+                            TERAPIA EM GRUPO • NOVA VERSÃO •
+                        </textPath>
+                    </text>
+                </svg>
+            </div>
+
+            <span className="font-serif italic text-cream/70 text-sm">
                 LJ
             </span>
         </div>
