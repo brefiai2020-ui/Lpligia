@@ -1,119 +1,95 @@
+from dotenv import load_dotenv
 
+load_dotenv()
 
-@api_router.put("/admin/settings")
-async def admin_save_settings(input: SettingsUpdate, user: dict = Depends(get_current_admin)):
-    data = {k: v for k, v in input.model_dump().items() if v is not None}
-    for key in ("colorPaper", "colorBeige", "colorInk", "colorGold", "colorRose"):
-        if key in data and not COLOR_RE.match(data[key]):
-            raise HTTPException(status_code=400, detail=f"Cor inválida em {key}.")
-    if "pricePix" in data and data["pricePix"] < 0:
-        raise HTTPException(status_code=400, detail="Preço inválido.")
-    if "priceCard" in data and data["priceCard"] < 0:
-        raise HTTPException(status_code=400, detail="Preço inválido.")
-    if "capacity" in data and not 0 <= data["capacity"] <= 1000:
-        raise HTTPException(status_code=400, detail="Capacidade inválida.")
-    if "installments" in data and not 1 <= data["installments"] <= 12:
-        raise HTTPException(status_code=400, detail="Parcelamento inválido.")
-    if data:
-        await db.site_settings.update_one({}, {"$set": data}, upsert=True)
-        if "capacity" in data:
-            pass  # contador de vagas continua atômico contra a nova capacidade
-    return await current_settings()
+import os
+import re
+import uuid
+import asyncio
+import ipaddress
+import secrets
+import logging
+from datetime import datetime, timezone, timedelta
+from html import escape
+from html.parser import HTMLParser
+from urllib.parse import urlparse
 
+import httpx
+import bcrypt
+import jwt
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
+from pydantic import BaseModel, EmailStr, ConfigDict
+from typing import Optional
+from starlette.middleware.cors import CORSMiddleware
+from motor.motor_asyncio import AsyncIOMotorClient
 
-# ---------- Seed + eventos ----------
+# MongoDB
+mongo_url = os.environ["MONGO_URL"]
+client = AsyncIOMotorClient(mongo_url)
+db = client[os.environ["DB_NAME"]]
 
-async def seed_admin():
-    email = os.environ.get("ADMIN_EMAIL", "admin@draligia.com").lower()
-    password = os.environ.get("ADMIN_PASSWORD")
-    if not password:
-        raise RuntimeError("ADMIN_PASSWORD não definido: configure a variável de ambiente antes de iniciar.")
-    existing = await db.users.find_one({"email": email})
-    if existing is None:
-        await db.users.insert_one({
-            "user_id": str(uuid.uuid4()),
-            "email": email,
-            "password_hash": hash_password(password),
-            "name": "Administradora",
-            "role": "admin",
-            "created_at": datetime.now(timezone.utc).isoformat(),
-        })
-        logger.info("Admin semeado com sucesso.")
-    elif not verify_password(password, existing["password_hash"]):
-        await db.users.update_one({"email": email}, {"$set": {"password_hash": hash_password(password)}})
-        logger.info("Hash da senha do admin atualizado.")
+app = FastAPI()
+api_router = APIRouter(prefix="/api")
 
+# JWT
+JWT_SECRET = os.environ["JWT_SECRET"]
+JWT_ALGORITHM = "HS256"
 
-@app.on_event("startup")
-async def startup():
-    logger.info("STARTUP: iniciado")
+# Email: Resend direto (API HTTP oficial). Credenciais 100% por variável de ambiente.
+RESEND_URL = "https://api.resend.com/emails"
+EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 
-    logger.info(
-        "STARTUP: variaveis obrigatorias presentes: "
-        "MONGO_URL=%s DB_NAME=%s JWT_SECRET=%s ADMIN_PASSWORD=%s EMAIL_FROM_NAME=%s",
-        bool(os.environ.get("MONGO_URL")),
-        bool(os.environ.get("DB_NAME")),
-        bool(os.environ.get("JWT_SECRET")),
-        bool(os.environ.get("ADMIN_PASSWORD")),
-        bool(os.environ.get("EMAIL_FROM_NAME")),
-    )
+# InfinitePay / WhatsApp / URLs
+INFINITEPAY_HANDLE = os.environ.get("INFINITEPAY_HANDLE", "")
+INFINITEPAY_API_URL = os.environ.get("INFINITEPAY_API_URL", "https://api.checkout.infinitepay.io")
+PUBLIC_APP_URL = os.environ.get("PUBLIC_APP_URL", "").rstrip("/")
+INFINITEPAY_SANDBOX = os.environ.get("INFINITEPAY_SANDBOX", "") == "1"
+WHATSAPP_API_URL = os.environ.get("WHATSAPP_API_URL", "")
+WHATSAPP_API_TOKEN = os.environ.get("WHATSAPP_API_TOKEN", "")
+WHATSAPP_ADMIN_PHONE = os.environ.get("WHATSAPP_ADMIN_PHONE", "")
+WHATSAPP_PROVIDER = os.environ.get("WHATSAPP_PROVIDER", "generic")
 
-    try:
-        logger.info("STARTUP: criando indices do MongoDB")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-        await db.users.create_index("email", unique=True)
-        await db.login_attempts.create_index("identifier")
-        await db.registrations.create_index("id")
-        await db.registrations.create_index("registration_code")
-        await db.payments.create_index("order_nsu", unique=True)
-        await db.payments.create_index("transaction_nsu")
-        await db.tickets.create_index("qr_token", unique=True)
-        await db.tickets.create_index("registration_id")
+DEFAULT_SETTINGS = {
+    "event_name": "Mentoria em Grupo",
+    "event_date": "10 de outubro de 2026",
+    "event_time": "",
+    "location": "",
+    "capacity": 50,
+    "infinitepay_handle": "",
+    "eventDateLabel": "10 de outubro de 2026",
+    "eventDateShort": "10/10/2026",
+    "eventDateTicket": "10 OUTUBRO 2026",
+    "eventPlaceNote": "Horário e local serão informados em breve.",
+    "slotsTotal": 50,
+    "pricePix": 189.90,
+    "priceCard": 229.00,
+    "installments": 3,
+    "photoUrl": "",
+    "videoUrl": "",
+    "whatsappNumber": "",
+    "instagram": "@draligijeanematroski",
+    "soldOut": False,
+    "heroTitle": "Tudo começa quando\nvocê decide olhar\npara dentro.",
+    "heroSubtitle": "Uma experiência de mentoria em grupo para mulheres que desejam ampliar a consciência, compreender seus padrões e abrir espaço para novas possibilidades.",
+    "heroQuote": "Um encontro para parar, olhar e se escutar.",
+    "connectionTitle": "Talvez você não precise de mais respostas.",
+    "connectionHighlight": "Talvez precise de um espaço para fazer novas perguntas.",
+    "connectionText": "Muitas vezes seguimos no automático — sem parar para perceber nossos pensamentos, escolhas, padrões e possibilidades. Este encontro é um convite para interromper esse ritmo com calma, presença e escuta.",
+    "impactQuote": "Você não precisa ter todas as respostas.\nPrecisa se permitir olhar.",
+    "finalTitle": "Reserve esse momento para você.",
+    "finalText": "Uma experiência em grupo para parar, olhar para dentro e ampliar suas possibilidades.",
+    "formTitle": "Vamos reservar sua vaga?",
+    "formSubtitle": "Leva menos de um minuto.",
+    "consentText": "Concordo com o uso dos meus dados para fins de inscrição e comunicação sobre o evento.",
+    "colorPaper": "#F2EAE0",
+    "colorBeige": "#A98E72",
+    "colorInk": "#3A2E27",
+    "colorGold": "#C5A880",
+    "colorRose": "#C4705C",
+}
 
-        logger.info("STARTUP: indices criados")
+COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 
-        logger.info("STARTUP: inicializando contadores")
-
-        await db.counters.update_one(
-            {"_id": "confirmed_sales"},
-            {"$setOnInsert": {"count": 0}},
-            upsert=True,
-        )
-
-        await db.counters.update_one(
-            {"_id": "registration_code"},
-            {"$setOnInsert": {"count": 0}},
-            upsert=True,
-        )
-
-        logger.info("STARTUP: contadores inicializados")
-
-        logger.info("STARTUP: executando seed_admin")
-
-        await seed_admin()
-
-        logger.info("STARTUP: concluido com sucesso")
-
-    except Exception:
-        logger.exception(
-            "STARTUP: FALHA durante a inicializacao da aplicacao"
-        )
-        raise
-
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
-
-
-from fastapi.responses import JSONResponse  # noqa: E402
-
-app.include_router(api_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
