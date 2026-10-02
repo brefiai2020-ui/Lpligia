@@ -5,10 +5,23 @@ import { useSettings, formatBRL } from "@/lib/settings";
 
 export default function Investment() {
     const { settings: s } = useSettings();
+
     const STEPS = [
-        { n: "01", t: "Inscreva-se", d: "Cadastro em 1 minuto, sem complicação." },
-        { n: "02", t: "Receba a confirmação", d: "Ingresso digital com QR Code no seu e-mail." },
-        { n: "03", t: "Viva o encontro", d: `Presencial e em grupo, em ${s.eventDateShort}.` },
+        {
+            n: "01",
+            t: "Inscreva-se",
+            d: "Cadastro em 1 minuto, sem complicação.",
+        },
+        {
+            n: "02",
+            t: "Receba a confirmação",
+            d: "Ingresso digital com QR Code no seu e-mail.",
+        },
+        {
+            n: "03",
+            t: "Viva o encontro",
+            d: `Presencial e em grupo, em ${s.eventDateShort}.`,
+        },
     ];
 
     return (
@@ -20,6 +33,7 @@ export default function Investment() {
             <div className="relative max-w-5xl mx-auto px-5 sm:px-8">
                 <Reveal>
                     <Eyebrow tone="dark">Como funciona</Eyebrow>
+
                     <h2 className="mt-5 font-serif italic font-light text-3xl sm:text-4xl text-ink leading-tight max-w-xl">
                         Do clique ao ingresso, em três passos.
                     </h2>
@@ -29,9 +43,17 @@ export default function Investment() {
                     {STEPS.map((step, i) => (
                         <Reveal key={step.n} delay={0.08 * i}>
                             <div className="border-t border-line pt-5">
-                                <span className="font-serif italic text-4xl text-rose">{step.n}</span>
-                                <h3 className="mt-3 font-serif italic text-xl text-ink">{step.t}</h3>
-                                <p className="mt-1.5 text-sm text-smoke leading-relaxed">{step.d}</p>
+                                <span className="font-serif italic text-4xl text-rose">
+                                    {step.n}
+                                </span>
+
+                                <h3 className="mt-3 font-serif italic text-xl text-ink">
+                                    {step.t}
+                                </h3>
+
+                                <p className="mt-1.5 text-sm text-smoke leading-relaxed">
+                                    {step.d}
+                                </p>
                             </div>
                         </Reveal>
                     ))}
@@ -42,9 +64,16 @@ export default function Investment() {
                         className="relative mt-12 bg-ink rounded-[2.5rem] p-8 sm:p-12 text-center overflow-hidden"
                         data-testid="investimento-card"
                     >
-                        <div className="absolute inset-0 texture-grain opacity-20" aria-hidden="true" />
+                        <div
+                            className="absolute inset-0 texture-grain opacity-20"
+                            aria-hidden="true"
+                        />
+
                         <div className="relative">
-                            <Eyebrow center tone="light">Investimento</Eyebrow>
+                            <Eyebrow center tone="light">
+                                Investimento
+                            </Eyebrow>
+
                             <p className="mt-5 inline-flex px-4 py-2 rounded-full bg-cream/10 border border-cream/25 text-[11px] uppercase tracking-[0.2em] text-cream">
                                 {s.eventDateLabel}
                             </p>
@@ -55,12 +84,23 @@ export default function Investment() {
                             >
                                 {formatBRL(s.pricePix)}
                             </p>
-                            <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-goldlight" data-testid="investimento-pix-note">
+
+                            <p
+                                className="mt-2 text-[11px] uppercase tracking-[0.2em] text-goldlight"
+                                data-testid="investimento-pix-note"
+                            >
                                 no Pix · melhor valor
                             </p>
-                            <p className="mt-4 text-sm text-cream/85" data-testid="investimento-price-card">
-                                ou {formatBRL(s.priceCard)} no cartão em até {s.installments}x de{" "}
-                                {formatBRL(s.priceCard / s.installments)}
+
+                            <p
+                                className="mt-4 text-sm text-cream/85"
+                                data-testid="investimento-price-card"
+                            >
+                                ou {formatBRL(s.priceCard)} no cartão em até{" "}
+                                <strong className="text-white font-semibold">
+                                    {s.installments}x sem juros
+                                </strong>{" "}
+                                de {formatBRL(s.priceCard / s.installments)}
                             </p>
 
                             <div className="mt-6 flex justify-center">
@@ -90,8 +130,14 @@ export default function Investment() {
                             )}
 
                             <p className="mt-5 flex items-center justify-center gap-2 text-xs text-cream/75">
-                                <ShieldCheck size={14} strokeWidth={1.5} className="text-goldlight" />
-                                Pagamento seguro pelo Checkout InfinitePay · confirmação por e-mail.
+                                <ShieldCheck
+                                    size={14}
+                                    strokeWidth={1.5}
+                                    className="text-goldlight"
+                                />
+
+                                Pagamento seguro pelo Checkout InfinitePay ·
+                                confirmação por e-mail.
                             </p>
                         </div>
                     </div>
