@@ -15,7 +15,13 @@ const ease = [0.22, 1, 0.36, 1];
 export default function Hero() {
     const { settings: s } = useSettings();
 
-    const LINES = (s.heroTitle || "")
+    // Título aprovado da Hero.
+    // Não depende mais do /api/settings para evitar que o texto antigo
+    // seja carregado novamente depois da abertura da página.
+    const HERO_TITLE = `Do nada, tudo.
+Uma nova versão de você.`;
+
+    const LINES = HERO_TITLE
         .split("\n")
         .filter(Boolean);
 
