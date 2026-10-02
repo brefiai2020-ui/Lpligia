@@ -88,7 +88,16 @@ class SupabaseCursor:
 
    async def to_list(self, length=1000):
 
-       return await self.collection._request("GET", self.filters, self.projection, self.order_field, self.order_desc, limit=length)
+       rows = await self.collection._request(
+           "GET",
+           self.filters,
+           self.projection,
+           self.order_field,
+           self.order_desc,
+           limit=length,
+       )
+
+       return [self.collection._normalize_row(row) for row in rows]
 
  
 
@@ -132,7 +141,89 @@ class SupabaseCollection:
 
            return "counter_key"
 
+       # A tabela site_settings usa snake_case no Supabase, enquanto
+       # o frontend/contrato legado usa camelCase em vários campos.
+       if self.name == "site_settings":
+
+           settings_fields = {
+               "eventDateLabel": "event_date_label",
+               "eventDateShort": "event_date_short",
+               "eventDateTicket": "event_date_ticket",
+               "eventPlaceNote": "event_place_note",
+               "slotsTotal": "slots_total",
+               "pricePix": "price_pix",
+               "priceCard": "price_card",
+               "photoUrl": "photo_url",
+               "videoUrl": "video_url",
+               "whatsappNumber": "whatsapp_number",
+               "soldOut": "sold_out",
+               "heroTitle": "hero_title",
+               "heroSubtitle": "hero_subtitle",
+               "heroQuote": "hero_quote",
+               "connectionTitle": "connection_title",
+               "connectionHighlight": "connection_highlight",
+               "connectionText": "connection_text",
+               "impactQuote": "impact_quote",
+               "finalTitle": "final_title",
+               "finalText": "final_text",
+               "formTitle": "form_title",
+               "formSubtitle": "form_subtitle",
+               "consentText": "consent_text",
+               "colorPaper": "color_paper",
+               "colorBeige": "color_beige",
+               "colorInk": "color_ink",
+               "colorGold": "color_gold",
+               "colorRose": "color_rose",
+           }
+
+           return settings_fields.get(key, key)
+
        return key
+
+   def _normalize_row(self, row):
+
+       if not row or self.name != "site_settings":
+
+           return row
+
+       reverse_fields = {
+           "event_date_label": "eventDateLabel",
+           "event_date_short": "eventDateShort",
+           "event_date_ticket": "eventDateTicket",
+           "event_place_note": "eventPlaceNote",
+           "slots_total": "slotsTotal",
+           "price_pix": "pricePix",
+           "price_card": "priceCard",
+           "photo_url": "photoUrl",
+           "video_url": "videoUrl",
+           "whatsapp_number": "whatsappNumber",
+           "sold_out": "soldOut",
+           "hero_title": "heroTitle",
+           "hero_subtitle": "heroSubtitle",
+           "hero_quote": "heroQuote",
+           "connection_title": "connectionTitle",
+           "connection_highlight": "connectionHighlight",
+           "connection_text": "connectionText",
+           "impact_quote": "impactQuote",
+           "final_title": "finalTitle",
+           "final_text": "finalText",
+           "form_title": "formTitle",
+           "form_subtitle": "formSubtitle",
+           "consent_text": "consentText",
+           "color_paper": "colorPaper",
+           "color_beige": "colorBeige",
+           "color_ink": "colorInk",
+           "color_gold": "colorGold",
+           "color_rose": "colorRose",
+       }
+
+       normalized = {}
+
+       for key, value in row.items():
+
+           normalized[reverse_fields.get(key, key)] = value
+
+       return normalized
 
  
 
@@ -226,7 +317,7 @@ class SupabaseCollection:
 
        rows = await self._request("GET", query or {}, projection, limit=1)
 
-       return rows[0] if rows else None
+       return self._normalize_row(rows[0]) if rows else None
 
  
 
@@ -242,9 +333,15 @@ class SupabaseCollection:
 
        data.pop("_id", None)
 
+       if self.name == "site_settings":
+
+           data = {self._field_name(k): v for k, v in data.items()}
+
        rows = await self._request("POST", {}, payload=data)
 
-       return SupabaseResult(rows[0] if rows else data)
+       row = rows[0] if rows else data
+
+       return SupabaseResult(self._normalize_row(row))
 
  
 
@@ -262,9 +359,9 @@ class SupabaseCollection:
 
                    base[self._field_name(k)] = v
 
-           base.update(update.get("$setOnInsert", {}))
+           base.update({self._field_name(k): v for k, v in update.get("$setOnInsert", {}).items()})
 
-           base.update(update.get("$set", {}))
+           base.update({self._field_name(k): v for k, v in update.get("$set", {}).items()})
 
            for k, v in update.get("$inc", {}).items():
 
@@ -272,7 +369,9 @@ class SupabaseCollection:
 
            rows = await self._request("POST", {}, payload=base)
 
-           return SupabaseResult(rows[0] if rows else base)
+           row = rows[0] if rows else base
+
+           return SupabaseResult(self._normalize_row(row))
 
        if not existing:
 
@@ -309,7 +408,7 @@ class SupabaseCollection:
 
        rows = await self._request("PATCH", patch_query, payload=patch)
 
-       return SupabaseResult((rows[0] if rows else existing))
+       return SupabaseResult(self._normalize_row(rows[0]) if rows else existing)
 
  
 
