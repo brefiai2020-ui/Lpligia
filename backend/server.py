@@ -2262,9 +2262,19 @@ async def admin_delete_registration(rid: str, user: dict = Depends(get_current_a
        raise HTTPException(status_code=404, detail="Inscrição não encontrada.")
 
    # Se era uma inscrição paga/confirmada, devolvemos a vaga ao contador.
-   if was_confirmed:
+     if was_confirmed:
 
-       await release_seat()
+       try:
+
+           await release_seat()
+
+       except Exception as exc:
+
+           logger.exception(
+               "Falha ao liberar vaga após exclusão %s: %s",
+               rid,
+               exc,
+           )
 
    return {"ok": True}
 
