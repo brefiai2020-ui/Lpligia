@@ -294,7 +294,20 @@ class SupabaseCollection:
 
            return SupabaseResult(existing)
 
-       rows = await self._request("PATCH", query, payload=patch)
+       # Supabase/PostgREST não permite PATCH sem filtro.
+       # Quando o código legado usa update_one({}), usamos a chave da linha encontrada.
+       patch_query = dict(query or {})
+       if not patch_query:
+           if existing.get("id") is not None:
+               patch_query = {"id": existing["id"]}
+           elif existing.get("user_id") is not None:
+               patch_query = {"user_id": existing["user_id"]}
+           elif existing.get("counter_key") is not None:
+               patch_query = {"counter_key": existing["counter_key"]}
+           else:
+               raise RuntimeError(f"Supabase PATCH sem chave primária em {self.name}")
+
+       rows = await self._request("PATCH", patch_query, payload=patch)
 
        return SupabaseResult((rows[0] if rows else existing))
 
@@ -2590,7 +2603,6 @@ async def startup():
 
  
 
-from fastapi.responses import JSONResponse  # noqa: E402
 
  
 
