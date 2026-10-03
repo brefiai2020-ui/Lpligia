@@ -2951,3 +2951,5 @@ app.add_middleware(
    ).split(","),
    allow_methods=["*"],
    allow_headers=["*"],
+ )
+ 
