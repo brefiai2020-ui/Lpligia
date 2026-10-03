@@ -15,8 +15,18 @@ const TEXT_FIELDS = {
         ["instagram", "Instagram", "@draligijeanematroski"],
         ["whatsappNumber", "WhatsApp para receber confirmações (só números)", "5547998887766"],
     ],
-    valores: [["capacity", "Capacidade máxima de vagas", "50"], ["slotsTotal", "Vagas exibidas na página", "50"], ["pricePix", "Preço no Pix (R$)", "189.90"], ["priceCard", "Preço no cartão (R$)", "229.00"], ["installments", "Parcelas no cartão", "3"], ["infinitepay_handle", "InfiniteTag da InfinitePay (sem o $)", "draligia"]],
-    midia: [["photoUrl", "URL da foto da Dra. Lígia", "https://..."], ["videoUrl", "URL do vídeo (YouTube/Vimeo/MP4)", "https://..."]],
+    valores: [
+        ["capacity", "Capacidade máxima de vagas", "50"],
+        ["slotsTotal", "Vagas exibidas na página", "50"],
+        ["pricePix", "Preço no Pix (R$)", "189.90"],
+        ["priceCard", "Preço no cartão (R$)", "229.00"],
+        ["installments", "Parcelas no cartão", "3"],
+        ["infinitepay_handle", "InfiniteTag da InfinitePay (sem o $)", "draligia"],
+    ],
+    midia: [
+        ["photoUrl", "URL da foto da Dra. Lígia", "https://..."],
+        ["videoUrl", "URL do vídeo (YouTube/Vimeo/MP4)", "https://..."],
+    ],
     conteudo: [
         ["heroTitle", "Título do hero (quebre linhas com Enter)", "Tudo começa quando\nvocê decide olhar\npara dentro.", true],
         ["heroSubtitle", "Subtítulo do hero", "Uma experiência de mentoria...", true],
@@ -50,20 +60,40 @@ export default function SettingsPanel() {
         setForm((f) => ({ ...f, ...settings }));
     }, [settings]);
 
-    const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
+    const set = (key, value) => {
+        setForm((f) => ({
+            ...f,
+            [key]: value,
+        }));
+    };
 
     const save = async () => {
         setSaving(true);
+
         try {
-            const payload = {
+            const normalized = {
                 ...form,
+                capacity: Number(form.capacity) || 0,
                 slotsTotal: Number(form.slotsTotal) || 0,
-                pricePix: Number(String(form.pricePix).replace(",", ".")) || 0,
-                priceCard: Number(String(form.priceCard).replace(",", ".")) || 0,
+                pricePix: Number(String(form.pricePix ?? "").replace(",", ".")) || 0,
+                priceCard: Number(String(form.priceCard ?? "").replace(",", ".")) || 0,
                 installments: Number(form.installments) || 1,
             };
+
+            const payload = Object.fromEntries(
+                Object.entries(normalized).filter(([key, value]) => {
+                    return value !== settings[key];
+                }),
+            );
+
+            if (Object.keys(payload).length === 0) {
+                toast.success("Nenhuma alteração para salvar.");
+                return;
+            }
+
             await apiService.saveSettings(payload);
             await refresh();
+
             toast.success("Site atualizado! As mudanças já estão no ar.");
         } catch (e) {
             toast.error(formatApiError(e));
@@ -75,7 +105,10 @@ export default function SettingsPanel() {
     return (
         <div className="space-y-10" data-testid="admin-settings-panel">
             <section>
-                <h3 className="text-[11px] uppercase tracking-[0.22em] text-gold mb-4">Vagas esgotadas</h3>
+                <h3 className="text-[11px] uppercase tracking-[0.22em] text-gold mb-4">
+                    Vagas esgotadas
+                </h3>
+
                 <label className="flex items-center gap-3 cursor-pointer select-none">
                     <input
                         data-testid="settings-input-soldout"
@@ -84,6 +117,7 @@ export default function SettingsPanel() {
                         onChange={(e) => set("soldOut", e.target.checked)}
                         className="w-4 h-4 accent-[#C5A059]"
                     />
+
                     <span className="text-sm text-ink">
                         Encerrar inscrições (mostra “Inscrições encerradas” e bloqueia o pagamento em todo o site)
                     </span>
@@ -93,19 +127,34 @@ export default function SettingsPanel() {
             {Object.entries(TEXT_FIELDS).map(([group, fields]) => (
                 <section key={group}>
                     <h3 className="text-[11px] uppercase tracking-[0.22em] text-gold mb-4">
-                        {group === "evento" ? "Evento" : group === "valores" ? "Valores" : group === "midia" ? "Foto e vídeo" : "Conteúdo"}
+                        {group === "evento"
+                            ? "Evento"
+                            : group === "valores"
+                              ? "Valores"
+                              : group === "midia"
+                                ? "Foto e vídeo"
+                                : "Conteúdo"}
                     </h3>
+
                     <div className="grid sm:grid-cols-2 gap-4">
                         {fields.map(([key, label, placeholder, wide]) => (
-                            <div key={key} className={wide ? "sm:col-span-2" : ""}>
-                                <label className="block text-[11px] uppercase tracking-[0.18em] text-smoke mb-1.5">{label}</label>
+                            <div
+                                key={key}
+                                className={wide ? "sm:col-span-2" : ""}
+                            >
+                                <label className="block text-[11px] uppercase tracking-[0.18em] text-smoke mb-1.5">
+                                    {label}
+                                </label>
+
                                 {key === "heroTitle" || key === "impactQuote" ? (
                                     <textarea
                                         data-testid={`settings-input-${key}`}
                                         rows={3}
                                         value={form[key] || ""}
                                         placeholder={placeholder}
-                                        onChange={(e) => set(key, e.target.value)}
+                                        onChange={(e) =>
+                                            set(key, e.target.value)
+                                        }
                                         className="w-full py-3 px-4 rounded-xl border border-line bg-cream text-ink focus:border-gold"
                                     />
                                 ) : (
@@ -113,7 +162,9 @@ export default function SettingsPanel() {
                                         data-testid={`settings-input-${key}`}
                                         value={form[key] ?? ""}
                                         placeholder={placeholder}
-                                        onChange={(e) => set(key, e.target.value)}
+                                        onChange={(e) =>
+                                            set(key, e.target.value)
+                                        }
                                         className="w-full py-3 px-4 rounded-xl border border-line bg-cream text-ink focus:border-gold"
                                     />
                                 )}
@@ -124,26 +175,41 @@ export default function SettingsPanel() {
             ))}
 
             <section>
-                <h3 className="text-[11px] uppercase tracking-[0.22em] text-gold mb-4">Cores do site</h3>
+                <h3 className="text-[11px] uppercase tracking-[0.22em] text-gold mb-4">
+                    Cores do site
+                </h3>
+
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {COLORS.map(([key, label]) => (
-                        <div key={key} className="bg-cream border border-line/60 rounded-xl p-4">
+                        <div
+                            key={key}
+                            className="bg-cream border border-line/60 rounded-xl p-4"
+                        >
                             <div className="flex items-center gap-3">
                                 <input
                                     data-testid={`settings-color-${key}`}
                                     type="color"
                                     value={form[key] || "#000000"}
-                                    onChange={(e) => set(key, e.target.value)}
+                                    onChange={(e) =>
+                                        set(key, e.target.value)
+                                    }
                                     className="w-10 h-10 rounded-lg cursor-pointer border border-line bg-transparent p-1"
                                 />
+
                                 <div>
-                                    <p className="text-xs text-ink">{label}</p>
-                                    <p className="text-[10px] text-smoke/70 font-mono mt-0.5">{form[key]}</p>
+                                    <p className="text-xs text-ink">
+                                        {label}
+                                    </p>
+
+                                    <p className="text-[10px] text-smoke/70 font-mono mt-0.5">
+                                        {form[key]}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
+
                 <p className="mt-3 text-[11px] text-smoke/70">
                     Tons derivados (bordas, textos suaves, dourado claro) se ajustam automaticamente.
                 </p>
