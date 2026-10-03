@@ -27,6 +27,18 @@ export const getStoredOrderNsu = () =>
 export const setStoredOrderNsu = (nsu) =>
     localStorage.setItem("lj_order_nsu", nsu);
 
+/**
+ * InfinitePay também pode retornar o transaction_nsu.
+ * Ele é diferente do order_nsu:
+ * - order_nsu = identificador criado pelo nosso sistema
+ * - transaction_nsu = identificador da transação na InfinitePay
+ */
+export const getStoredTransactionNsu = () =>
+    localStorage.getItem("lj_transaction_nsu");
+
+export const setStoredTransactionNsu = (nsu) =>
+    localStorage.setItem("lj_transaction_nsu", nsu);
+
 export function formatBRL(value) {
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
